@@ -1,19 +1,27 @@
-<h1 align='center'>Video Player</h1>
+<h1 align='center'>JSON/YAML Feed and Video Player</h1>
 
-[![video-player](https://github.com/sahilatahar/Video-Player/assets/100127570/8315e5d3-9b16-4b37-a50c-141a96f2e72e)]()
+[![video-player](https://github.com/sahilatahar/Video-Player/assets/100127570/8315e5d3-9b16-4b37-a50c-141a96f2e72e)](https://video-player-sahilatahar.netlify.app/)
 
 Welcome to the Video-Player React Project! This project provides a modern and user-friendly video player interface built using ReactJS, HTML, CSS, and JavaScript. The Video-Player is designed to be fully responsive and packed with a range of features to enhance your video watching experience.
 
+## Feed Samples
+
+TO DO: Update the code to pull from these.
+
+[Video .MP4 Links](src/Data/data.js) - Existing video sample
+[Film Scouting Location Feed](https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json) - Slide Show
+[Recycling Locations .CSV](https://docs.google.com/spreadsheets/d/e/2PACX-1vRBRXb005Plt3mmmJunBMk6IejMu-VAJOPdlHWXUpyecTAF-SK4OpfSjPHNMN_KAePShbNsiOo2hZzt/pub?gid=1924677788&single=true&output=csv) - Text-only (for image prompts)
+
 ## Features
 
-- &#9658; Play/Pause: Easily start and pause the video playback with a single click.
-- &#9632; Stop: Stop the video playback and reset it to the beginning.
-- 🔊 Volume Control: Adjust the volume level to your preference by increasing or decreasing the volume.
-- 🔇 Mute: Quickly mute or unmute the video's audio with the mute button.
-- &#9970; Full-Screen: Enjoy your videos in full-screen mode for an immersive viewing experience.
-- &#9202; Remaining Time: The video player displays the remaining time of the current video.
-- &#9654;&#9664; Navigation: Seamlessly navigate to the next or previous video in the playlist.
-- &#128250; Play by URL: Paste a valid video URL to play a video directly from the web.
+&#9658; &nbsp; Play/Pause: Easily start and pause the video playback with a single click.
+&#9632; &nbsp; Stop: Stop the video playback and reset it to the beginning.
+🔊 &nbsp; Volume Control: Adjust the volume level to your preference by increasing or decreasing the volume.
+🔇 &nbsp; Mute: Quickly mute or unmute the video's audio with the mute button.
+&#9970; &nbsp; Full-Screen: Enjoy your videos in full-screen mode for an immersive viewing experience.
+&#9202; &nbsp; Remaining Time: The video player displays the remaining time of the current video.
+&#9654;&#9664; &nbsp;Navigation: Seamlessly navigate to the next or previous video in the playlist.
+&#128250; &nbsp; Play by URL: Paste a valid video URL to play a video directly from the web.
 
 ## New UI and Controls
 

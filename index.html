@@ -12,11 +12,23 @@
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
   <title>Video Player</title>
+
+  <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
 </head>
 
 <body>
+
+<script>
+loadMarkdown("README.md", "readmeDiv", "_parent");
+</script>
+
+<div class="content contentpadding large-list">
+  <div id="readmeDiv"></div>
+</div>
+
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+  
 </body>
 
 </html>
