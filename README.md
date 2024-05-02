@@ -13,6 +13,12 @@ TO DO: Update the code to pull from these.
 [Recycling Locations .CSV](https://docs.google.com/spreadsheets/d/e/2PACX-1vRBRXb005Plt3mmmJunBMk6IejMu-VAJOPdlHWXUpyecTAF-SK4OpfSjPHNMN_KAePShbNsiOo2hZzt/pub?gid=1924677788&single=true&output=csv) - Text-only (for image prompts)  
 [Bluesky RSS Feed Reader](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q) - Find sample Bluesky RSS link  
 
+**Also see:**
+[Swiper Element](https://swiperjs.com/element) - [Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/)  
+[Film-strip below hero area](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - but avoid showing multiple heros at the same time  
+Swiper could be used for the film-strip portion.
+
+
 ## Features
 
 &#9658; &nbsp; Play/Pause: Easily start and pause the video playback with a single click.  
