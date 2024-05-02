@@ -8,8 +8,8 @@ Welcome to the Video-Player React Project! This project provides a modern and us
 
 TO DO: Update the code to pull from these.
 
-[Video .MP4 Links](src/Data/data.js) - Existing video sample
-[Film Scouting Location Feed](https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json) - Slide Show
+[Video .MP4 Links](src/Data/data.js) - Existing video sample  
+[Film Scouting Location Feed](https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json) - Slide Show  
 [Recycling Locations .CSV](https://docs.google.com/spreadsheets/d/e/2PACX-1vRBRXb005Plt3mmmJunBMk6IejMu-VAJOPdlHWXUpyecTAF-SK4OpfSjPHNMN_KAePShbNsiOo2hZzt/pub?gid=1924677788&single=true&output=csv) - Text-only (for image prompts)
 
 ## Features
