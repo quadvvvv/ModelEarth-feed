@@ -85,10 +85,12 @@ Contributions to the Feed-Player React Project are welcome! If you have any impr
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE), which means you are free to use, modify, and distribute the code as you see fit.
+This project is licensed under the [MIT License](https://github.com/ModelEarth/feed/blob/main/LICENSE),  
+which means you are free to use, modify, and distribute the code as you see fit.
 
 ---
 
-We hope you enjoy using the Feed-Player for all your playback needs. If you have any questions or feedback, please don't hesitate to reach out.
+We hope you enjoy using the Feed-Player!
+If you have any questions or feedback, please reach out by posting a [discussion item](https://github.com/orgs/ModelEarthTeam/discussions).
 
 Happy feed watching! 🎥🍿
