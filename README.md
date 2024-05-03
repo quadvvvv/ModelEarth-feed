@@ -10,15 +10,13 @@ View and [add your feeds](view)
 
 TO DO: Update the code to pull from these.
 
-[Video .MP4 Links](src/Data/data.js) - Existing list of videos (will include paths for images, json, csv and yaml)
-[Bluesky RSS Feed Reader](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q) - Find sample Bluesky RSS link 
-[Recycling Locations .CSV](https://docs.google.com/spreadsheets/d/e/2PACX-1vRBRXb005Plt3mmmJunBMk6IejMu-VAJOPdlHWXUpyecTAF-SK4OpfSjPHNMN_KAePShbNsiOo2hZzt/pub?gid=1924677788&single=true&output=csv) - Text-only (for image prompts)  
- 
-Swiper.js could be used for the film-strip portion as navigation.
+[JSON for video, image and feed links](src/Data/data.js) - We will also load from CSV files
+[Bluesky RSS Feeds](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q) - Add a sample Bluesky RSS link to our [feed view](view).
+[Swiper Element](https://swiperjs.com/element) will be used for film-strip-style navigation.
 
 **Also see:**  
-[Swiper Element](https://swiperjs.com/element) - [Swiper Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/)  
-[Film-strip below hero area](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
+[Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/)  
+[Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
 
 
 
