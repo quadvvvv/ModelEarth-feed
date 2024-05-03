@@ -35,41 +35,41 @@ Swiper.js could be used for the film-strip portion as navigation.
 
 ## New UI and Controls
 
-The Video-Player project boasts a brand-new user interface that is both visually appealing and intuitive to use. The controls have been thoughtfully designed to provide easy access to the various functionalities while keeping the user experience smooth and engaging.
+The Feed-Player project boasts a brand-new user interface that is both visually appealing and intuitive to use. The controls have been thoughtfully designed to provide easy access to the various functionalities while keeping the user experience smooth and engaging.
 
 ## Live Preview
 
-Check out the live preview of the Video-Player project on Netlify: [Live Preview](https://video-player-sahilatahar.netlify.app/)
+Check out the live preview of the Feed-Player project on Netlify: [Live Preview](https://video-player-sahilatahar.netlify.app/)
 
 ## Getting Started
 
-To run the Video-Player project locally, follow these steps:
+To run the Feed-Player project locally, follow these steps:
 
 1. Clone this repository to your local machine using:
 
    ```
-   git clone https://github.com/sahilatahar/video-player.git
+   git clone https://github.com/modelearth/feed.git
    ```
 
 2. Navigate to the project directory:
 
    ```
-   cd video-player
+   cd feed
    ```
 
-3. Install the required dependencies using your preferred package manager. For example, with npm:
+3. Install the required dependencies using your preferred package manager. For example, with yarn:
 
    ```
-   npm install
+   yarn
    ```
 
 4. Start the development server:
 
    ```
-   npm run dev
+   yarn dev
    ```
 
-5. Open your web browser and go to `http://localhost:5173` to access the Video-Player application.
+5. Open your web browser and go to `http://localhost:5173` to access the Feed-Player application.
 
 ## Technologies Used
 
@@ -81,7 +81,7 @@ To run the Video-Player project locally, follow these steps:
 
 ## Contributions
 
-Contributions to the Video-Player React Project are welcome! If you have any improvements, bug fixes, or additional features in mind, feel free to fork this repository, make your changes, and submit a pull request.
+Contributions to the Feed-Player React Project are welcome! If you have any improvements, bug fixes, or additional features in mind, feel free to fork this repository, make your changes, and submit a pull request.
 
 ## License
 
@@ -89,6 +89,6 @@ This project is licensed under the [MIT License](LICENSE), which means you are f
 
 ---
 
-We hope you enjoy using the Video-Player for your video playback needs. If you have any questions or feedback, please don't hesitate to reach out.
+We hope you enjoy using the Feed-Player for all your playback needs. If you have any questions or feedback, please don't hesitate to reach out.
 
-Happy video watching! 🎥🍿
+Happy feed watching! 🎥🍿
