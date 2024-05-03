@@ -128,8 +128,9 @@ and (max-device-width : 480px) {
 		{"value":"usda","name":"USDA Nutrition Label"},
     {"value":"nasa","name":"NASA Image Feed"},
     {"value":"311","name":"See Click Fix Requests"},
-    {"value":"civictechindex","name":"Civic Tech - Organizations"},
-    {"value":"civictechlinks","name":"Civic Tech - Links"},
+    {"value":"film-scouting","name":"Film Scouting Locations"},
+    {"value":"civictechindex","name":"Civic Tech Organizations"},
+    {"value":"civictechlinks","name":"Civic Tech Links"},
     {"value":"epd","name":"Environmental Product Declarations (EPD) - static"},
   ]}
 
@@ -212,12 +213,16 @@ function displayFeed() {
 		$('#pageTitleText').html("<a href='https://seeclickfix.com/open311/v2/docs' target='_blank'>About Open311 API</a><br><br>");
 		selected_array = ["issues"];
 		barName = "summary"
+	} else if (hash.feed == "film-scouting") {
+		$('#pageTitle').html("Film Scounting Locations");
+		url = "https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json";
 	} else if (hash.feed == "civictechindex") {
+		$('#pageTitle').html("Civic Tech Organizations");
 		//url = "https://api-stage.civictechindex.org/swagger/?format=openapi"
 		url = "https://api-stage.civictechindex.org/api/organizations/";
 		barName = "name"
 	} else if (hash.feed == "civictechlinks") {
-		//url = "https://api-stage.civictechindex.org/swagger/?format=openapi"
+		$('#pageTitle').html("Civic Tech Links");
 		url = "https://api-stage.civictechindex.org/api/links/";
 		barName = "link_type"
 	} else if (hash.feed == "epd") {

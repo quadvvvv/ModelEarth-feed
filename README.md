@@ -6,13 +6,14 @@ Welcome to the Video-Player React Project! This project provides a modern and us
 
 ## Feed Samples
 
+View and [add your feeds](view)
+
 TO DO: Update the code to pull from these.
 
-[Video .MP4 Links](src/Data/data.js) - Existing video sample  
-[Film Scouting Location Feed](https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json) - Slide Show  
+[Video .MP4 Links](src/Data/data.js) - Existing list of videos (will include paths for images, json, csv and yaml)
+[Bluesky RSS Feed Reader](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q) - Find sample Bluesky RSS link 
 [Recycling Locations .CSV](https://docs.google.com/spreadsheets/d/e/2PACX-1vRBRXb005Plt3mmmJunBMk6IejMu-VAJOPdlHWXUpyecTAF-SK4OpfSjPHNMN_KAePShbNsiOo2hZzt/pub?gid=1924677788&single=true&output=csv) - Text-only (for image prompts)  
-[Bluesky RSS Feed Reader](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q) - Find sample Bluesky RSS link  
-
+ 
 Swiper.js could be used for the film-strip portion as navigation.
 
 **Also see:**  
