@@ -22,14 +22,14 @@ TO DO: Update the code to pull from these.
 
 ## Features
 
-&#9658; &nbsp; Play/Pause: Easily start and pause the video playback with a single click.  
-&#9632; &nbsp; Stop: Stop the video playback and reset it to the beginning.  
+&#9658; &nbsp; Play/Pause: Easily start and pause the playback with a single click.  
+&#9632; &nbsp; Stop: Stop the feed playback and reset it to the beginning.  
 🔊 &nbsp; Volume Control: Adjust the volume level to your preference by increasing or decreasing the volume.  
-🔇 &nbsp; Mute: Quickly mute or unmute the video's audio with the mute button.  
+🔇 &nbsp; Mute: Quickly mute or unmute the feed's audio with the mute button.  
 &#9970; &nbsp; Full-Screen: Enjoy your videos in full-screen mode for an immersive viewing experience.  
-&#9202; &nbsp; Remaining Time: The video player displays the remaining time of the current video.  
-&#9654;&#9664; &nbsp;Navigation: Seamlessly navigate to the next or previous video in the playlist.  
-&#128250; &nbsp; Play by URL: Paste a valid video URL to play a video directly from the web.
+&#9202; &nbsp; Remaining Time: The feed player will display the remaining time of the current feed.  
+&#9654; &nbsp;Navigation: Seamlessly navigate to the next or previous item in the playlist.  
+&#128250; &nbsp; Play by URL: Paste a feed URL to play any valid feed format directly from the web. (Coming soon)
 
 ## New UI and Controls
 
