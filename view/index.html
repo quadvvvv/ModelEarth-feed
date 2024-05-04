@@ -127,12 +127,16 @@ and (max-device-width : 480px) {
 		{"value":"none","name":"Select a feed..."},
 		{"value":"usda","name":"USDA Nutrition Label"},
     {"value":"nasa","name":"NASA Image Feed"},
+    {"value":"US:Count_Person","name":"US State Populations"},
     {"value":"311","name":"See Click Fix Requests"},
     {"value":"film-scouting","name":"Film Scouting Locations"},
     {"value":"civictechindex","name":"Civic Tech Organizations"},
     {"value":"civictechlinks","name":"Civic Tech Links"},
-    {"value":"epd","name":"Environmental Product Declarations (EPD) - static"},
+    
   ]}
+
+// Too slow due to 2.5 MB size and display process
+// {"value":"epd","name":"Environmental Product Declarations (EPD) - static"},
 
 // 403 - Get a new API to activate
 // {"value":"diffbot","name":"Diffbot"},
@@ -160,7 +164,8 @@ function displayFeed() {
 	}
 	$("#resultFull").css("opacity","0");
 	$("#resultLoading").show(); // .text("Loading...");
-	$('#pageTitleText').html(""); // Stiil adds padding
+	$('#pageTitleText').html("");
+	$('#apiURL').val("");
 	$("#apiFeeds option[value='" + hash.feed + "']").prop("selected", true);
 
 	//var zip = param["zip"] || "30318";
@@ -207,10 +212,15 @@ function displayFeed() {
 		url = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=True&count=2"; // &count=1
 		selected_array = ["date","explanation","url","hdurl"]; // "title"
 		barName = "title"
+	} else if (hash.feed == "US:Count_Person") {
+		$('#pageTitle').html("US State Populations");
+		url = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&date=LATEST&entity.dcids=country%2FUSA&select=entity&select=variable&select=value&select=date&variable.dcids=Count_Person";
+		
+		$('#pageTitleText').html('"expression": country/USA<-containedInPlace+{typeOf:State}"<br><a href="https://docs.datacommons.org/api/rest/v2/observation">About GDC v2 Observation API</a> - <a href="https://docs.datacommons.org/api/rest/v2/resolve">Find a DCID</a><br><br>');
 	} else if (hash.feed == "311") {
 		$('#pageTitle').html("See Click Fix - Open 311");
 		url = "https://seeclickfix.com/api/v2/issues?lat=41.307153&lng=-72.925791&zoom=8&per_page=10";
-		$('#pageTitleText').html("<a href='https://seeclickfix.com/open311/v2/docs' target='_blank'>About Open311 API</a><br><br>");
+		$('#pageTitleText').html("<a href='https://seeclickfix.com/open311/v2/docs'>About Open311 API</a><br><br>");
 		selected_array = ["issues"];
 		barName = "summary"
 	} else if (hash.feed == "film-scouting") {
@@ -231,6 +241,7 @@ function displayFeed() {
 	} else if (hash.feed) {
 		$("#resultLoading").text("Unidentified feed request: " + hash.feed)
 	}
+	$('#apiURL').val(url);
 
 	let count = 0;
 	let maxcount = 10;
@@ -344,8 +355,11 @@ function displayFeed() {
 
 	<div style="float:right">View <a href="../">Feed Player</a></div>
 
-	<h1 id="pageTitle"></h1>
+	<!--h1 id="pageTitle"></h1-->
 	<select id="apiFeeds" onchange="goHash({'feed':this.value})"></select>
+	<br>
+
+	<input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;color:#999;background-color:rgba(0, 0, 0, 0);" placeholder="API URL" value="" autofocus onfocus="this.select()"><br><br>
 
 	<div style="margin-left:10px">
 		<!--
