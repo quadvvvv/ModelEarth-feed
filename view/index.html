@@ -129,11 +129,13 @@ and (max-device-width : 480px) {
     {"value":"nasa","name":"NASA Image Feed"},
     {"value":"US:Count_Person","name":"US State Populations"},
     {"value":"311","name":"See Click Fix Requests"},
-    {"value":"film-scouting","name":"Film Scouting Locations"},
-    {"value":"civictechindex","name":"Civic Tech Organizations"},
-    {"value":"civictechlinks","name":"Civic Tech Links"},
     
   ]}
+
+// Add back once support for arrays of objects reactivated
+//    {"value":"film-scouting","name":"Film Scouting Locations"},
+//    {"value":"civictechindex","name":"Civic Tech Organizations"},
+//    {"value":"civictechlinks","name":"Civic Tech Links"},
 
 // Too slow due to 2.5 MB size and display process
 // {"value":"epd","name":"Environmental Product Declarations (EPD) - static"},
@@ -210,12 +212,12 @@ function displayFeed() {
 		$('#pageTitle').html("NASA Image Feed");
 		// NASA images and videos
 		url = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=True&count=2"; // &count=1
-		selected_array = ["date","explanation","url","hdurl"]; // "title"
+		selected_array = ["title","date","explanation","url","hdurl"]; // "title"
 		barName = "title"
 	} else if (hash.feed == "US:Count_Person") {
 		$('#pageTitle').html("US State Populations");
 		url = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&date=LATEST&entity.dcids=country%2FUSA&select=entity&select=variable&select=value&select=date&variable.dcids=Count_Person";
-		
+
 		$('#pageTitleText').html('"expression": country/USA<-containedInPlace+{typeOf:State}"<br><a href="https://docs.datacommons.org/api/rest/v2/observation">About GDC v2 Observation API</a> - <a href="https://docs.datacommons.org/api/rest/v2/resolve">Find a DCID</a><br><br>');
 	} else if (hash.feed == "311") {
 		$('#pageTitle').html("See Click Fix - Open 311");
@@ -248,97 +250,20 @@ function displayFeed() {
 	const start = Date.now();
 
   d3.json(url).then(function(json) {
-  	const millis = Date.now() - start;
-		console.log("API fetch - seconds elapsed " + millis / 1000);
-
-		if (hash.feed == "usda" || hash.feed == "311") {
-			let myArray = [];
-			myArray.push(json);
-			json = myArray; // Add [] around {}
-		}
-
   	var fullHtml = '';
-  	if (Array.isArray(json)) { // Other than DiffBot - NASA when count included
-  		for (a in json) {
-  			count++;
-  			if (count <= maxcount) {
-  				if (json[a][barName]) {
-	    			fullHtml += "<div class='level1'>" + count + ". " + json[a][barName] + "</div>\n";
-	    		} else {
-	    			fullHtml += "<div class='level1'>" + count + ".</div>\n";
-	    		}
-    			for (b in json[a]) {
-    				fullHtml += "<div class='level1children' style='displayX:none'>"
-    				fullHtml += formatRow(b,json[a][b],1); // Resides in localsite.js
-    				fullHtml += "</div>"
-    			}
-    		}
-  		}
+  	//fullHtml += formatRow(b,json[a][b],1); // Resides in localsite.js
+
+  	if (hash.feed != "nasa" && Array.isArray(json)) {
+  		// TO DO - Move this into localsite and support arrays of objects
   	} else {
-  		if (!json.data) {
-  			json.data = json; // For NASA
-  		}
-			for (a in json.data) { // An object. a key is 0,1,2,3,..
-				count++;
-				if (count <= maxcount) {
-          fullHtml += "<div class='level1'>" + count + ". " + json.data[a][barName] + "</div>\n";
-          for (b in json.data[a]) { //b is value like allNames: ["AirWatch"], so b is key for  ["AirWatch"]
+	  	// Key, Value, Level, Params
+	  	fullHtml += formatRow("",json,0); // Resides in localsite.js
 
-          	addHtml = "";
-          	addHtml += formatRow(b,json.data[a][b],1); // Resides in localsite.js
-         
-      			//resultFull.innerHTML = resultFull.innerHTML + addHtml;
-      			fullHtml += addHtml;
-          }
-        }
-	    }
+	  	$("#resultFull").css("opacity","100");
+	    resultFull.innerHTML = fullHtml;
 	  }
-	  $("#resultFull").css("opacity","100");
-    resultFull.innerHTML = fullHtml;
-    //resultLading.innerHTML = '';
-    $("#resultLoading").hide();
-
-    // After results added to innerHTML
-  	var anchors = document.getElementsByClassName('level1');
-      for(var i = 0; i < anchors.length; i++) {
-          var anchor = anchors[i];
-          //if((/\blevel1\b/).match(anchor.className)) {
-              anchor.onclick = function() {
-
-              //alert("clicked")
-              $(".level1children").show();
-              //$(".level2").attr('style', 'display:block');
-
-              // These need to be revised to open current section
-
-		          var arrayOfElements=document.getElementsByClassName('level2');
-							var lengthOfArray=arrayOfElements.length;
-
-							for (var i=0; i<lengthOfArray;i++){
-							    arrayOfElements[i].classList.remove('hidden');
-							}
-
-							var arrayOfElements3=document.getElementsByClassName('level3');
-							var lengthOfArray3=arrayOfElements3.length;
-
-							for (var i=0; i<lengthOfArray3;i++){
-							    arrayOfElements3[i].classList.remove('hidden');
-							}
-
-							// At time of development there was not a level4 in DiffBot - A precaution
-							var arrayOfElements4=document.getElementsByClassName('level4');
-							var lengthOfArray4=arrayOfElements4.length;
-
-							for (var i=0; i<lengthOfArray4;i++){
-							    arrayOfElements4[i].classList.remove('hidden');
-							}
-
-              }
-          //}
-      }
-      //console.log(json);
   })
- //  .catch(function(error) {
+  // .catch(function(error) {
 	//     //alert(error);
 	//     $("#resultLoading").text(error);
 	//     //$("#resultLoading").text("Error: " + error.message);
@@ -367,7 +292,9 @@ function displayFeed() {
 		-->
 		<div id="pageTitleText" style="padding-top: 10px;"></div>
 
+		<!--
 		<div id="resultLoading" style="padding-top: 10px;">Loading..<br></div>
+		-->
 		<div id="resultFull"></div>
 	</div>
 
