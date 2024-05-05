@@ -129,16 +129,11 @@ and (max-device-width : 480px) {
     {"value":"nasa","name":"NASA Image Feed"},
     {"value":"US:Count_Person","name":"US State Populations"},
     {"value":"311","name":"See Click Fix Requests"},
-    
+		{"value":"film-scouting","name":"Film Scouting Locations"},
+		{"value":"civictechindex","name":"Civic Tech Organizations"},
+		{"value":"civictechlinks","name":"Civic Tech Links"},
+		{"value":"epd","name":"Environmental Product Declarations (EPD)"},
   ]}
-
-// Add back once support for arrays of objects reactivated
-//    {"value":"film-scouting","name":"Film Scouting Locations"},
-//    {"value":"civictechindex","name":"Civic Tech Organizations"},
-//    {"value":"civictechlinks","name":"Civic Tech Links"},
-
-// Too slow due to 2.5 MB size and display process
-// {"value":"epd","name":"Environmental Product Declarations (EPD) - static"},
 
 // 403 - Get a new API to activate
 // {"value":"diffbot","name":"Diffbot"},
@@ -239,7 +234,7 @@ function displayFeed() {
 		barName = "link_type"
 	} else if (hash.feed == "epd") {
 		url = "/io/template/feed/toy100.json";
-		$('#pageTitleText').html("100 static rows from <a href='/io/template/feed/toy100.json'>2.5 MB JSON</a> for comparison with <a href='/io/template/feed/'>BuildingTransparency API Pull</a>.<br><br>");
+		$('#pageTitleText').html("10 of 100 static rows from <a href='/io/template/feed/toy100.json'>2.5 MB JSON</a> for comparison with <a href='/io/template/feed/'>BuildingTransparency API Pull</a>.<br><br>");
 	} else if (hash.feed) {
 		$("#resultLoading").text("Unidentified feed request: " + hash.feed)
 	}
@@ -253,15 +248,11 @@ function displayFeed() {
   	var fullHtml = '';
   	//fullHtml += formatRow(b,json[a][b],1); // Resides in localsite.js
 
-  	if (hash.feed != "nasa" && Array.isArray(json)) {
-  		// TO DO - Move this into localsite and support arrays of objects
-  	} else {
-	  	// Key, Value, Level, Params
-	  	fullHtml += formatRow("",json,0); // Resides in localsite.js
+  	// Key, Value, Level, Params
+  	fullHtml += formatRow("",json,0); // Resides in localsite.js
 
-	  	$("#resultFull").css("opacity","100");
-	    resultFull.innerHTML = fullHtml;
-	  }
+  	$("#resultFull").css("opacity","100");
+    resultFull.innerHTML = fullHtml;
   })
   // .catch(function(error) {
 	//     //alert(error);
