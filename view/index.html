@@ -135,6 +135,10 @@ and (max-device-width : 480px) {
 		{"value":"epd","name":"Environmental Product Declarations (EPD)"},
   ]}
 
+// To develop
+//    {"value":"Continents","name":"Emissions by Continent"},
+//     {"value":"jobs","name":"Jobs Random Forest Accuracy"},
+
 // 403 - Get a new API to activate
 // {"value":"diffbot","name":"Diffbot"},
 
@@ -184,12 +188,18 @@ function displayFeed() {
 	let url = "";
 	selected_array = [];
 
+	// https://github.com/ModelEarth/data-commons/blob/main/docs/air/emissions/data/API_EN.ATM.CO2E.PC_DS2_zh_csv_v2_45186.csv
+
 	if (hash.feed == "usda") { // Nutrition label
 		$('#pageTitle').html("Nutrition label");
 		url = "https://api.nal.usda.gov/fdc/v1/food/2015943?api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
 		//selected_array = ["foodAttributes"];
 		selected_array = [];
 		$('#pageTitleText').html("View <a href='/OpenFootprint'>Label Template</a>.<br><br>");
+	} else if (hash.feed == "jobs") {
+		$('#pageTitle').html("Jobs Random Forest Accuracy");
+		url = "/RealityStream/output/jobs/CV-RandomForestClassifier_accuracy.yaml";
+
 	} else if (hash.feed == "diffbot") {
 		quantity = 2;
 		$('#pageTitle').html("DiffBot JSON API - ZIP CODE " + hash.zip);
@@ -281,7 +291,12 @@ function displayFeed() {
 		<!--
 		Also see <a href="no-d3.html">$.getJSON</a>
 		-->
-		<div id="pageTitleText" style="padding-top: 10px;"></div>
+
+		<!--
+		If we reactivate, only show when contains text
+		-->
+		<div id="pageTitleText" style="display:none;padding-top: 10px;"></div>
+		
 
 		<!--
 		<div id="resultLoading" style="padding-top: 10px;">Loading..<br></div>
