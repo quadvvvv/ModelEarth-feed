@@ -145,6 +145,7 @@ and (max-device-width : 480px) {
 document.addEventListener('hashChangeEvent', function (elem) {
 	let hash = getHash();
 	if (hash.feed != priorHash.feed) {
+		updateHash({'path':''});
  		displayFeed();
  	}
 }, false);
@@ -161,7 +162,9 @@ $(document).ready(function () {
 function displayFeed() {
 	let hash = getHash();
 	if (!hash.feed || hash.feed == "none") {
-		hash.feed = "usda"
+		if (!hash.path) {
+			hash.feed = "usda"
+		}
 	}
 	$("#resultFull").css("opacity","0");
 	$("#resultLoading").show(); // .text("Loading...");
@@ -186,6 +189,9 @@ function displayFeed() {
 	//var url = "https://kg.diffbot.com/kg/dql_endpoint?type=query&token=31c80e03058e4f5b86585fb9e97640a6&size=3&from=0&query=type%3AOrganization%20name%3A%22General%20Mills%22";
 	
 	let url = "";
+	if (hash.path) {
+		url = hash.path;
+	}
 	selected_array = [];
 
 	// https://github.com/ModelEarth/data-commons/blob/main/docs/air/emissions/data/API_EN.ATM.CO2E.PC_DS2_zh_csv_v2_45186.csv
