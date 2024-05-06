@@ -81,7 +81,7 @@ Vite is preferable to Create React App (CRA) because Vite does not rebuild the w
 
 ## Contributions
 
-Contributions to the Feed-Player React Project are welcome! If you have any improvements, bug fixes, or additional features in mind, feel free to fork this repository, make your changes, and submit a pull request.
+Contributions to the [Feed-Player Github Repo](https://github.com/modelearth/feed/) are welcome! If you have any improvements, bug fixes, or additional features in mind, feel free to fork this repository, make your changes, and submit a pull request.
 
 ## License
 
