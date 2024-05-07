@@ -125,6 +125,7 @@ and (max-device-width : 480px) {
 
 	var jsonList = {"Table" : [
 		{"value":"none","name":"Select a feed..."},
+		{"value":"bsky","name":"BSky Project Feed (CORS Restriction)"},
 		{"value":"usda","name":"USDA Nutrition Label"},
     {"value":"nasa","name":"NASA Image Feed"},
     {"value":"US:Count_Person","name":"US State Populations"},
@@ -197,7 +198,10 @@ function displayFeed() {
 
 	// https://github.com/ModelEarth/data-commons/blob/main/docs/air/emissions/data/API_EN.ATM.CO2E.PC_DS2_zh_csv_v2_45186.csv
 
-	if (hash.feed == "usda") { // Nutrition label
+	if (hash.feed == "bsky") {
+		url = "https://bsky.app/profile/did:plc:ileopdnhib52emw3veem5zxk";
+		selected_array = [];
+	} else if (hash.feed == "usda") { // Nutrition label
 		$('#pageTitle').html("Nutrition label");
 		url = "https://api.nal.usda.gov/fdc/v1/food/2015943?api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
 		//selected_array = ["foodAttributes"];
