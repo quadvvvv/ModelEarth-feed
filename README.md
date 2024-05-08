@@ -6,7 +6,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 ## Feed Samples
 
-View and [add your feeds](view)
+View and [add your feeds](view) - View upcoming [Google Sheet feed links](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing)
 
 TO DO: Update the code to pull from these.
 
