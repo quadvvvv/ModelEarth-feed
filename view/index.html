@@ -342,8 +342,14 @@ function displayRequestsCorsAnywhere(url) {
 	            const requestsDiv = document.getElementById('resultFull');
 	            data.forEach(item => {
 	                const requestDiv = document.createElement('div');
+
+	                if (item.media_url) {
+	                	const requestDiv2 = document.createElement('div');
+	                	requestDiv2.innerHTML = `<img src="${item.media_url}" style="width:100%;max-width:500px"><br>`
+	                	requestsDiv.appendChild(requestDiv2);
+	            	}
 	                requestDiv.innerHTML = `
-	                    <h2>${item.description}</h2>
+	                    <h3>${capFirst(item.description)}</h3>
 	                    <b>Address</b> ${item.address}<br>
 	                    <b>Latitude</b> ${item.lat}<br>
 	                    <b>Longitude</b> ${item.long}<br>
@@ -355,14 +361,14 @@ function displayRequestsCorsAnywhere(url) {
 	                    <b>Updated Datetime</b> ${item.updated_datetime}<br>
 	                    <b>Agency Responsible</b> ${item.agency_responsible}<br>
 	                    <b>Service Name</b> ${item.service_name}<br>
-	                    <img src="${item.media_url}" style="width:100%;max-width:500px"><br>
 	                    <b>Expected Datetime</b> ${item.expected_datetime}<br>
 	                    <b>Address ID</b> ${item.address_id}<br>
 	                    <b>Service Notice</b> ${item.service_notice}<br>
-	                    <b>Status Notes</b> ${item.status_notes}<br>
+	                    <b>Status Notes</b> ${item.status_notes}<br><hr style='border-bottom:1px solid #aaa;margin-top:10px'><br>
 	                `;
 	                requestsDiv.appendChild(requestDiv);
-
+	                
+	            	
 	            });
 	        }
         } else if (xhr.readyState === 4) {
@@ -372,7 +378,10 @@ function displayRequestsCorsAnywhere(url) {
     
     xhr.send();
 }
-
+function capFirst(str, locale=navigator.language) {
+  if (!str) return "";
+  return str.replace(/^\p{CWU}/u, char => char.toLocaleUpperCase(locale));
+}
 </script>
 
 </head>
