@@ -83,6 +83,31 @@ Vite is preferable to Create React App (CRA) because Vite does not rebuild the w
 
 Contributions to the [Feed-Player Github Repo](https://github.com/modelearth/feed/) are welcome! If you have any improvements, bug fixes, or additional features in mind, feel free to fork this repository, make your changes, and submit a pull request.
 
+## Team Projects
+
+Place your name here if your working on an update.
+
+Gary - Pulling image and video links from a Google Sheet and adding still images to player flow.
+
+Add a process for saving related notes in Supabase. Save the id of the RSS feed from BlueSky. Place process within Earthscape.
+
+Copy the 7 feed paths from our new feed/view index.html page into our Google Sheet. Include all of each feed's properties, Path, Title, Description, etc. as columns.
+
+Loren - Update the formatRow() function in localsite/js/locasite.js to show images when the value contains .jpg and all other image extensions. Use ChatGPT to get full list. Put loading="lazy" in the img tag so only the visible images load.
+
+Starting from Gary's Google Sheet pull React, modify the feed view to pull from a csv file and point it at our "requests" repo prompt file. CSV pull using D3 sample in our localhost/js/map.js 
+
+Update to pull multiple Bluesky RSS feed links by passing in a comma separated list.
+
+Allow the text field on the feed/view page to be submitted to refresh the feed pull.
+
+Update the javascript in this Building Transparency page to allow an API token to be pasted in the "Your API Key" field: https://model.earth/io/template/feed
+
+Create a Python process using Github Actions that automatically pulls a new Building Transparency token every 24 hours.
+
+Use Vite to add a Swiper Element into our "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder.
+
+
 ## License
 
 This project is licensed under the [MIT License](https://github.com/ModelEarth/feed/blob/main/LICENSE),  
