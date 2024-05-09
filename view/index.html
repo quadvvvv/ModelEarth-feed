@@ -125,12 +125,13 @@ and (max-device-width : 480px) {
 
 	var jsonList = {"Table" : [
 		{"value":"none","name":"Select a feed..."},
-		{"value":"bsky","name":"BSky Project Feed (CORS Restriction)"},
 		{"value":"usda","name":"USDA Nutrition Label"},
-    {"value":"nasa","name":"NASA Image Feed"},
-    {"value":"US:Count_Person","name":"US State Populations"},
-    {"value":"LandCoverFraction_Forest","name":"Land Covered by Forests"},
-    {"value":"311","name":"See Click Fix Requests"},
+	    {"value":"nasa","name":"NASA Image Feed"},
+	    {"value":"US:Count_Person","name":"US State Populations"},
+	    {"value":"LandCoverFraction_Forest","name":"Land Covered by Forests"},
+	    {"value":"311","name":"See Click Fix Requests"},
+	    {"value":"bsky","name":"BlueSky Model.Earth RSS (CORS)"},
+	    {"value":"open311","name":"See Click Fix Requests (CORS)"},
 		{"value":"film-scouting","name":"Film Scouting Locations"},
 		{"value":"civictechindex","name":"Civic Tech Organizations"},
 		{"value":"civictechlinks","name":"Civic Tech Links"},
@@ -168,7 +169,7 @@ function displayFeed() {
 			hash.feed = "usda"
 		}
 	}
-	$("#resultFull").css("opacity","0");
+	$("#resultFull").hide();
 	$("#resultLoading").show(); // .text("Loading...");
 	$('#pageTitleText').html("");
 	$('#apiURL').val("");
@@ -198,9 +199,14 @@ function displayFeed() {
 
 	// https://github.com/ModelEarth/data-commons/blob/main/docs/air/emissions/data/API_EN.ATM.CO2E.PC_DS2_zh_csv_v2_45186.csv
 
+	const latitude = localStorage.latitude ? localStorage.latitude : 41.307;
+	const longitude = localStorage.longitude ? localStorage.longitude : -72.925;
+
 	if (hash.feed == "bsky") {
-		url = "https://bsky.app/profile/did:plc:ileopdnhib52emw3veem5zxk";
+		url = "https://bsky.app/profile/did:plc:ileopdnhib52emw3veem5zxk/rss";
+		//alert(url)
 		selected_array = [];
+		$('#pageTitleText').html('<a href="https://cors-anywhere.herokuapp.com/">Turn on CORS passthrough</a>');
 	} else if (hash.feed == "usda") { // Nutrition label
 		$('#pageTitle').html("Nutrition label");
 		url = "https://api.nal.usda.gov/fdc/v1/food/2015943?api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
@@ -239,11 +245,14 @@ function displayFeed() {
 		$('#pageTitle').html("US State Populations");
 		url = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&date=2015&date=LATEST&entity.expression=geoId%2F06%3C-containedInPlace%2B%7BtypeOf%3ACounty%7D&select=date&select=entity&select=value&select=variable&variable.dcids=LandCoverFraction_Forest";
 	} else if (hash.feed == "311") {
-		$('#pageTitle').html("See Click Fix - Open 311");
-		url = "https://seeclickfix.com/api/v2/issues?lat=41.307153&lng=-72.925791&zoom=8&per_page=10";
+		$('#pageTitle').html("See Click Fix - v2");
+		url = `https://seeclickfix.com/api/v2/issues?lat=${latitude}&lng=${longitude}&zoom=8&per_page=10`;
 		$('#pageTitleText').html("<a href='https://seeclickfix.com/open311/v2/docs'>About Open311 API</a><br><br>");
 		selected_array = ["issues"];
 		barName = "summary"
+	} else if (hash.feed == "open311") {
+		url = `https://seeclickfix.com/open311/v2/requests.json?lat=${latitude}&long=${longitude}`;
+		$('#pageTitleText').html('<a href="https://cors-anywhere.herokuapp.com/">Turn on CORS passthrough</a>');
 	} else if (hash.feed == "film-scouting") {
 		$('#pageTitle').html("Film Scounting Locations");
 		url = "https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json";
@@ -266,8 +275,14 @@ function displayFeed() {
 
 	let count = 0;
 	let maxcount = 10;
-	const start = Date.now();
-
+	//const start = Date.now();
+	if (hash.feed == "bsky" || hash.feed == "open311") {
+		displayRequestsCorsAnywhere(url);
+	} else {
+		displayJson(url);
+	}
+}
+function displayJson(url){
   d3.json(url).then(function(json) {
   	var fullHtml = '';
   	//fullHtml += formatRow(b,json[a][b],1); // Resides in localsite.js
@@ -275,8 +290,9 @@ function displayFeed() {
   	// Key, Value, Level, Params
   	fullHtml += formatRow("",json,0); // Resides in localsite.js
 
-  	$("#resultFull").css("opacity","100");
-    resultFull.innerHTML = fullHtml;
+  	$("#resultFull").show();
+    //resultFull.innerHTML = fullHtml;
+    $("#resultFull").html(fullHtml);
   })
   // .catch(function(error) {
 	//     //alert(error);
@@ -284,6 +300,79 @@ function displayFeed() {
 	//     //$("#resultLoading").text("Error: " + error.message);
 	// });
 }
+function displayRequestsCorsAnywhere(url) {
+	$("#resultFull").html("");
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use your own proxy if available
+    urlCombo = proxyUrl + url;
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", urlCombo, true);
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+        	$("#resultFull").show();
+        	if (url.indexOf("/rss") !== -1) { // RSS FEED
+	        	const rssFeed = xhr.responseText;
+
+	        	// Parse XML
+				const parser = new DOMParser();
+				const xmlDoc = parser.parseFromString(rssFeed, "text/xml");
+
+				// Extract items
+				const items = xmlDoc.getElementsByTagName("item");
+				const formattedItems = [];
+
+				for (let i = 0; i < items.length; i++) {
+				  const item = items[i];
+				  const link = item.querySelector("link").textContent;
+				  const description = item.querySelector("description").textContent;
+				  const pubDate = item.querySelector("pubDate").textContent;
+				  const guid = item.querySelector("guid").textContent;
+				  
+				  formattedItems.push({
+				    link,
+				    description,
+				    pubDate,
+				    guid
+				  });
+				}
+				const formattedRSS = formatRow("",formattedItems,0); // Resides in localsite.js
+			    $("#resultFull").html(formattedRSS);
+	        } else {
+	            const data = JSON.parse(xhr.responseText);
+	            const requestsDiv = document.getElementById('resultFull');
+	            data.forEach(item => {
+	                const requestDiv = document.createElement('div');
+	                requestDiv.innerHTML = `
+	                    <h2>${item.description}</h2>
+	                    <b>Address</b> ${item.address}<br>
+	                    <b>Latitude</b> ${item.lat}<br>
+	                    <b>Longitude</b> ${item.long}<br>
+	                    <b>Service Request ID</b> ${item.service_request_id}<br>
+	                    <b>Requested Datetime</b> ${item.requested_datetime}<br>
+	                    <b>Service Code</b> ${item.service_code}<br>
+	                    <b>Status</b> ${item.status}<br>
+	                    <b>Zipcode</b> ${item.zipcode}<br>
+	                    <b>Updated Datetime</b> ${item.updated_datetime}<br>
+	                    <b>Agency Responsible</b> ${item.agency_responsible}<br>
+	                    <b>Service Name</b> ${item.service_name}<br>
+	                    <img src="${item.media_url}" style="width:100%;max-width:500px"><br>
+	                    <b>Expected Datetime</b> ${item.expected_datetime}<br>
+	                    <b>Address ID</b> ${item.address_id}<br>
+	                    <b>Service Notice</b> ${item.service_notice}<br>
+	                    <b>Status Notes</b> ${item.status_notes}<br>
+	                `;
+	                requestsDiv.appendChild(requestDiv);
+
+	            });
+	        }
+        } else if (xhr.readyState === 4) {
+            console.error('Error fetching data. Status:', xhr.status);
+        }
+    };
+    
+    xhr.send();
+}
+
 </script>
 
 </head>
@@ -309,7 +398,7 @@ function displayFeed() {
 		<!--
 		If we reactivate, only show when contains text
 		-->
-		<div id="pageTitleText" style="display:none;padding-top: 10px;"></div>
+		<div id="pageTitleText" style="padding-top: 10px;"></div>
 		
 
 		<!--
