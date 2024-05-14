@@ -133,6 +133,7 @@ and (max-device-width : 480px) {
 	    {"value":"open311","name":"See Click Fix Requests (CORS)"},
 	    {"value":"bsky","name":"BlueSky Model.Earth RSS (CORS)"},
 		{"value":"film-scouting","name":"Film Scouting Locations"},
+		{"value":"flow","name":"USEEIO Impact Flow"},
 		{"value":"civictechindex","name":"Civic Tech Organizations"},
 		{"value":"civictechlinks","name":"Civic Tech Links"},
 		{"value":"epd","name":"Environmental Product Declarations (EPD)"},
@@ -256,6 +257,9 @@ function displayFeed() {
 	} else if (hash.feed == "film-scouting") {
 		$('#pageTitle').html("Film Scounting Locations");
 		url = "https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json";
+	} else if (hash.feed == "flow") {
+		$('#pageTitleText').html("USEEEIO Flow GAEEIOv1.0-s-20");
+		url = "https://raw.githubusercontent.com/ModelEarth/OpenFootprint/main/impacts/2020/GAEEIOv1.0-s-20/flows.json";
 	} else if (hash.feed == "civictechindex") {
 		$('#pageTitle').html("Civic Tech Organizations");
 		//url = "https://api-stage.civictechindex.org/swagger/?format=openapi"
