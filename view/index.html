@@ -125,13 +125,14 @@ and (max-device-width : 480px) {
 
 	var jsonList = {"Table" : [
 		{"value":"none","name":"Select a feed..."},
+		{"value":"food","name":"USDA Food List"},
 		{"value":"usda","name":"USDA Nutrition Label"},
     {"value":"nasa","name":"NASA Image Feed"},
 
     {"value":"gdc","name":"Google Data Commons"},
     {"value":"US:Count_Person","name":"US State Populations"},
     {"value":"LandCoverFraction_Forest","name":"Land Covered by Forests"},
-
+    {"value":"datausa","name":"Data USA State Populations"},
     {"value":"311","name":"See Click Fix Requests"},
     {"value":"open311","name":"See Click Fix Requests (CORS)"},
     {"value":"bsky","name":"BlueSky Model.Earth RSS (CORS)"},
@@ -212,6 +213,9 @@ function displayFeed() {
 		//alert(url)
 		selected_array = [];
 		$('#pageTitleText').html('<a href="https://cors-anywhere.herokuapp.com/" target="passthrough">Turn on CORS passthrough</a>');
+	} else if (hash.feed == "food") {
+		// data-commons/docs/food/network/api_to_path.js
+		url = "https://api.nal.usda.gov/fdc/v1/foods/list?dataType=Foundation,SR%20Legacy&pageSize=5&pageNumber=1&api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
 	} else if (hash.feed == "usda") { // Nutrition label
 		$('#pageTitle').html("Nutrition label");
 		url = "https://api.nal.usda.gov/fdc/v1/food/2015943?api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
@@ -250,6 +254,10 @@ function displayFeed() {
 		$('#pageTitle').html("Land Cover Forest"); // County but not State
 		url = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&date=2015&date=LATEST&entity.expression=geoId%2F06%3C-containedInPlace%2B%7BtypeOf%3ACounty%7D&select=date&select=entity&select=value&select=variable&variable.dcids=LandCoverFraction_Forest";
 		// = "response.byVariable.LandCoverFraction_Forest.byEntity";
+
+	} else if (hash.feed == "datausa") {
+		url = "https://datausa.io/api/data?drilldowns=State&measures=Population&year=latest";
+
 	} else if (hash.feed == "gdc") {
 		// node, resolve or observation
 		u = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&";
