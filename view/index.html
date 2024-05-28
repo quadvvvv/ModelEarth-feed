@@ -205,8 +205,8 @@ function displayFeed() {
 
 	// https://github.com/ModelEarth/data-commons/blob/main/docs/air/emissions/data/API_EN.ATM.CO2E.PC_DS2_zh_csv_v2_45186.csv
 
-	const latitude = localStorage.latitude ? localStorage.latitude : 41.307;
-	const longitude = localStorage.longitude ? localStorage.longitude : -72.925;
+	var latitude = localStorage.latitude ? localStorage.latitude : 41.307;
+	var longitude = localStorage.longitude ? localStorage.longitude : -72.925;
 
 	if (hash.feed == "bsky") {
 		url = "https://bsky.app/profile/did:plc:ileopdnhib52emw3veem5zxk/rss";
