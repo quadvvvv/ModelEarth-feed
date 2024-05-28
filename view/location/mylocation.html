@@ -1,87 +1,78 @@
-
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html;">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
-    <title>Location Projects</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+<title>Location Projects</title>
 
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true&showsearch=true"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <link rel="stylesheet" href="locationSearchStyles.css">
-
-
+<script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true&showsearch=true"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+<style>
+     .autocomplete-container {
+        position: relative;
+        width: 300px;
+      }
+      .autocomplete-input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .autocomplete-results {
+        position: absolute;
+        width: 100%;
+        border: 1px solid #ccc;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: white;
+        z-index: 1000;
+      }
+      .autocomplete-item {
+        padding: 10px;
+        cursor: pointer;
+      }
+      .autocomplete-item-highlighted {
+        background-color: lightgray;
+      }
+</style>
 </head>
 
 <body>
 
-<!--
-<a href="https://www.civicservice.civicplus.help/hc/en-us/articles/360043963693-SeeClickFix-Integration-Polling-Schedule">SeeClickFix Integration Polling Schedule</a>
--->
-<div>
-
-
-    <div class="autocomplete-container">
-        <input type="text" id="autocomplete-input" class="autocomplete-input" />
-        <div id="loading" style="display: none;">Loading...</div>
-        <ul id="autocomplete-results" class="autocomplete-results"></ul>
-      </div>
-    <br >
-  
-
-
-<script src="locationSearch.js"></script>
+<div class="autocomplete-container">
+    <input type="text" id="autocomplete-input" class="autocomplete-input" />
+    <div id="loading" style="display: none;">Loading...</div>
+    <ul id="autocomplete-results" class="autocomplete-results"></ul>
+</div>
 
 <div class="content contentpadding">
-  <button onclick="getGeolocation()">
+  <button id="btnlocate" onclick="getGeolocation()">
     Get my coordinates!
   </button>
   <div id="mycoords"></div>
   <div id="requests"></div>
 </div>
 
+<script src="locationSearch.js"></script>
+
 <script>
-
-/////////////////////////////////
-var globalAddress = "";
-
-// Function to update the global variable
-function updateGlobalAddress() {
-    // Get the value from the input field
-    var inputField = document.getElementById("textlocate");
-    globalAddress = inputField.value;
-    console.log("Global Address Updated: " + globalAddress);
-    displayRequests(1,1)
-}
-
-// Add event listener to the button
-window.onload = function() {
-    var button = document.getElementById("btnlocate");
-    button.addEventListener("click", updateGlobalAddress);
-}
-
-
-
-
-///////////////////////////////
-
-
 const mycoords = document.getElementById('mycoords');
+
 function error(err) {
     mycoords.innerHTML = `Failed to locate. Error: ${err.message}`;
 }
+
 function success(pos) {
     mycoords.innerHTML = 'Located.';
-    //alert(`${pos.coords.latitude}, ${pos.coords.longitude}`);
-    displayRequests(pos.coords.latitude, pos.coords.longitude)
+    displayRequests(pos.coords.latitude, pos.coords.longitude);
 }
+
 function getGeolocation() {
     if (navigator.geolocation) {
         mycoords.innerHTML = 'Locating…';
@@ -91,57 +82,9 @@ function getGeolocation() {
     }
 }
 getGeolocation();
-
-// SeeClickFix list based on latitude and longitude
-const requestsDiv = document.getElementById('requests');
-function displayRequests(latitude, longitude) {
-  console.log(`inside displayRequests url = https://seeclickfix.com/api/v2/issues?search[place_name]=${globalAddress}`);
-  let url
-
-    //url = `https://seeclickfix.com/api/v2/issues?search[place_url]=${zipCode}&per_page=10`;
-   if(globalAddress === null || globalAddress == '')
-   {
-    url = `https://seeclickfix.com/api/v2/issues?lat=${latitude}&lng=${longitude}&zoom=8&per_page=10`;
-
-   }
-    else 
-    {
-      url = `https://seeclickfix.com/api/v2/issues?search[place_name]=${globalAddress}`;
-    
-  }
-   requestsDiv.innerHTML = ""; 
-  
-  //alert(url)
-    axios
-    .get(url)
-    .then((data) => {
-      const results = data.data.issues;
-      //console.log("results ");
-      //console.log(results);
-
-      results.forEach(item => {
-
-        const introDiv = document.createElement('div');
-        introDiv.innerHTML = `
-              <br><hr><h3>${item.summary}</h3>
-              ${item.description}<br>
-              ${item.address}<br>
-              <a href="${item.html_url}">View Details</a><br><br>
-           `;
-        requestsDiv.appendChild(introDiv);
-
-        Object.keys(item).forEach(key => {
-           const requestDiv = document.createElement('div');
-            if (item[key] !== null) {
-               // console.log(`${key} ${item[key]}`);
-                requestDiv.innerHTML = `<b>${key}</b>&nbsp; ${item[key]}`;
-                //requestsDiv.appendChild(`${key}: ${item[key]}`);
-                requestsDiv.appendChild(requestDiv);
-            }
-        });
-      });
-    })
-    .catch((error) => console.error(error));
+window.onload = function() {
+    var button = document.getElementById("btnlocate");
+    button.addEventListener("click", updateGlobalAddress);
 }
 </script>
 
