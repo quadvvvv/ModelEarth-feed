@@ -307,6 +307,13 @@ function displayFeed() {
 	}
 	$('#apiURL').val(url);
 
+	// TO DO: Instead show when URL contains {latitude}, etc.  Detect when 
+	if (hash.feed == "311") {
+		$(".autocomplete-container").show();
+	} else {
+		$(".autocomplete-container").hide();
+	}
+
 	let count = 0;
 	let maxcount = 10;
 	//const start = Date.now();
@@ -430,34 +437,46 @@ function capFirst(str, locale=navigator.language) {
 
 <body>
 
-<div class="contentpadding">
+<div class="content contentpadding">
 
-	<div style="float:right">View <a href="../">Feed Player</a> | <a href="/data-commons/docs/jobs/">Data Commons</a></div>
+	<div style="float:right; border-left:3px #ccc solid;padding-left:15px"> <a href="../">Feed Player</a><br><a href="/data-commons/docs/jobs/">Data Commons</a></div>
 
 	<!--h1 id="pageTitle"></h1-->
 	<select id="apiFeeds" onchange="goHash({'feed':this.value})"></select>
-	<br>
 
+	<!--link rel="stylesheet" href="location/locationSearchStyles.css" -->
+	<script type="text/javascript" src="location/locationSearch.js"></script>
+
+
+  <div class="autocomplete-container" style="display:none">
+    <input type="text" id="autocomplete-input" placeholder="Location..." class="autocomplete-input textInput" style="min-width:380px;" /><br>
+    <span style="font-size:.9em;">&nbsp;Enter an address, county or zip code.</span><br>
+    <div id="loading" style="display: none;">Loading...</div>
+    <ul id="autocomplete-results" class="autocomplete-results" style="border: 0px !important;"></ul>
+  </div>
+
+	<br>
+	<div id="pageTitleText" style="padding-top: 10px;"></div>
+
+	API URL:<br>
 	<input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;color:#999;background-color:rgba(0, 0, 0, 0);" placeholder="API URL" value="" autofocus onfocus="this.select()"><br><br>
 
-	<div style="margin-left:10px">
-		<!--
-		Also see <a href="no-d3.html">$.getJSON</a>
-		-->
+	<!--
+	Also see <a href="no-d3.html">$.getJSON</a>
+	-->
 
-		<!--
-		If we reactivate, only show when contains text
-		-->
-		<div id="pageTitleText" style="padding-top: 10px;"></div>
-		
-		Results
-		<div id="resultJson" style="max-height:100px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
+	<!--
+	If we reactivate, only show when contains text
+	-->
+	
+	
+	Results
+	<div id="resultJson" style="max-height:100px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
 
-		<!--
-		<div id="resultLoading" style="padding-top: 10px;">Loading..<br></div>
-		-->
-		<div id="resultFull"></div>
-	</div>
+	<!--
+	<div id="resultLoading" style="padding-top: 10px;">Loading..<br></div>
+	-->
+	<div id="resultFull"></div>
 
 </div>
 
