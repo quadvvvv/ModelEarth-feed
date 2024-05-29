@@ -81,7 +81,8 @@ To run the Feed-Player project locally, follow these steps:
 
 Avoid `http://localhost:5173/dist` since localsite nav is not available there and we've set the base path for the following instead:
 
-6. Start a webserver at port 8777 and view locally at [localhost:8887/feed/dist/](http://localhost:8887/feed/dist/)
+6. Start a webserver at port 8777 and view locally at [localhost:8887/feed/dist/](http://localhost:8887/feed/dist/)  
+Your webroot should be the parent of feed.
 
    ```
    python3 -m venv env
