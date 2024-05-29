@@ -75,9 +75,20 @@ To run the Feed-Player project locally, follow these steps:
 
 5. Build the app to the dist folder
 
+   ```
    yarn build
+   ```
 
-6. Open your web browser and go to `http://localhost:5173/dist` to access the Feed-Player application.
+Avoid `http://localhost:5173/dist` since localsite nav is not available there and we've set the base path for the following instead:
+
+6. Start a webserver at port 8777 and view locally at [localhost:8887/feed/dist/](http://localhost:8887/feed/dist/)
+
+   ```
+   python3 -m venv env
+   source env/bin/activate
+   python -m http.server 8887
+   ```
+
 
 ## Technologies Used
 
