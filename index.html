@@ -14,6 +14,47 @@
   <title>Feed Player - For Images, Video and Text</title>
 
   <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
+
+<script>
+// Because placing these two include here brakes the build:
+// <script type="module" crossorigin src="/feed/dist/assets/index-123d251f.js"><!--/script-->
+// <link rel="stylesheet" href="/feed/dist/assets/index-a61ce7ef.css">
+
+function loadFilesIfNotInDist(jsFile, cssFile) {
+  // Get the current path
+  var currentPath = window.location.pathname;
+
+  // Check if the path does not contain "/dist/"
+  if (!currentPath.includes('/dist/')) {
+    // Function to load a script file
+    function loadScript(file) {
+      var script = document.createElement('script');
+      script.src = file;
+      script.type = 'module';
+      script.crossOrigin = 'anonymous';
+      document.head.appendChild(script);
+    }
+
+    // Function to load a CSS file
+    function loadCSS(file) {
+      var link = document.createElement('link');
+      link.href = file;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+
+    // Load the JS and CSS files
+    loadScript(jsFile);
+    loadCSS(cssFile);
+  } else {
+    console.log('Current path contains /dist/, files will not be loaded.');
+  }
+}
+
+// Example usage
+loadFilesIfNotInDist('/feed/dist/assets/index-123d251f.js', '/feed/dist/assets/index-a61ce7ef.css');
+</script>
+
 </head>
 
 <body>
