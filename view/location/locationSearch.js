@@ -67,6 +67,12 @@ document.addEventListener('DOMContentLoaded', function () {
   } else {
     url = `https://seeclickfix.com/api/v2/issues?search[place_name]=${globalAddress}`;
   }
+
+         if (results.length > 0) {
+        // Store latitude and longitude of the first item in localStorage
+        localStorage.setItem('latitude', results[0].lat);
+        localStorage.setItem('longitude', results[0].lng);
+         }
   
   requestsDiv.innerHTML = ""; 
   
