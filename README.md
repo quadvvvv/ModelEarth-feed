@@ -1,12 +1,17 @@
 <h1 align='center'>Feed Player - For Images, Video and Text</h1>
 
+<!-- Image and link icon to https://video-player-sahilatahar.netlify.app
+
 [![video-player](https://github.com/sahilatahar/Video-Player/assets/100127570/8315e5d3-9b16-4b37-a50c-141a96f2e72e)](https://video-player-sahilatahar.netlify.app/)
+-->
 
 Welcome to our Feed-Player React Project! This project provides a modern and user-friendly interface for viewing a series of images and video pulled from RSS, JSON, CSV and YAML. The UI is built using Vite, ReactJS, HTML, CSS, and JavaScript. The Feed-Player is designed to be fully responsive and packed with a range of features to enhance your viewing experience.
 
 ## Feed Samples
 
 View and [add your feeds](view) - View upcoming [Google Sheet feed links](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing)
+
+TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next vidwo loads, then removed the inserted height. (The last video is an example with a different aspect ratio.)
 
 TO DO: Update the code to pull from these.
 
@@ -37,7 +42,8 @@ The Feed-Player project boasts a brand-new user interface that is both visually 
 
 ## Live Preview
 
-Check out the live preview of the Feed-Player project on Netlify: [Live Preview](https://video-player-sahilatahar.netlify.app/)
+<!-- https://video-player-sahilatahar.netlify.app -->
+Check out the live preview of the Feed-Player project on Netlify: [Live Preview](dist/)
 
 ## Getting Started
 
@@ -67,7 +73,11 @@ To run the Feed-Player project locally, follow these steps:
    yarn dev
    ```
 
-5. Open your web browser and go to `http://localhost:5173` to access the Feed-Player application.
+5. Build the app to the dist folder
+
+   yarn build
+
+6. Open your web browser and go to `http://localhost:5173/dist` to access the Feed-Player application.
 
 ## Technologies Used
 
