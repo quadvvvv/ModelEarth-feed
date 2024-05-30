@@ -18,7 +18,7 @@ TO DO: Update the code to display images within the video sequence.
 
 TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next vidwo loads, then removed the inserted height. (The last video is an example with a different aspect ratio.)
 
-TO DO: Implement the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
+Gary: Implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
 
 [JSON for video, image and feed links](src/Data/data.js) - We will also load from CSV files.
 [Swiper Element](https://swiperjs.com/element) will be used for film-strip-style navigation.
