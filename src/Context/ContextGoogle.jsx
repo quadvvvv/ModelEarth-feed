@@ -17,6 +17,8 @@ export default function ContextProvider({ children }) {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
+                // Pulls from this Google Sheet: https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing
+                // Add comments in the sheet above to request additions.
                 const response = await axios.get('https://docs.google.com/spreadsheets/d/e/2PACX-1vSxfv7lxikjrmro3EJYGE_134vm5HdDszZKt4uKswHhsNJ_-afSaG9RoA4oeNV656r4mTuG3wTu38pM/pub?output=csv');
                 Papa.parse(response.data, {
                     header: true,  // Assuming your CSV has headers
