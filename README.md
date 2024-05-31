@@ -19,7 +19,7 @@ TO DO: Prevent .js and .css from being renamed whenever building. Even better, s
 
 TO DO: Update the code to display images within the video sequence.
 
-TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next vidwo loads, then removed the inserted height. (The last video is an example with a different aspect ratio.)
+TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads, then remove the inserted height. (The last video is an example with a different aspect ratio.)
 
 Gary: Implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
 
