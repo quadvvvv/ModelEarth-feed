@@ -111,7 +111,9 @@ Contributions to the [Feed-Player Github Repo](https://github.com/modelearth/fee
 
 Place your name here if your working on an update.
 
-Gary - Pulling image and video links from a Google Sheet and adding still images to player flow.
+Gary - Pulling image and video links from a Google Sheet
+
+Fanyi - Adding images to player flow.
 
 Add a process for saving related notes in Supabase. Save the id of the RSS feed from BlueSky. Place process within Earthscape.
 
