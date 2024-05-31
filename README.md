@@ -15,13 +15,13 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 [View Feeds](view) - The Feed Player is being designed to convert APIs, JSON and .CSV into video-like presentations.
 [Bluesky RSS Feeds](view/#feed=bsky) - Click "Turn on CORS passthrough". &nbsp;[About Bluesky RSS](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q).
 
-TO DO: Prevent .js and .css from being renamed whenever building. Even better, save two additional files (called feedplayer.js and feedplayer.css) without the number appended and use those names in the root index.html page.
+1.) TO DO: Prevent .js and .css from being renamed whenever building. Even better, save two additional files (called feedplayer.js and feedplayer.css) without the number appended and use those names in the root index.html page.
 
-TO DO: Update the code to display images within the video sequence.
+2.) Fanyi: Update the code to display images within the video sequence.
 
-TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads, then remove the inserted height. (The last video is an example with a different aspect ratio.)
+3.) TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads, then remove the inserted height. (The last video is an example with a different aspect ratio.)
 
-Gary: Implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
+4.) Gary: Implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
 
 [JSON for video, image and feed links](src/Data/data.js) - We will also load from CSV files.
 [Swiper Element](https://swiperjs.com/element) will be used for film-strip-style navigation.
