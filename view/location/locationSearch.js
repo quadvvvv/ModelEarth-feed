@@ -57,6 +57,22 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("Global Address Updated: " + globalAddress);
     displayRequests(1, 1);
   }
+ function addressLookup()
+  {
+    let url = `https://seeclickfix.com/api/v2/issues?search[place_name]=${globalAddress}`;
+ 
+    axios.get(url)
+    .then((data) => {
+      const results = data.data.issues;
+
+         if (results.length > 0) {
+        // Store latitude and longitude of the first item in localStorage
+        localStorage.setItem('latitude', results[0].lat);
+        localStorage.setItem('longitude', results[0].lng);
+         }
+      });
+    
+   }
   
   const requestsDiv = document.getElementById('requests');
   
