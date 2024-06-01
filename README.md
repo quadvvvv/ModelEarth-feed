@@ -15,7 +15,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 [View Feeds](view) - The Feed Player is being designed to convert APIs, JSON and .CSV into video-like presentations.
 [Bluesky RSS Feeds](view/#feed=bsky) - Click "Turn on CORS passthrough". &nbsp;[About Bluesky RSS](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q).
 
-1.) TO DO: Prevent .js and .css from being renamed whenever building. Even better, save two additional files (called feedplayer.js and feedplayer.css) without the number appended and use those names in the root index.html page.
+1.) Marco: Prevent .js and .css from being renamed whenever building. Even better, save two additional files (called feedplayer.js and feedplayer.css) without the number appended and use those names in the root index.html page.
 
 2.) Fanyi: Update the code to display images within the video sequence.
 
