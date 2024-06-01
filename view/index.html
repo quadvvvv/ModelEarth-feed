@@ -137,7 +137,8 @@ and (max-device-width : 480px) {
     {"value":"open311","name":"See Click Fix Requests (CORS)"},
     {"value":"bsky","name":"BlueSky Model.Earth RSS (CORS)"},
 		{"value":"film-scouting","name":"Film Scouting Locations"},
-		{"value":"flow","name":"USEEIO Impact Flow"},
+		{"value":"sectors","name":"USEEIO State Sectors"},
+		{"value":"flow","name":"USEEIO State Impact Flow"},
 		{"value":"Dmatrix","name":"USEEIO D Matrix Commodities"},
 		{"value":"civictechindex","name":"Civic Tech Organizations"},
 		{"value":"civictechlinks","name":"Civic Tech Links"},
@@ -284,6 +285,9 @@ function displayFeed() {
 	} else if (hash.feed == "film-scouting") {
 		$('#pageTitle').html("Film Scounting Locations");
 		url = "https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json";
+	} else if (hash.feed == "sectors") {
+		$('#pageTitleText').html("USEEEIO Sectors");
+		url = "https://raw.githubusercontent.com/ModelEarth/OpenFootprint/main/impacts/2020/GAEEIOv1.0-s-20/sectors.json";
 	} else if (hash.feed == "flow") {
 		$('#pageTitleText').html("USEEEIO Flow GAEEIOv1.0-s-20");
 		url = "https://raw.githubusercontent.com/ModelEarth/OpenFootprint/main/impacts/2020/GAEEIOv1.0-s-20/flows.json";
