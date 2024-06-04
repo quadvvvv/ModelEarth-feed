@@ -3,6 +3,7 @@ import './VideoPlayer.scss';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../Context/Context';
 
+
 function VideoPlayer() {
 
     const { videoList, currentVideoSrc, setCurrentVideoSrc } = useContext(Context);
@@ -131,8 +132,9 @@ function VideoPlayer() {
 
     return (
         <div className="VideoPlayer">
-            <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause}>
-            </video>
+            <div className="VideoPlayer__wrapper">
+                <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause} poster="src/assets/videos/intro.jpg"></video>
+            </div>
             <div className="VideoPlayer__controls">
                 <div className="control-group control-group-btn">
                     <button className="control-button pre" onClick={handlePrev}>
