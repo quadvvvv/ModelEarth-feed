@@ -1,8 +1,21 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import copyAssets from './vite-plugin-copy';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  base: '', // Set the base path here  /feed/dist/
-})
+  plugins: [
+    react(),
+    copyAssets()
+  ],
+  base: '',
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+      },
+    },
+  },
+});
