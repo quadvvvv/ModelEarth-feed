@@ -1,4 +1,5 @@
 const videosURLs = [
+    "/feed/src/assets/videos/intro.jpg",
     "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
     "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
