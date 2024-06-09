@@ -188,6 +188,7 @@ function displayFeed() {
 	//if (!param.zip) {
 	//	param.zip = "30318"
 	//}
+	let useCORS = false;
 	var barName = "title"
 	var quantity = 1;
 	$('.ziptext').text(hash.zip);
@@ -213,7 +214,7 @@ function displayFeed() {
 		url = "https://bsky.app/profile/did:plc:ileopdnhib52emw3veem5zxk/rss";
 		//alert(url)
 		selected_array = [];
-		$('#pageTitleText').html('<a href="https://cors-anywhere.herokuapp.com/" target="passthrough">Turn on CORS passthrough</a>');
+		useCORS = true;
 	} else if (hash.feed == "food") {
 		// data-commons/docs/food/network/api_to_path.js
 		url = "https://api.nal.usda.gov/fdc/v1/foods/list?dataType=Foundation,SR%20Legacy&pageSize=5&pageNumber=1&api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
@@ -281,7 +282,7 @@ function displayFeed() {
 		barName = "summary"
 	} else if (hash.feed == "open311") {
 		url = `https://seeclickfix.com/open311/v2/requests.json?lat=${latitude}&long=${longitude}`;
-		$('#pageTitleText').html('<a href="https://cors-anywhere.herokuapp.com/" target="passthrough">Turn on CORS passthrough</a>');
+		useCORS = true;
 	} else if (hash.feed == "film-scouting") {
 		$('#pageTitle').html("Film Scounting Locations");
 		url = "https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json";
@@ -328,6 +329,8 @@ function displayFeed() {
 	}
 }
 function displayJson(url){
+	$("#resultJson").hide();
+	$("#resultFull").hide();
 	let hash = getHash();
   d3.json(url).then(function(json) {
   	var fullHtml = '';
@@ -341,10 +344,11 @@ function displayJson(url){
   	fullHtml += formatRow("",json,0); // Resides in localsite.js
 
   	$("#resultJson").html(JSON.stringify(json));
-
-  	$("#resultFull").show();
+  	$("#resultJson").show();
+  	
     //resultFull.innerHTML = fullHtml;
     $("#resultFull").html(fullHtml);
+    $("#resultFull").show();
   })
   // .catch(function(error) {
 	//     //alert(error);
@@ -353,82 +357,95 @@ function displayJson(url){
 	// });
 }
 function displayRequestsCorsAnywhere(url) {
-	$("#resultFull").html("");
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use your own proxy if available
-    urlCombo = proxyUrl + url;
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", urlCombo, true);
-    
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-        	$("#resultFull").show();
-        	if (url.indexOf("/rss") !== -1) { // RSS FEED
-	        	const rssFeed = xhr.responseText;
+	$("#resultFull").hide();
+	let errorOutput;
+  const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use your own proxy if available
+  urlCombo = proxyUrl + url;
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", urlCombo, true);
+  
+  xhr.onload = function() {
+  	//alert("onload")
+  	if (xhr.status === 200) {
+        console.log('Success:', xhr.responseText);
+        // Handle the successful response here
 
-	        	// Parse XML
-				const parser = new DOMParser();
-				const xmlDoc = parser.parseFromString(rssFeed, "text/xml");
+				$("#resultFull").show();
+	    	if (url.indexOf("/rss") !== -1) { // RSS FEED
+	      	const rssFeed = xhr.responseText;
 
-				// Extract items
-				const items = xmlDoc.getElementsByTagName("item");
-				const formattedItems = [];
+	      	// Parse XML
+					const parser = new DOMParser();
+					const xmlDoc = parser.parseFromString(rssFeed, "text/xml");
 
-				for (let i = 0; i < items.length; i++) {
-				  const item = items[i];
-				  const link = item.querySelector("link").textContent;
-				  const description = item.querySelector("description").textContent;
-				  const pubDate = item.querySelector("pubDate").textContent;
-				  const guid = item.querySelector("guid").textContent;
-				  
-				  formattedItems.push({
-				    link,
-				    description,
-				    pubDate,
-				    guid
-				  });
-				}
-				const formattedRSS = formatRow("",formattedItems,0); // Resides in localsite.js
-			    $("#resultFull").html(formattedRSS);
-	        } else {
-	            const data = JSON.parse(xhr.responseText);
-	            const requestsDiv = document.getElementById('resultFull');
-	            data.forEach(item => {
-	                const requestDiv = document.createElement('div');
+					// Extract items
+					const items = xmlDoc.getElementsByTagName("item");
+					const formattedItems = [];
 
-	                if (item.media_url) {
-	                	const requestDiv2 = document.createElement('div');
-	                	requestDiv2.innerHTML = `<img src="${item.media_url}" style="width:100%;max-width:500px"><br>`
-	                	requestsDiv.appendChild(requestDiv2);
-	            	}
-	                requestDiv.innerHTML = `
-	                    <h3>${capFirst(item.description)}</h3>
-	                    <b>Address</b> ${item.address}<br>
-	                    <b>Latitude</b> ${item.lat}<br>
-	                    <b>Longitude</b> ${item.long}<br>
-	                    <b>Service Request ID</b> ${item.service_request_id}<br>
-	                    <b>Requested Datetime</b> ${item.requested_datetime}<br>
-	                    <b>Service Code</b> ${item.service_code}<br>
-	                    <b>Status</b> ${item.status}<br>
-	                    <b>Zipcode</b> ${item.zipcode}<br>
-	                    <b>Updated Datetime</b> ${item.updated_datetime}<br>
-	                    <b>Agency Responsible</b> ${item.agency_responsible}<br>
-	                    <b>Service Name</b> ${item.service_name}<br>
-	                    <b>Expected Datetime</b> ${item.expected_datetime}<br>
-	                    <b>Address ID</b> ${item.address_id}<br>
-	                    <b>Service Notice</b> ${item.service_notice}<br>
-	                    <b>Status Notes</b> ${item.status_notes}<br><hr style='border-bottom:1px solid #aaa;margin-top:10px'><br>
-	                `;
-	                requestsDiv.appendChild(requestDiv);
-	                
-	            	
-	            });
-	        }
-        } else if (xhr.readyState === 4) {
-            console.error('Error fetching data. Status:', xhr.status);
-        }
-    };
-    
-    xhr.send();
+					for (let i = 0; i < items.length; i++) {
+					  const item = items[i];
+					  const link = item.querySelector("link").textContent;
+					  const description = item.querySelector("description").textContent;
+					  const pubDate = item.querySelector("pubDate").textContent;
+					  const guid = item.querySelector("guid").textContent;
+					  
+					  formattedItems.push({
+					    link,
+					    description,
+					    pubDate,
+					    guid
+					  });
+					}
+					const formattedRSS = formatRow("",formattedItems,0); // Resides in localsite.js
+				  $("#resultFull").html(formattedRSS);
+			  } else {
+          const data = JSON.parse(xhr.responseText);
+          const requestsDiv = document.getElementById('resultFull');
+          data.forEach(item => {
+              const requestDiv = document.createElement('div');
+
+              if (item.media_url) {
+              	const requestDiv2 = document.createElement('div');
+              	requestDiv2.innerHTML = `<img src="${item.media_url}" style="width:100%;max-width:500px"><br>`
+              	requestsDiv.appendChild(requestDiv2);
+          		}
+              requestDiv.innerHTML = `
+                <h3>${capFirst(item.description)}</h3>
+                <b>Address</b> ${item.address}<br>
+                <b>Latitude</b> ${item.lat}<br>
+                <b>Longitude</b> ${item.long}<br>
+                <b>Service Request ID</b> ${item.service_request_id}<br>
+                <b>Requested Datetime</b> ${item.requested_datetime}<br>
+                <b>Service Code</b> ${item.service_code}<br>
+                <b>Status</b> ${item.status}<br>
+                <b>Zipcode</b> ${item.zipcode}<br>
+                <b>Updated Datetime</b> ${item.updated_datetime}<br>
+                <b>Agency Responsible</b> ${item.agency_responsible}<br>
+                <b>Service Name</b> ${item.service_name}<br>
+                <b>Expected Datetime</b> ${item.expected_datetime}<br>
+                <b>Address ID</b> ${item.address_id}<br>
+                <b>Service Notice</b> ${item.service_notice}<br>
+                <b>Status Notes</b> ${item.status_notes}<br><hr style='border-bottom:1px solid #aaa;margin-top:10px'><br>
+              `;
+              requestsDiv.appendChild(requestDiv);
+          });
+			  }
+    } else {
+    		if (xhr.status === 403) { // CORS - Show link to turn on pass-through
+    			$("#corsLink").show();
+      	}
+        //console.error('Error:', xhr.status, xhr.statusText);
+        errorOutput = 'Error xhr.status ' + xhr.status + ': ' + xhr.statusText;
+    }
+    if (errorOutput) {
+		  	$("#resultFull").html(errorOutput);
+		}
+	};
+
+  if(!errorOutput) { // Typically this won't be set at this until after we send to xhr.sent()
+	  xhr.send();
+	}
+  
 }
 function capFirst(str, locale=navigator.language) {
   if (!str) return "";
@@ -464,22 +481,21 @@ function capFirst(str, locale=navigator.language) {
   </div>
 
 	<br>
+
+	<div id="corsLink" style="display:none">
+		<a href="https://cors-anywhere.herokuapp.com/" target="passthrough">Turn on CORS passthrough</a>
+	</div>
+
 	<div id="pageTitleText" style="padding-top: 10px;"></div>
 
 	API URL:<br>
-	<input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;color:#999;background-color:rgba(0, 0, 0, 0);" placeholder="API URL" value="" autofocus onfocus="this.select()"><br><br>
+	<button id="refreshButton" onclick="displayFeed()" class="btn btn-success" style="float:right;margin-left:8px;display:none;">Refresh</button><div style="overflow:auto;"><input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;" placeholder="API URL" value="" autofocus onfocus="this.select()"></div><br>
 
 	<!--
 	Also see <a href="no-d3.html">$.getJSON</a>
 	-->
-
-	<!--
-	If we reactivate, only show when contains text
-	-->
 	
-	
-	Results
-	<div id="resultJson" style="max-height:100px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
+	<div id="resultJson" style="display:none;max-height:100px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
 
 	<!--
 	<div id="resultLoading" style="padding-top: 10px;">Loading..<br></div>
