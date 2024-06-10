@@ -128,6 +128,7 @@ and (max-device-width : 480px) {
 		{"value":"food","name":"USDA Food List"},
 		{"value":"usda","name":"USDA Nutrition Label"},
     {"value":"nasa","name":"NASA Image Feed"},
+    {"value":"serp","name":"Serp API (CORS)"},
 
     {"value":"gdc","name":"Google Data Commons"},
     {"value":"US:Count_Person","name":"US State Populations"},
@@ -136,7 +137,6 @@ and (max-device-width : 480px) {
     {"value":"311","name":"See Click Fix Requests"},
     {"value":"open311","name":"See Click Fix Requests (CORS)"},
     {"value":"bsky","name":"BlueSky Model.Earth RSS (CORS)"},
-		{"value":"film-scouting","name":"Film Scouting Locations"},
 		{"value":"sectors","name":"USEEIO State Sectors"},
 		{"value":"flow","name":"USEEIO State Impact Flow"},
 		{"value":"Dmatrix","name":"USEEIO D Matrix Commodities"},
@@ -144,6 +144,9 @@ and (max-device-width : 480px) {
 		{"value":"civictechlinks","name":"Civic Tech Links"},
 		{"value":"epd","name":"Environmental Product Declarations (EPD)"},
   ]}
+
+// Might need json support change. TypeError: Cannot read properties of null (reading 'match')
+// 		{"value":"film-scouting","name":"Film Scouting Locations"},
 
 // To develop
 //    {"value":"Continents","name":"Emissions by Continent"},
@@ -169,6 +172,57 @@ $(document).ready(function () {
   displayFeed();
 });
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  const apiURLInput = document.getElementById('apiURL');
+  const apiKeyInput = document.getElementById('apiKey');
+  const addressInput = document.getElementById('autocomplete-input');
+  const refreshButton = document.getElementById('refreshButton');
+
+  apiURLInput.addEventListener('focus', function() {
+      refreshButton.style.display = 'inline';
+  });
+
+  apiURLInput.addEventListener('blur', function(event) {
+      if (!event.relatedTarget || event.relatedTarget.id !== 'refreshButton') {
+          refreshButton.style.display = 'none';
+      }
+  });
+
+  // Submit when hitting enter in URL and APIkey fields. To do: make this a loop.
+  apiURLInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+          event.preventDefault();
+          refreshDisplay();
+      }
+  });
+  apiKeyInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+          event.preventDefault();
+          refreshDisplay();
+      }
+  });
+  addressInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+      		alert("Address/latlon yet applied to API URL.")
+          event.preventDefault();
+          refreshDisplay();
+      }
+  });
+
+  document.addEventListener('click', function(event) {
+      if (event.target !== apiURLInput && event.target !== refreshButton) {
+          refreshButton.style.display = 'none';
+      }
+  });
+
+  refreshButton.addEventListener('click', function(event) {
+        //const apiURL = document.getElementById('apiURL').value;
+			  //console.log('API URL Submitted:', apiURL);
+			  refreshDisplay();
+  });
+});
+
+let activeFeed = {};
 function displayFeed() {
 	let hash = getHash();
 	if (!hash.feed || hash.feed == "none") {
@@ -179,7 +233,11 @@ function displayFeed() {
 	$("#resultFull").hide();
 	$("#resultLoading").show(); // .text("Loading...");
 	$('#pageTitleText').html("");
-	$('#apiURL').val("");
+	if (hash.feed != priorHash.feed) {
+		$('#apiURL').val(""); // Avoid clearing because user may have modifired
+	}
+	$("#corsLink").hide();
+	$("#apiKeyHolder").hide();
 	$("#apiFeeds option[value='" + hash.feed + "']").prop("selected", true);
 
 	//var zip = param["zip"] || "30318";
@@ -188,7 +246,7 @@ function displayFeed() {
 	//if (!param.zip) {
 	//	param.zip = "30318"
 	//}
-	let useCORS = false;
+	activeFeed.useCORS = false;
 	var barName = "title"
 	var quantity = 1;
 	$('.ziptext').text(hash.zip);
@@ -214,7 +272,7 @@ function displayFeed() {
 		url = "https://bsky.app/profile/did:plc:ileopdnhib52emw3veem5zxk/rss";
 		//alert(url)
 		selected_array = [];
-		useCORS = true;
+		activeFeed.useCORS = true;
 	} else if (hash.feed == "food") {
 		// data-commons/docs/food/network/api_to_path.js
 		url = "https://api.nal.usda.gov/fdc/v1/foods/list?dataType=Foundation,SR%20Legacy&pageSize=5&pageNumber=1&api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
@@ -247,6 +305,12 @@ function displayFeed() {
 		url = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&hd=True&count=2"; // &count=1
 		selected_array = ["title","date","explanation","url","hdurl"]; // "title"
 		barName = "title"
+	} else if (hash.feed == "serp") {
+		//$('#pageTitleText').html("Append your API and hit refresh.");
+		// &location=New+York&hl=en&gl=us
+		url = "https://serpapi.com/search.json?q=Open+WebUI&google_domain=google.com&api_key=";
+		activeFeed.useCORS = true;
+		$("#apiKeyHolder").show();
 	} else if (hash.feed == "US:Count_Person") {
 		$('#pageTitle').html("US State Populations");
 		url = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&date=LATEST&entity.dcids=country%2FUSA&select=entity&select=variable&select=value&select=date&variable.dcids=Count_Person";
@@ -282,7 +346,7 @@ function displayFeed() {
 		barName = "summary"
 	} else if (hash.feed == "open311") {
 		url = `https://seeclickfix.com/open311/v2/requests.json?lat=${latitude}&long=${longitude}`;
-		useCORS = true;
+		activeFeed.useCORS = true;
 	} else if (hash.feed == "film-scouting") {
 		$('#pageTitle').html("Film Scounting Locations");
 		url = "https://raw.githubusercontent.com/GeorgiaFilm/cameraready_locations_curl/main/cameraready.json";
@@ -310,8 +374,9 @@ function displayFeed() {
 	} else if (hash.feed) {
 		$("#resultLoading").text("Unidentified feed request: " + hash.feed)
 	}
-	$('#apiURL').val(url);
-
+	if (hash.feed != priorHash.feed) {
+		$('#apiURL').val(url);
+	}
 	// TO DO: Instead show when URL contains {latitude}, etc.  Detect when 
 	if (hash.feed == "311") {
 		$(".autocomplete-container").show();
@@ -321,8 +386,39 @@ function displayFeed() {
 
 	let count = 0;
 	let maxcount = 10;
-	//const start = Date.now();
-	if (hash.feed == "bsky" || hash.feed == "open311") {
+	// An object containing API Providers and API Keys as key-value pairs
+
+
+	if (hash.feed == priorHash.feed) {
+		url = $("#apiURL").val(); // Allows user to edit
+	} else {
+		$("#apiKey").val("");
+		var aPro = {};
+		if (isValidJSON(localStorage.getItem('aPro'))) {
+			aPro = JSON.parse(localStorage.getItem('aPro')) || {};
+			//console.log("aPro");
+			//console.log(aPro);
+			if (hash.feed == "serp") {
+				let keyValue = getValueFrom("serp",aPro)
+				if (keyValue) {
+					//alert(keyValue)
+					$("#apiKey").val(keyValue);
+				}
+			}
+		}
+	}
+	refreshDisplay(url);
+}
+function refreshDisplay(url) {
+	if(!url) {
+		url = $("#apiURL").val();
+	}
+	if (!urlContainsApiKey(url) && $("#apiKey").val().length) {
+		alert("url1 " + url);
+		url = updateAPIKeyInURL(url,$("#apiKey").val()); // The default keyname (api_key) comes from possibleKeyNames array.
+		alert("url2 " + url);
+	}
+	if (activeFeed.useCORS) {
 		displayRequestsCorsAnywhere(url);
 	} else {
 		displayJson(url);
@@ -362,6 +458,7 @@ function displayRequestsCorsAnywhere(url) {
   const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use your own proxy if available
   urlCombo = proxyUrl + url;
   const xhr = new XMLHttpRequest();
+  console.log("proxyUrl: " + proxyUrl);
   xhr.open("GET", urlCombo, true);
   
   xhr.onload = function() {
@@ -371,7 +468,7 @@ function displayRequestsCorsAnywhere(url) {
         // Handle the successful response here
 
 				$("#resultFull").show();
-	    	if (url.indexOf("/rss") !== -1) { // RSS FEED
+	    	if (url.indexOf("/rss") !== -1) { // RSS FEED = XML HTML Tags
 	      	const rssFeed = xhr.responseText;
 
 	      	// Parse XML
@@ -398,9 +495,32 @@ function displayRequestsCorsAnywhere(url) {
 					}
 					const formattedRSS = formatRow("",formattedItems,0); // Resides in localsite.js
 				  $("#resultFull").html(formattedRSS);
+
+				} else if (isObject(xhr.responseText) || typeof xhr.responseText == "string") { // serp is a string
+
+					$("#resultJson").html(xhr.responseText);
+			  	$("#resultJson").show();
+
+					if (typeof xhr.responseText == "string") {
+						let asJson = JSON.parse(xhr.responseText);
+
+						const formattedOutput = formatRow("", asJson, 0); // Resides in localsite.js
+						$("#resultFull").html(formattedOutput);
+						$("#resultFull").show();
+					} else {
+						console.log("Note sure if reached. All xhr.responseText could be a string.")
+						const formattedOutput = formatRow("", xhr.responseText, 0); // Resides in localsite.js
+						$("#resultFull").html(formattedOutput);
+						$("#resultFull").show();
+					}
+					
+
 			  } else {
           const data = JSON.parse(xhr.responseText);
           const requestsDiv = document.getElementById('resultFull');
+          alert(data)
+          // if object
+
           data.forEach(item => {
               const requestDiv = document.createElement('div');
 
@@ -436,9 +556,12 @@ function displayRequestsCorsAnywhere(url) {
       	}
         //console.error('Error:', xhr.status, xhr.statusText);
         errorOutput = 'Error xhr.status ' + xhr.status + ': ' + xhr.statusText;
+    		errorOutput += "<br>Check that you've included an API Key.";
+    		errorOutput += "<br><a href='/localsite/tools/storage/api/' target='editstorage'>Edit your API Keys</a>";
     }
     if (errorOutput) {
 		  	$("#resultFull").html(errorOutput);
+		  	$("#resultFull").show();
 		}
 	};
 
@@ -450,6 +573,66 @@ function displayRequestsCorsAnywhere(url) {
 function capFirst(str, locale=navigator.language) {
   if (!str) return "";
   return str.replace(/^\p{CWU}/u, char => char.toLocaleUpperCase(locale));
+}
+function urlContainsApiKey(url) {
+    // List of possible API key parameter names in lowercase
+    const possibleKeyNames = ['api_key', 'apikey', 'key', 'token'];
+
+    // Convert the URL to lowercase to allow case-insensitive matching
+    const lowerCaseUrl = url.toLowerCase();
+
+    // Check if any of the possible key names are in the URL
+    for (const keyName of possibleKeyNames) {
+        // Use a regular expression to search for the keyName in the query string
+        const regex = new RegExp(`[?&]${keyName}=([^&]*)`, 'i');
+        const match = lowerCaseUrl.match(regex);
+        if (match) {
+            // Extract the value of the API key
+            const apiKeyValue = match[1];
+            // Check if the API key value is in brackets or is empty
+            if (apiKeyValue && !apiKeyValue.includes('[')) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+function getValueFrom(key, dataobject) {
+    const lowerKey = key.toLowerCase();
+    for (const objKey in dataobject) {
+        if (objKey.toLowerCase().startsWith(lowerKey)) {
+            return dataobject[objKey];
+        }
+    }
+    return null; // Return null if no match is found
+}
+const possibleKeyNames = ['api_key', 'apikey', 'key', 'token'];
+
+function updateAPIKeyInURL(url, apikey, keyname) {
+  // If keyname is not provided, find a suitable key name from possibleKeyNames
+  if (!keyname) {
+    // Check if any of the possible key names exist in the URL
+    keyname = possibleKeyNames.find(name => url.includes(name));
+  }
+
+  // If no key name is found in the URL, use the first one from possibleKeyNames
+  if (!keyname) {
+    keyname = possibleKeyNames[0];
+  }
+
+  // Regular expression to find and replace the key-value pair
+  const regex = new RegExp(`${keyname}=[^&]*`);
+
+  // Check if the keyname already exists in the URL
+  if (url.match(regex)) {
+    // Replace the existing key-value pair with the new apikey
+    url = url.replace(regex, `${keyname}=${apikey}`);
+  } else {
+    // Append the key-value pair to the URL
+    url += `${url.includes('?') ? '&' : '?'}${keyname}=${apikey}`;
+  }
+
+  return url;
 }
 </script>
 
@@ -482,14 +665,20 @@ function capFirst(str, locale=navigator.language) {
 
 	<br>
 
-	<div id="corsLink" style="display:none">
-		<a href="https://cors-anywhere.herokuapp.com/" target="passthrough">Turn on CORS passthrough</a>
+	<div id="corsLink" style="display:none; margin:12px 0 32px 0">
+		<span style="color:white;background:#444;padding:8px 20px;margin-right:10px">IMPORTANT</span> <a href="https://cors-anywhere.herokuapp.com/" target="passthrough">Turn on CORS passthrough</a> (then refresh this page)
 	</div>
 
-	<div id="pageTitleText" style="padding-top: 10px;"></div>
+	<div id="pageTitleText" style="margin-top:10px;margin-bottom:12px"></div>
 
 	API URL:<br>
-	<button id="refreshButton" onclick="displayFeed()" class="btn btn-success" style="float:right;margin-left:8px;display:none;">Refresh</button><div style="overflow:auto;"><input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;" placeholder="API URL" value="" autofocus onfocus="this.select()"></div><br>
+	<button id="refreshButton" class="btn btn-success" style="float:right;margin-left:8px;display:none;">Refresh</button><div style="overflow:auto;"><input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;" placeholder="API URL" value="" autofocus onfocus="this.select()"></div><br>
+
+	<div id="apiKeyHolder" style="display:none;margin-bottom:12px">
+		Your API Key:<br>
+		<input type="text" id="apiKey" class="textInput" style="width:100%;max-width:300px;" value="" autofocus onfocus="this.select()">
+	</div>
+
 
 	<!--
 	Also see <a href="no-d3.html">$.getJSON</a>
