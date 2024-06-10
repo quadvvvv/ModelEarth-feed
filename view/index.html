@@ -378,7 +378,7 @@ function displayFeed() {
 		$('#apiURL').val(url);
 	}
 	// TO DO: Instead show when URL contains {latitude}, etc.  Detect when 
-	if (hash.feed == "311") {
+	if (hash.feed == "311" || hash.feed == "serp") {
 		$(".autocomplete-container").show();
 	} else {
 		$(".autocomplete-container").hide();
