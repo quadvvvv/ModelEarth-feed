@@ -414,9 +414,7 @@ function refreshDisplay(url) {
 		url = $("#apiURL").val();
 	}
 	if (!urlContainsApiKey(url) && $("#apiKey").val().length) {
-		alert("url1 " + url);
 		url = updateAPIKeyInURL(url,$("#apiKey").val()); // The default keyname (api_key) comes from possibleKeyNames array.
-		alert("url2 " + url);
 	}
 	if (activeFeed.useCORS) {
 		displayRequestsCorsAnywhere(url);
