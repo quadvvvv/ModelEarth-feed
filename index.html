@@ -15,10 +15,18 @@
 
   <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
 
-<script>
-// Because placing these two include here brakes the build:
-// <script type="module" crossorigin src="/feed/dist/assets/index-123d251f.js"><!--/script-->
-// <link rel="stylesheet" href="/feed/dist/assets/index-de0c0210.css">
+  <!-- these includes should not be in this file instead they should be in feed/dist/assets/index.html 
+          this is because they are production build files there is no need to include them in this file
+  -->
+  <!-- script type="module" crossorigin src="/feed/dist/assets/index-2b2832fe.js"></script> 
+  <link rel="stylesheet" href="/feed/dist/assets/index-9c4d15f8.css"> -->
+   
+  
+  <script> 
+
+ 
+ 
+
 
 function loadFilesIfNotInDist(jsFile, cssFile) {
   // Get the current path
@@ -53,6 +61,7 @@ function loadFilesIfNotInDist(jsFile, cssFile) {
 
 // IMPORTANT :: After building, update to new .js name (sometimes .css too).
 loadFilesIfNotInDist('/feed/dist/assets/index-2b2832fe.js', '/feed/dist/assets/index-9c4d15f8.css');
+
 </script>
 
 </head>
