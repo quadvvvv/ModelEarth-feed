@@ -1,4 +1,4 @@
-<h1 align='center'>Feed Player - For Images, Video and Text</h1>
+<h1 align='center'>Feed Player - For Images, Video&nbsp;and&nbsp;Text</h1>
 
 <!-- Image and link icon to https://video-player-sahilatahar.netlify.app
 
@@ -15,20 +15,35 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 [View Feeds](view) - The Feed Player is being designed to convert APIs, JSON and .CSV into video-like presentations.
 [Bluesky RSS Feeds](view/#feed=bsky) - Click "Turn on CORS passthrough". &nbsp;[About Bluesky RSS](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q).
 
+[JSON for video, image and feed links](src/Data/data.js) - We will also load from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing)
+
+## Team Projects
+
+Place your name here if your working on an update.
+
 1.) Marco: Prevent .js and .css from being renamed whenever building. Even better, save two additional files (called feedplayer.js and feedplayer.css) without the number appended and use those names in the root index.html page.
 
 2.) Fanyi: Update the code to display images within the video sequence.
 
-3.) TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads, then remove the inserted height. (The last video is an example with a different aspect ratio.)
+3.) TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)
 
-4.) Gary: Implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
+4.) Gary: Pulling image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
 
-[JSON for video, image and feed links](src/Data/data.js) - We will also load from CSV files.
-[Swiper Element](https://swiperjs.com/element) will be used for film-strip-style navigation.
+5.) Copy the feed paths from our [feed/view index.html page](view) into our Google Sheet. Include all of each feed's properties, Path, Title, Description, etc. as columns.
 
-**Also see:**  
-[Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/)  
+6.) Use Vite to add [Swiper Element](https://swiperjs.com/element) in our "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/)  
 [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
+
+7.) Load images into the Feed Player from our [requests repo](/requests) .CSV prompt file.
+
+8.) Pull in multiple Bluesky RSS feed links by passing in a comma separated list.
+
+9.) Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
+
+10.) Create a Python process using Github Actions that automatically pulls a new Building Transparency token every 24 hours. See our existing Python for sample of refreshing the API using their username (email) and password.
+
+11.) Supabase integration - Add a process for saving related edits in Supabase. Save the id of the RSS feed from BlueSky. Integrate with https://holocron.so.
+
 
 
 
@@ -45,37 +60,69 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 ## New UI and Controls
 
-The Feed-Player project boasts a brand-new user interface that is both visually appealing and intuitive to use. The controls have been thoughtfully designed to provide easy access to the various functionalities while keeping the user experience smooth and engaging.
+The Feed-Player interface that is both visually appealing and intuitive to use. The controls have been thoughtfully designed by to provide easy access to the various functionalities while keeping the user experience smooth and engaging.
 
 ## Getting Started
 
-To run the Feed-Player project locally, follow these steps:
+Start a webroot containing localsite and feed
 
-1. Clone this repository to your local machine using:
+      git clone https://github.com/modelearth/localsite.git
+      git clone https://github.com/modelearth/feed.git
+
+
+### Folders in your website root
+
+```ini
+website
+├─ localsite
+└─ feed
+   ├─ README.md
+   ├─ dist
+   ├─ src
+   ├─ view
+   ├─ package.json
+   ├─ vite.config.js
+   └─ .gitignore
+```
+
+
+### Start a web server in your webroot
 
    ```
-   git clone https://github.com/modelearth/feed.git
+   python3 -m venv env
+   source env/bin/activate
+   python -m http.server 8887
    ```
+On Windows, the second line is:
 
-2. Navigate to the project directory:
+### The primary pages will be visible here:
+
+[Feed Player - localhost:8887/feed](http://localhost:8887/feed/)
+[Feed View - localhost:8887/feed/view](http://localhost:8887/feed/view/)
+
+
+
+## Edit and build the "feed" project locally
+
+### 1. Navigate to the project directory:
 
    ```
    cd feed
    ```
 
-3. Install the required dependencies using your preferred package manager. For example, with yarn:
+### 2. Install the required dependencies:
 
    ```
    yarn
    ```
 
-4. Start the development server:
+### 3. Start the development server:
 
    ```
    yarn dev
    ```
 
-5. Build the app to the dist folder
+### 4. Build the app to the dist folder
 
    ```
    yarn build
@@ -83,14 +130,6 @@ To run the Feed-Player project locally, follow these steps:
 
 Avoid `http://localhost:5173/dist` since localsite nav is not available there and we've set the base path for the following instead:
 
-6. Start a webserver at port 8887 and view locally at [localhost:8887/feed/dist/](http://localhost:8887/feed/dist/)  
-Your webroot should be the parent of feed.
-
-   ```
-   python3 -m venv env
-   source env/bin/activate
-   python -m http.server 8887
-   ```
 
 
 ## Technologies Used
@@ -107,33 +146,6 @@ Vite is preferable to Create React App (CRA) because Vite does not rebuild the w
 
 Contributions to the [Feed-Player Github Repo](https://github.com/modelearth/feed/) are welcome! If you have any improvements, bug fixes, or additional features in mind, feel free to fork this repository, make your changes, and submit a pull request.
 
-## Team Projects
-
-Place your name here if your working on an update.
-
-Gary - Pulling image and video links from a Google Sheet
-
-Fanyi - Adding images to player flow.
-
-Add a process for saving related notes in Supabase. Save the id of the RSS feed from BlueSky. Place process within Earthscape.
-
-Copy the 7 feed paths from our new feed/view index.html page into our Google Sheet. Include all of each feed's properties, Path, Title, Description, etc. as columns.
-
-Loren - Update the formatRow() function in localsite/js/locasite.js to show images when the value contains .jpg and all other image extensions. Use ChatGPT to get full list. Put loading="lazy" in the img tag so only the visible images load.
-
-Starting from Gary's Google Sheet pull React, modify the feed view to pull from a csv file and point it at our "requests" repo prompt file. CSV pull using D3 sample in our localhost/js/map.js 
-
-Update to pull multiple Bluesky RSS feed links by passing in a comma separated list.
-
-Allow the text field on the feed/view page to be submitted to refresh the feed pull.
-
-Update the javascript in this Building Transparency page to allow an API token to be pasted in the "Your API Key" field: https://model.earth/io/template/feed
-
-Create a Python process using Github Actions that automatically pulls a new Building Transparency token every 24 hours.
-
-Use Vite to add a Swiper Element into our "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder.
-
-
 ## License
 
 This project is licensed under the [MIT License](https://github.com/ModelEarth/feed/blob/main/LICENSE),  
@@ -142,6 +154,10 @@ which means you are free to use, modify, and distribute the code as you see fit.
 ---
 
 We hope you enjoy using the Feed-Player!
-If you have any questions or feedback, please reach out by posting a [discussion item](https://github.com/orgs/ModelEarthTeam/discussions).
+
+
+If you have any questions, requests or feedback, please post an issue in our 
+[Feed Player repo](http://github.com/modelearth/feed) or the parent [Video Player repo](https://github.com/sahilatahar/Video-Player).
+
 
 Happy feed watching! 🎥🍿
