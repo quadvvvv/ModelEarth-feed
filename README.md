@@ -104,7 +104,7 @@ On Windows, the second line is:
 
 ## Edit and build the "feed" project locally
 
-### 1. Navigate to the project directory:
+### 1. Navigate into the feed directory:
 
    ```
    cd feed
@@ -122,14 +122,19 @@ On Windows, the second line is:
    yarn dev
    ```
 
+Since we include /feed in the base path, the feed player does not currently work at: [localhost:5173/dist](http://localhost:5173/dist/)  
+Code could be updated to add model.earth/js/localsite.js include file in the built output. Insert full links, as used [here](https://model.earth/localsite/start/).
+
+      <link type="text/css" rel="stylesheet" href="https://model.earth/localsite/css/base.css" id="/localsite/css/base.css" />
+      <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
+
 ### 4. Build the app to the dist folder
 
    ```
    yarn build
    ```
 
-Avoid `http://localhost:5173/dist` since localsite nav is not available there and we've set the base path for the following instead:
-
+View at: [http://localhost:8887/feed](http://localhost:8887/feed/)
 
 
 ## Technologies Used
