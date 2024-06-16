@@ -137,6 +137,9 @@ and (max-device-width : 480px) {
     {"value":"311","name":"See Click Fix Requests"},
     {"value":"open311","name":"See Click Fix Requests (CORS)"},
     {"value":"bsky","name":"BlueSky Model.Earth RSS (CORS)"},
+
+    //{"value":"foryou","name":"News For You (CORS)"},
+
 		{"value":"sectors","name":"USEEIO State Sectors"},
 		{"value":"flow","name":"USEEIO State Impact Flow"},
 		{"value":"Dmatrix","name":"USEEIO D Matrix Commodities"},
@@ -261,7 +264,8 @@ function displayFeed() {
 	if (hash.path) {
 		url = hash.path;
 	}
-	selected_array = [];
+
+	// selected_array[] is declared in /localsite/js/localsite.js
 
 	// https://github.com/ModelEarth/data-commons/blob/main/docs/air/emissions/data/API_EN.ATM.CO2E.PC_DS2_zh_csv_v2_45186.csv
 
@@ -270,9 +274,16 @@ function displayFeed() {
 
 	if (hash.feed == "bsky") {
 		url = "https://bsky.app/profile/did:plc:ileopdnhib52emw3veem5zxk/rss";
-		//alert(url)
-		selected_array = [];
 		activeFeed.useCORS = true;
+	} else if (hash.feed == "foryou") {
+
+		// To implement Google News foryou, 
+    // get an API key for a screenscraper
+    // https://chatgpt.com/share/dc619da9-df3c-4acb-a7e4-44a78fb699a7
+
+		url = "https://news.google.com/foryou";
+		activeFeed.useCORS = true;
+		
 	} else if (hash.feed == "food") {
 		// data-commons/docs/food/network/api_to_path.js
 		url = "https://api.nal.usda.gov/fdc/v1/foods/list?dataType=Foundation,SR%20Legacy&pageSize=5&pageNumber=1&api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
@@ -280,7 +291,6 @@ function displayFeed() {
 		$('#pageTitle').html("Nutrition label");
 		url = "https://api.nal.usda.gov/fdc/v1/food/2015943?api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
 		//selected_array = ["foodAttributes"];
-		selected_array = [];
 		$('#pageTitleText').html("View <a href='/OpenFootprint'>Label Template</a>.<br><br>");
 	} else if (hash.feed == "jobs") {
 		$('#pageTitle').html("Jobs Random Forest Accuracy");
@@ -293,10 +303,6 @@ function displayFeed() {
 		if (hash.zip) {
 			url += "+locations.postalCode%3A%22" + hash.zip + "%22+";
 		}
-		//alert(url)
-		// selected_array[] Declared in /localsite/js/localsite.js
-		// Currently commented out in localsite.js
-		// Adjust map page too if adding.
 		//selected_array=["founders","foundingDate","images","location","locations","yearlyRevenues","categories"];
 		barName = "name"
 	} else if (hash.feed == "nasa") {
