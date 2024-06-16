@@ -116,14 +116,14 @@ On Windows, the second line is:
    yarn
    ```
 
-### 3. Start the development server:
+### 3. Skip this step. Port 5173 does not currently work because the files are looking for a base path containing "feed".<!--Start the development server:-->
 
    ```
    yarn dev
    ```
 
 Since we include /feed in the base path, the feed player does not currently work at: [localhost:5173/dist](http://localhost:5173/dist/)  
-Code could be updated to add model.earth/js/localsite.js include file in the built output. Insert full links, as used [here](https://model.earth/localsite/start/).
+Code could be updated to add model.earth/js/localsite.js include file in the built output, as used [here](https://model.earth/localsite/start/).
 
       <link type="text/css" rel="stylesheet" href="https://model.earth/localsite/css/base.css" id="/localsite/css/base.css" />
       <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
@@ -134,7 +134,7 @@ Code could be updated to add model.earth/js/localsite.js include file in the bui
    yarn build
    ```
 
-View at: [http://localhost:8887/feed](http://localhost:8887/feed/)
+View at: [http://localhost:8887/feed](http://localhost:8887/feed/) and [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
 
 
 ## Technologies Used
