@@ -165,4 +165,4 @@ If you have any questions, requests or feedback, please post an issue in our
 [Feed Player repo](http://github.com/modelearth/feed) or the parent [Video Player repo](https://github.com/sahilatahar/Video-Player).
 
 
-Happy feed watching! 🎥🍿
+Happy feed viewing! 🎥🍿
