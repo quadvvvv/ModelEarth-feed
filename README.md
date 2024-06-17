@@ -21,9 +21,9 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if your working on an update.
 
-1.) Marco: Update Yarn Build to save feedplayer.js and feedplayer.css in dist/assests.  
+1.) Marco: Update Yarn Build to save feedplayer.js and feedplayer.css in dist/assets.  
 1a.) Replace vite.config.js with vite.config-upcoming.js while testing Yarn Build locally.  
-1b.) Debug vite-plugin-copy.js to saves a copy of the index-[code].js and index-[code].css as feedplayer.js and feedplayer.css.  
+1b.) Debug vite-plugin-copy.js to save copies of the index-[code].js and index-[code].css as feedplayer.js and feedplayer.css.  
 1c.) Edit the widget embed sample in feed/index.html to use feedplayer.js and feedplayer.css.  
 
 2.) Fanyi: Update the code to display images within the video sequence.
