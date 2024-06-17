@@ -59,9 +59,11 @@ function loadFilesIfNotInDist(jsFile, cssFile) {
   }
 }
 
-// IMPORTANT :: After building, update to new .js name (sometimes .css too).
-loadFilesIfNotInDist('/feed/dist/assets/index-2b2832fe.js', '/feed/dist/assets/index-9c4d15f8.css');
-
+// WIDGET EMBED SAMPLE
+// IMPORTANT: After building, update to new names generated for index-XXXXXXX.js and index-XXXXXXX.css here.
+// TO DO: We are working on always generting copies called feedplayer.js and feedplayer.css
+// to avoid manually fixing each time.
+loadFilesIfNotInDist('/feed/dist/assets/index-7872abe3.js', '/feed/dist/assets/index-4687ea36.css');
 </script>
 
 </head>
@@ -73,8 +75,10 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
 </script>
 
 <br><br>
-<div id="root"></div>
-<script type="module" src="/src/main.jsx"></script>
+<div id="root" style="text-align: center;line-height: 0px;"><img src="src/assets/videos/intro.jpg" style="border-radius:20px;"><div style="margin-top:20px;z-index:1000">Broken by build. Manually update the index .js and .css files to include the newly built ID values.</div></div>
+<!--
+<script type="module" src="src/main.jsx"></script>
+-->
 
 <div class="content contentpadding large-list">
   <div id="readmeDiv"></div>

@@ -4,7 +4,6 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../Context/Context';
 
 function VideoPlayer() {
-
     const { videoList, currentVideoSrc, setCurrentVideoSrc } = useContext(Context);
 
     const [isPlaying, setIsPlaying] = useState(false);
@@ -20,8 +19,15 @@ function VideoPlayer() {
     const [durationSec, setDurationSec] = useState(0);
     const [currentSec, setCurrentTimeSec] = useState(0);
 
+    const isImageFile = (src) => {
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+        return imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
+    };
+
     const handlePlayPause = () => {
-        isPlaying ? pause() : play();
+        if (!isImageFile(currentVideoSrc)) {
+            isPlaying ? pause() : play();
+        }
     }
 
     const play = async () => {
@@ -51,6 +57,7 @@ function VideoPlayer() {
         if (currentVideoIndex.current >= videoList.length) {
             currentVideoIndex.current = 0;
         }
+        
         setCurrentVideoSrc(videoList[currentVideoIndex.current]);
         setCurrentTimeSec(0);
     }, [videoList, setCurrentVideoSrc]);
@@ -116,42 +123,57 @@ function VideoPlayer() {
         return () => clearInterval(interval);
     }, [isPlaying]);
 
-
     useEffect(() => {
         currentVideoIndex.current = videoList?.findIndex(item => item === currentVideoSrc) || 0;
-        videoRef.current.addEventListener('loadeddata', () => {
-            setDurationSec(videoRef.current.duration);
-            const { min, sec } = formatTime(videoRef.current.duration);
-            setDuration([min, sec]);
-            setIsPlaying(false);
-            play();
-        }, false);
-        videoRef.current.addEventListener('ended', handleNext)
+        if (isImageFile(currentVideoSrc)) {
+            const imageTimer = setTimeout(() => {
+                handleNext();
+            }, 4000);
+            return () => clearTimeout(imageTimer);
+        } else {
+            videoRef.current.addEventListener('loadeddata', () => {
+                setDurationSec(videoRef.current.duration);
+                const { min, sec } = formatTime(videoRef.current.duration);
+                setDuration([min, sec]);
+                setIsPlaying(false);
+                play();
+            }, false);
+            videoRef.current.addEventListener('ended', handleNext);
+        }
     }, [currentVideoSrc, handleNext, videoList]);
 
     return (
         <div className="VideoPlayer">
-            <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause}>
-            </video>
+            {isImageFile(currentVideoSrc) ? (
+                <img src={currentVideoSrc} alt="Current media" className="VideoPlayer__image" />
+            ) : (
+                <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause}></video>
+            )}
             <div className="VideoPlayer__controls">
                 <div className="control-group control-group-btn">
                     <button className="control-button pre" onClick={handlePrev}>
                         <i className="ri-skip-back-fill icon"></i>
                     </button>
-                    <button className="control-button play-pause" onClick={handlePlayPause}>
-                        <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
-                    </button>
+                    {!isImageFile(currentVideoSrc) && (
+                        <>
+                            <button className="control-button play-pause" onClick={handlePlayPause}>
+                                <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
+                            </button>
+                            <button className="control-button stop" onClick={stop}>
+                                <i className="ri-stop-fill icon"></i>
+                            </button>
+                        </>
+                    )}
                     <button className="control-button next" onClick={handleNext}>
                         <i className="ri-skip-forward-fill icon"></i>
                     </button>
-                    <button className="control-button stop" onClick={stop}>
-                        <i className="ri-stop-fill icon"></i>
-                    </button>
                 </div>
-                <div className="control-group control-group-slider">
-                    <input type="range" className="range-input" ref={videoRangeRef} onChange={handleVideoRange} max={durationSec} value={currentSec} min={0} />
-                    <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
-                </div>
+                {!isImageFile(currentVideoSrc) && (
+                    <div className="control-group control-group-slider">
+                        <input type="range" className="range-input" ref={videoRangeRef} onChange={handleVideoRange} max={durationSec} value={currentSec} min={0} />
+                        <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
+                    </div>
+                )}
                 <div className="control-group control-group-volume">
                     <button className="control-button volume" onClick={handleMute}>
                         <i className={`ri-volume-${isMute ? 'mute' : 'up'}-fill`}></i>
@@ -166,4 +188,4 @@ function VideoPlayer() {
     )
 }
 
-export default VideoPlayer
+export default VideoPlayer;

@@ -6,7 +6,7 @@ import copyAssets from './vite-plugin-copy';
 export default defineConfig({
   plugins: [
     react(),
-    copyAssets()
+    //copyAssets()
   ],
   base: '',
   build: {
