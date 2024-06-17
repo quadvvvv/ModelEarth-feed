@@ -21,7 +21,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if your working on an update.
 
-1.) Marco: Prevent .js and .css from being renamed whenever building. Even better, save two additional files (called feedplayer.js and feedplayer.css) without the number appended and use those names in the root index.html page.
+1.) Marco: When running Yarn Build, use vite-plugin-copy.js to save a copy of the index-[code].js and index-[code].css as files in (dist/assests) as feedplayer.js and feedplayer.css (without the code appended). We'll use the two feedplayer files in the feed/index.html page and in externally embedded widgets.
 
 2.) Fanyi: Update the code to display images within the video sequence.
 
@@ -94,6 +94,8 @@ website
    python -m http.server 8887
    ```
 On Windows, the second line is:
+
+      env\Scripts\activate
 
 ### The primary pages will be visible here:
 
