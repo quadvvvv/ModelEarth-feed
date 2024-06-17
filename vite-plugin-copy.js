@@ -18,7 +18,7 @@ export default function copyAssets() {
           const isIndexCssFile = /^index-[a-f0-9]{8}\.css$/.test(value.fileName);
 
           if (isIndexJsFile || isIndexCssFile) {
-            const fixedFileName = isIndexJsFile ? 'index.js' : 'index.css';
+            const fixedFileName = isIndexJsFile ? 'feedplayer.js' : 'feedplayer.css';
             const fixedFilePath = path.join(outDir, fixedFileName);
 
             try {
