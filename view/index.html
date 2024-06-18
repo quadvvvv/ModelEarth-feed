@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="/localsite/css/base.css" id="/localsite/css/base.css" />
 <script type="text/javascript" src="/localsite/js/localsite.js?showheader=true&showsearch=true"></script>
 
-<!-- 
+<!--
 	How to use Promise.all to wait for multiple sources (csv, json) 
 	http://learnjsdata.com/read_data.html
 -->
@@ -120,7 +120,6 @@ and (max-device-width : 480px) {
 }
 </style>
 
-
 <script type="text/javascript">
 
 	var jsonList = {"Table" : [
@@ -173,6 +172,17 @@ $(document).ready(function () {
   }
   $("#apiFeeds").html(listItems);
   displayFeed();
+
+  $('#viewRaw').click(function(event) {
+      //event.preventDefault();
+      $('#viewRaw').hide();$('#hideRaw').show();
+      $('#resultJson').show();
+  });
+  $('#hideRaw').click(function(event) {
+      //event.preventDefault();
+      $('#hideRaw').hide();$('#viewRaw').show();
+      $('#resultJson').hide();
+  });
 });
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -237,7 +247,8 @@ function displayFeed() {
 	$("#resultLoading").show(); // .text("Loading...");
 	$('#pageTitleText').html("");
 	if (hash.feed != priorHash.feed) {
-		$('#apiURL').val(""); // Avoid clearing because user may have modifired
+		$('#viewRaw').show();$('#hideRaw').hide();
+		$('#apiURL').val("");
 	}
 	$("#corsLink").hide();
 	$("#apiKeyHolder").hide();
@@ -263,6 +274,7 @@ function displayFeed() {
 	let url = "";
 	if (hash.path) {
 		url = hash.path;
+		$("#apiURL").val(url);
 	}
 
 	// selected_array[] is declared in /localsite/js/localsite.js
@@ -395,8 +407,8 @@ function displayFeed() {
 	// An object containing API Providers and API Keys as key-value pairs
 
 
-	if (hash.feed == priorHash.feed) {
-		url = $("#apiURL").val(); // Allows user to edit
+	if (hash.feed == priorHash.feed && $("#apiURL").val().length > 0) {
+		url = $("#apiURL").val(); // Since user may have edited
 	} else {
 		$("#apiKey").val("");
 		var aPro = {};
@@ -444,7 +456,7 @@ function displayJson(url){
   	fullHtml += formatRow("",json,0); // Resides in localsite.js
 
   	$("#resultJson").html(JSON.stringify(json));
-  	$("#resultJson").show();
+  	//$("#resultJson").show();
   	
     //resultFull.innerHTML = fullHtml;
     $("#resultFull").html(fullHtml);
@@ -503,7 +515,7 @@ function displayRequestsCorsAnywhere(url) {
 				} else if (isObject(xhr.responseText) || typeof xhr.responseText == "string") { // serp is a string
 
 					$("#resultJson").html(xhr.responseText);
-			  	$("#resultJson").show();
+			  	//$("#resultJson").show();
 
 					if (typeof xhr.responseText == "string") {
 						let asJson = JSON.parse(xhr.responseText);
@@ -676,7 +688,7 @@ function updateAPIKeyInURL(url, apikey, keyname) {
 	<div id="pageTitleText" style="margin-top:10px;margin-bottom:12px"></div>
 
 	API URL:<br>
-	<button id="refreshButton" class="btn btn-success" style="float:right;margin-left:8px;display:none;">Refresh</button><div style="overflow:auto;"><input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;" placeholder="API URL" value="" autofocus onfocus="this.select()"></div><br>
+	<button id="refreshButton" class="btn btn-success" style="float:right;margin-left:8px;">GO</button><div style="overflow:auto;"><input type="text" id="apiURL" class="textInput" style="width:100%;max-width:1000px;" placeholder="API URL" value="" autofocus onfocus="this.select()"></div><br>
 
 	<div id="apiKeyHolder" style="display:none;margin-bottom:12px">
 		Your API Key:<br>
@@ -688,7 +700,14 @@ function updateAPIKeyInURL(url, apikey, keyname) {
 	Also see <a href="no-d3.html">$.getJSON</a>
 	-->
 	
-	<div id="resultJson" style="display:none;max-height:100px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
+	<div id="relativeRaw" style="position:relative;">
+		<div id="viewRaw" style="position:absolute; right:0px; cursor:pointer; z-index:1;">
+			View Raw Feed
+		</div>
+		<div id="hideRaw" style="display:none;position:absolute; right:0px; cursor:pointer; padding:0 6px; font-size: 18px;z-index:1;">x</div>
+		<div id="resultJson" style="display:none;max-height:200px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
+	</div>
+	
 
 	<!--
 	<div id="resultLoading" style="padding-top: 10px;">Loading..<br></div>
@@ -697,7 +716,5 @@ function updateAPIKeyInURL(url, apikey, keyname) {
 
 </div>
 
-
 </body>
-
 </html>
