@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     //copyAssets()
   ],
-  base: '',
+  base: '', // base path was originally not set. Another option is /feed/dist/
   build: {
     rollupOptions: {
       output: {

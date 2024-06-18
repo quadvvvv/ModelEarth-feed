@@ -8,7 +8,7 @@
 Welcome to our Feed-Player React Project! This project provides a modern and user-friendly interface for viewing a series of images and video pulled from RSS, JSON, CSV and YAML. The UI is built using Vite, ReactJS, HTML, CSS, and JavaScript. The Feed-Player is designed to be fully responsive and packed with a range of features to enhance your viewing experience.
 
 <!-- https://video-player-sahilatahar.netlify.app -->
-[Check out the Live Preview](https://model.earth/feed/dist/) of the Feed-Player project on model.earth.
+[Check out the Live Preview](https://model.earth/feed/intro.html) of the Feed-Player project on model.earth.
 
 ## Feed Samples
 
@@ -24,7 +24,7 @@ Place your name here if your working on an update.
 1.) Marco: Update Yarn Build to save feedplayer.js and feedplayer.css in dist/assets.  
 1a.) Replace vite.config.js with vite.config-upcoming.js while testing Yarn Build locally.  
 1b.) Debug vite-plugin-copy.js to save copies of the index-[code].js and index-[code].css as feedplayer.js and feedplayer.css.  
-1c.) Edit the "WIDGET EMBED SAMPLE" in feed/index.html to use feedplayer.js and feedplayer.css.  
+1c.) Edit the "WIDGET EMBED SAMPLE" in feed/intro.html to use feedplayer.js and feedplayer.css.  
 
 2.) Fanyi: Update the code to display images within the video sequence.
 
@@ -67,10 +67,10 @@ The Feed-Player interface that is both visually appealing and intuitive to use. 
 
 ## Getting Started
 
-Start a webroot containing localsite and feed
+Fork our two repos (localsite and feed) and clone into your webroot
 
-      git clone https://github.com/modelearth/localsite.git
-      git clone https://github.com/modelearth/feed.git
+      git clone https://github.com/[your account]/localsite.git
+      git clone https://github.com/[your account]/feed.git
 
 
 ### Folders in your website root
@@ -140,6 +140,13 @@ Code could be updated to add model.earth/js/localsite.js include file in the bui
    ```
 
 View at: [http://localhost:8887/feed](http://localhost:8887/feed/) and [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
+
+Deploy to GitHub and turn on GitHub Pages for localsite and feed.
+
+Your updates can now be reviewed at:
+
+https://[your account].github.io/feed
+https://[your account].github.io/feed/dist
 
 
 ## Technologies Used
