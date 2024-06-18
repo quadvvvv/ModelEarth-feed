@@ -143,16 +143,19 @@ View at: [http://localhost:8887/feed](http://localhost:8887/feed/) and [http://l
 
 After building, you may need to manually edit the index-xxxx.js and index-xxxx.css links in intro.html.
 
-Deploy to GitHub and turn on GitHub Pages for localsite and feed.
+## Deploy for Review using Github Pages
+
+Deploy to your fork on GitHub and turn on GitHub Pages for localsite and feed.
 
 Your updates can now be reviewed at:
 
 https://[your account].github.io/feed
 https://[your account].github.io/feed/dist
 
-### About model.earth localsite navigation
+## About model.earth localsite navigation
 
-We included localsite navigation using the following two lines. [Source](https://model.earth/localsite/start/).
+We included [localsite navigation](https://model.earth/localsite/) using the following two lines. It's non-relative so changes to the base path won't break the nav. [Source](https://model.earth/localsite/start/).
+Another option would be to add localsite as a [submodule](https://model.earth/localsite/start/submodules) or add the localsite github path to the package.json file.
 
       <link type="text/css" rel="stylesheet" href="https://model.earth/localsite/css/base.css" id="/localsite/css/base.css" />
       <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
