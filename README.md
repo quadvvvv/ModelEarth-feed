@@ -121,17 +121,17 @@ On Windows, the second line is:
    yarn
    ```
 
-### 3. Skip this step. Port 5173 does not currently work because the files are looking for a base path containing "feed".<!--Start the development server:-->
+### 3. Start the development server
+
+<!--Skip this step. Port 5173 does not currently work because the files are looking for a base path containing "feed".-->
 
    ```
    yarn dev
    ```
 
-Since we include /feed in the base path, the feed player does not currently work at: [localhost:5173/dist](http://localhost:5173/dist/)  
-Code could be updated to add model.earth/js/localsite.js include file in the built output, as used [here](https://model.earth/localsite/start/).
+Or you can skip "yarn dev" and view at [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
 
-      <link type="text/css" rel="stylesheet" href="https://model.earth/localsite/css/base.css" id="/localsite/css/base.css" />
-      <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
+Since we might include /feed in the base path, the feed player may not always work at: [localhost:5173/dist](http://localhost:5173/dist/)  
 
 ### 4. Build the app to the dist folder
 
@@ -147,6 +147,13 @@ Your updates can now be reviewed at:
 
 https://[your account].github.io/feed
 https://[your account].github.io/feed/dist
+
+### About model.earth localsite navigation
+
+We included localsite navigation using the following two lines. [Source](https://model.earth/localsite/start/).
+
+      <link type="text/css" rel="stylesheet" href="https://model.earth/localsite/css/base.css" id="/localsite/css/base.css" />
+      <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
 
 
 ## Technologies Used
