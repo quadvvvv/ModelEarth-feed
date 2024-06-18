@@ -130,9 +130,9 @@ On Windows, the second line is:
    ```
 
 Or you can skip "yarn dev" and view at [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
-
+<!--
 Since we might include /feed in the base path, the feed player may not always work at: [localhost:5173/dist](http://localhost:5173/dist/)  
-
+-->
 ### 4. Build the app to the dist folder
 
    ```
@@ -140,6 +140,8 @@ Since we might include /feed in the base path, the feed player may not always wo
    ```
 
 View at: [http://localhost:8887/feed](http://localhost:8887/feed/) and [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
+
+After building, you may need to manually edit the index-xxxx.js and index-xxxx.css links in intro.html.
 
 Deploy to GitHub and turn on GitHub Pages for localsite and feed.
 
