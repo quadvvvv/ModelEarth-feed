@@ -1,7 +1,7 @@
+import { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { Context } from '../Context/ContextGoogle'; // Ensure this imports the new context
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Context } from '../Context/Context';
 
 function VideoPlayer() {
     const { videoList, currentVideoSrc, setCurrentVideoSrc } = useContext(Context);
@@ -19,15 +19,8 @@ function VideoPlayer() {
     const [durationSec, setDurationSec] = useState(0);
     const [currentSec, setCurrentTimeSec] = useState(0);
 
-    const isImageFile = (src) => {
-        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-        return imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
-    };
-
     const handlePlayPause = () => {
-        if (!isImageFile(currentVideoSrc)) {
-            isPlaying ? pause() : play();
-        }
+        isPlaying ? pause() : play();
     }
 
     const play = async () => {
@@ -57,7 +50,6 @@ function VideoPlayer() {
         if (currentVideoIndex.current >= videoList.length) {
             currentVideoIndex.current = 0;
         }
-        
         setCurrentVideoSrc(videoList[currentVideoIndex.current]);
         setCurrentTimeSec(0);
     }, [videoList, setCurrentVideoSrc]);
@@ -91,7 +83,7 @@ function VideoPlayer() {
         let volume = volumeRangeRef.current.value;
         videoRef.current.volume = volume;
         setCurrentVolume(volume);
-        if (volume == 0) {
+        if (volume === 0) {
             setIsMute(true);
         } else {
             setIsMute(false);
@@ -125,67 +117,54 @@ function VideoPlayer() {
 
     useEffect(() => {
         currentVideoIndex.current = videoList?.findIndex(item => item === currentVideoSrc) || 0;
-        if (isImageFile(currentVideoSrc)) {
-            const imageTimer = setTimeout(() => {
-                handleNext();
-            }, 4000);
-            return () => clearTimeout(imageTimer);
-        } else {
-            videoRef.current.addEventListener('loadeddata', () => {
-                setDurationSec(videoRef.current.duration);
-                const { min, sec } = formatTime(videoRef.current.duration);
-                setDuration([min, sec]);
-                setIsPlaying(false);
-                play();
-            }, false);
-            videoRef.current.addEventListener('ended', handleNext);
-        }
+        videoRef.current.addEventListener('loadeddata', () => {
+            setDurationSec(videoRef.current.duration);
+            const { min, sec } = formatTime(videoRef.current.duration);
+            setDuration([min, sec]);
+            setIsPlaying(false);
+            play();
+        }, false);
+        videoRef.current.addEventListener('ended', handleNext);
     }, [currentVideoSrc, handleNext, videoList]);
 
     return (
-        <div className="VideoPlayer">
-            {isImageFile(currentVideoSrc) ? (
-                <img src={currentVideoSrc} alt="Current media" className="VideoPlayer__image" />
-            ) : (
-                <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause}></video>
-            )}
-            <div className="VideoPlayer__controls">
-                <div className="control-group control-group-btn">
-                    <button className="control-button pre" onClick={handlePrev}>
-                        <i className="ri-skip-back-fill icon"></i>
-                    </button>
-                    {!isImageFile(currentVideoSrc) && (
-                        <>
-                            <button className="control-button play-pause" onClick={handlePlayPause}>
-                                <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
-                            </button>
-                            <button className="control-button stop" onClick={stop}>
-                                <i className="ri-stop-fill icon"></i>
-                            </button>
-                        </>
-                    )}
-                    <button className="control-button next" onClick={handleNext}>
-                        <i className="ri-skip-forward-fill icon"></i>
-                    </button>
+        <div className="VideoPlayerWrapper">
+            <div className="VideoPlayer">
+                <div className="VideoPlayer__video-container">
+                    <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause}></video>
                 </div>
-                {!isImageFile(currentVideoSrc) && (
+                <div className="VideoPlayer__controls">
+                    <div className="control-group control-group-btn">
+                        <button className="control-button prev" onClick={handlePrev}>
+                            <i className="ri-skip-back-fill icon"></i>
+                        </button>
+                        <button className="control-button play-pause" onClick={handlePlayPause}>
+                            <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
+                        </button>
+                        <button className="control-button next" onClick={handleNext}>
+                            <i className="ri-skip-forward-fill icon"></i>
+                        </button>
+                        <button className="control-button stop" onClick={stop}>
+                            <i className="ri-stop-fill icon"></i>
+                        </button>
+                    </div>
                     <div className="control-group control-group-slider">
                         <input type="range" className="range-input" ref={videoRangeRef} onChange={handleVideoRange} max={durationSec} value={currentSec} min={0} />
                         <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
                     </div>
-                )}
-                <div className="control-group control-group-volume">
-                    <button className="control-button volume" onClick={handleMute}>
-                        <i className={`ri-volume-${isMute ? 'mute' : 'up'}-fill`}></i>
-                    </button>
-                    <input type="range" className='range-input' ref={volumeRangeRef} max={1} min={0} value={currentVolume} onChange={handleVolumeRange} step={0.1} />
-                    <button className="control-button full-screen" onClick={handleFullScreen}>
-                        <i className="ri-fullscreen-line"></i>
-                    </button>
+                    <div className="control-group control-group-volume">
+                        <button className="control-button volume" onClick={handleMute}>
+                            <i className={`ri-volume-${isMute ? 'mute' : 'up'}-fill`}></i>
+                        </button>
+                        <input type="range" className='range-input' ref={volumeRangeRef} max={1} min={0} value={currentVolume} onChange={handleVolumeRange} step={0.1} />
+                        <button className="control-button full-screen" onClick={handleFullScreen}>
+                            <i className="ri-fullscreen-line"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default VideoPlayer;

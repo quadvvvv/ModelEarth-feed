@@ -8,7 +8,7 @@
 Welcome to our Feed-Player React Project! This project provides a modern and user-friendly interface for viewing a series of images and video pulled from RSS, JSON, CSV and YAML. The UI is built using Vite, ReactJS, HTML, CSS, and JavaScript. The Feed-Player is designed to be fully responsive and packed with a range of features to enhance your viewing experience.
 
 <!-- https://video-player-sahilatahar.netlify.app -->
-[Check out the Live Preview](https://model.earth/feed/intro.html) of the Feed-Player project on model.earth.
+[Check out the Live Preview](intro.html) of the Feed-Player project on model.earth.
 
 ## Feed Samples
 
