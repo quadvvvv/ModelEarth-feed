@@ -34,19 +34,19 @@ Place your name here if your working on an update.
 
 5.) Copy the feed paths from our [feed/view index.html page](view) into our Google Sheet. Include all of each feed's properties, Path, Title, Description, etc. as columns.
 
-6.) Use Vite to add [Swiper Element](https://swiperjs.com/element) in our "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/)  
-[Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
+6.) Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
 
-7.) Load images into the Feed Player from our [requests repo](/requests) .CSV prompt file.
+7.) Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
 8.) Pull in multiple Bluesky RSS feed links by passing in a comma separated list.
 
 9.) Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
 
-10.) Create a Python process using Github Actions that automatically pulls a new Building Transparency token every 24 hours. See our existing Python for sample of refreshing the API using their username (email) and password.
+10.) Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
 
-11.) Supabase integration - Add a process for saving related edits in Supabase. Save the id of the RSS feed from BlueSky. Integrate with https://holocron.so.
+11.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
 
+12.) Integrate with https://holocron.so to edit content on GitHub.
 
 
 
