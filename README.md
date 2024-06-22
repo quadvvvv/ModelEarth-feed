@@ -149,7 +149,7 @@ Deploy to your fork on GitHub and turn on GitHub Pages for localsite and feed.
 
 Your updates can now be reviewed at:
 
-https://[your account].github.io/feed
+https://[your account].github.io/feed  
 https://[your account].github.io/feed/dist
 
 ## About model.earth localsite navigation
