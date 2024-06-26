@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../Context/ContextGoogle'; // Ensure this imports the new context
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
@@ -19,31 +19,44 @@ function VideoPlayer() {
     const [durationSec, setDurationSec] = useState(0);
     const [currentSec, setCurrentTimeSec] = useState(0);
 
+    const isImageFile = (src) => {
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+        return imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
+    };
+
     const handlePlayPause = () => {
-        isPlaying ? pause() : play();
-    }
+        if (!isImageFile(currentVideoSrc)) {
+            isPlaying ? pause() : play();
+        }
+    };
 
     const play = async () => {
-        setIsPlaying(true);
-        try {
-            await videoRef.current.play();
-        } catch (error) {
-            console.log("Can't play video");
-            setIsPlaying(false);
+        if (!isImageFile(currentVideoSrc)) {
+            setIsPlaying(true);
+            try {
+                await videoRef.current.play();
+            } catch (error) {
+                console.log("Can't play video");
+                setIsPlaying(false);
+            }
         }
-    }
+    };
 
     const pause = () => {
-        setIsPlaying(false);
-        videoRef.current.pause();
-    }
+        if (!isImageFile(currentVideoSrc)) {
+            setIsPlaying(false);
+            videoRef.current.pause();
+        }
+    };
 
     const stop = () => {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
+        if (!isImageFile(currentVideoSrc)) {
+            videoRef.current.pause();
+            videoRef.current.currentTime = 0;
+        }
         setCurrentTimeSec(0);
         setIsPlaying(false);
-    }
+    };
 
     const handleNext = useCallback(() => {
         currentVideoIndex.current++;
@@ -52,6 +65,7 @@ function VideoPlayer() {
         }
         setCurrentVideoSrc(videoList[currentVideoIndex.current]);
         setCurrentTimeSec(0);
+        setIsPlaying(false); // Reset isPlaying to false so the next useEffect can handle play
     }, [videoList, setCurrentVideoSrc]);
 
     const handlePrev = () => {
@@ -61,12 +75,15 @@ function VideoPlayer() {
         }
         setCurrentTimeSec(0);
         setCurrentVideoSrc(videoList[currentVideoIndex.current]);
-    }
+        setIsPlaying(false); // Reset isPlaying to false so the next useEffect can handle play
+    };
 
     const handleVideoRange = () => {
-        videoRef.current.currentTime = videoRangeRef.current.value;
-        setCurrentTimeSec(videoRangeRef.current.value);
-    }
+        if (!isImageFile(currentVideoSrc)) {
+            videoRef.current.currentTime = videoRangeRef.current.value;
+            setCurrentTimeSec(videoRangeRef.current.value);
+        }
+    };
 
     const handleFullScreen = () => {
         const elem = videoRef.current;
@@ -77,7 +94,7 @@ function VideoPlayer() {
         } else if (elem.msRequestFullscreen) { /* IE11 */
             elem.msRequestFullscreen();
         }
-    }
+    };
 
     const handleVolumeRange = () => {
         let volume = volumeRangeRef.current.value;
@@ -88,7 +105,7 @@ function VideoPlayer() {
         } else {
             setIsMute(false);
         }
-    }
+    };
 
     const handleMute = () => {
         if (isMute) {
@@ -98,12 +115,12 @@ function VideoPlayer() {
             videoRef.current.volume = 0;
             setIsMute(true);
         }
-    }
+    };
 
     useEffect(() => {
         let interval;
 
-        if (isPlaying) {
+        if (isPlaying && !isImageFile(currentVideoSrc)) {
             interval = setInterval(() => {
                 const { min, sec } = formatTime(videoRef.current.currentTime);
                 setCurrentTimeSec(videoRef.current.currentTime);
@@ -113,44 +130,85 @@ function VideoPlayer() {
             clearInterval(interval);
         }
         return () => clearInterval(interval);
-    }, [isPlaying]);
+    }, [isPlaying, currentVideoSrc]);
 
     useEffect(() => {
-        currentVideoIndex.current = videoList?.findIndex(item => item === currentVideoSrc) || 0;
-        videoRef.current.addEventListener('loadeddata', () => {
+        const handleLoadedData = () => {
             setDurationSec(videoRef.current.duration);
             const { min, sec } = formatTime(videoRef.current.duration);
             setDuration([min, sec]);
-            setIsPlaying(false);
             play();
-        }, false);
-        videoRef.current.addEventListener('ended', handleNext);
-    }, [currentVideoSrc, handleNext, videoList]);
+        };
+
+        const handleEnded = handleNext;
+
+        if (isImageFile(currentVideoSrc)) {
+            const imageTimer = setTimeout(() => {
+                handleNext();
+            }, 4000);
+            return () => clearTimeout(imageTimer);
+        } else if (videoRef.current) {
+            videoRef.current.addEventListener('loadeddata', handleLoadedData, false);
+            videoRef.current.addEventListener('ended', handleEnded);
+
+            return () => {
+                if (videoRef.current) {
+                    videoRef.current.removeEventListener('loadeddata', handleLoadedData);
+                    videoRef.current.removeEventListener('ended', handleEnded);
+                }
+            };
+        }
+    }, [currentVideoSrc, handleNext]);
+
+    // useEffect(() => {
+    //     if (!isPlaying) {
+    //         play();
+    //     }
+    // }, [currentVideoSrc, isPlaying]);
+
+    useEffect(() => {
+        if (videoList.length > 0) {
+            setCurrentVideoSrc(videoList[0]);
+            currentVideoIndex.current = 0;
+        }
+    }, [videoList, setCurrentVideoSrc]);
 
     return (
         <div className="VideoPlayerWrapper">
             <div className="VideoPlayer">
                 <div className="VideoPlayer__video-container">
-                    <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause}></video>
+                    {isImageFile(currentVideoSrc) ? (
+                        <img src={currentVideoSrc} alt="Current media" />
+                    ) : (
+                        <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause} poster='src/assets/videos/intro.jpg'></video>
+                    )}
                 </div>
                 <div className="VideoPlayer__controls">
                     <div className="control-group control-group-btn">
                         <button className="control-button prev" onClick={handlePrev}>
                             <i className="ri-skip-back-fill icon"></i>
                         </button>
-                        <button className="control-button play-pause" onClick={handlePlayPause}>
-                            <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
-                        </button>
+                        {!isImageFile(currentVideoSrc) && (
+                            <>
+                                <button className="control-button play-pause" onClick={handlePlayPause}>
+                                    <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
+                                </button>
+                                <button className="control-button stop" onClick={stop}>
+                                    <i className="ri-stop-fill icon"></i>
+                                </button>
+                            </>
+                        )}
                         <button className="control-button next" onClick={handleNext}>
                             <i className="ri-skip-forward-fill icon"></i>
                         </button>
-                        <button className="control-button stop" onClick={stop}>
-                            <i className="ri-stop-fill icon"></i>
-                        </button>
                     </div>
                     <div className="control-group control-group-slider">
-                        <input type="range" className="range-input" ref={videoRangeRef} onChange={handleVideoRange} max={durationSec} value={currentSec} min={0} />
-                        <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
+                        {!isImageFile(currentVideoSrc) && (
+                            <>
+                                <input type="range" className="range-input" ref={videoRangeRef} onChange={handleVideoRange} max={durationSec} value={currentSec} min={0} />
+                                <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
+                            </>
+                        )}
                     </div>
                     <div className="control-group control-group-volume">
                         <button className="control-button volume" onClick={handleMute}>
