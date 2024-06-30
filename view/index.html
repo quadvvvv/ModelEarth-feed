@@ -129,10 +129,10 @@ and (max-device-width : 480px) {
     {"value":"nasa","name":"NASA Image Feed"},
     {"value":"serp","name":"Serp API (CORS)"},
 
-    {"value":"gdc","name":"Google Data Commons"},
-    {"value":"US:Count_Person","name":"US State Populations"},
-    {"value":"LandCoverFraction_Forest","name":"Land Covered by Forests"},
-    {"value":"datausa","name":"Data USA State Populations"},
+    {"value":"gdc","name":"GDC Google Data Commons - Forests"},
+    {"value":"US:Count_Person","name":"GDC US State Populations"},
+    {"value":"LandCoverFraction_Forest","name":"GDC Land Covered by Forests"},
+    {"value":"datausa","name":"DataUSA State Populations"},
     {"value":"311","name":"See Click Fix Requests"},
     {"value":"open311","name":"See Click Fix Requests (CORS)"},
     {"value":"bsky","name":"BlueSky Model.Earth RSS (CORS)"},
@@ -344,18 +344,28 @@ function displayFeed() {
 
 	} else if (hash.feed == "gdc") {
 		// node, resolve or observation
+
+		// https://docs.datacommons.org/api/rest/v2/observation
+
 		u = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&";
 		// Q30 = country/USA
 		// Q6256
 		//nodes=Q6256&property=<-wikidataId->dcid";
 		// property=<-*
 
-		// California
-		expression = "entity.expression=" + encodeURIComponent("geoId/06<-containedInPlace+{typeOf:County}");
+		// California Counties
+		expressionX = "entity.expression=" + encodeURIComponent("geoId/06<-containedInPlace+{typeOf:County}");
 
+		// Georgia Counties
 		expressionX = "entity.expression=" + encodeURIComponent("geoId/13<-containedInPlace+{typeOf:County}");
 
-		url = u + expression + "&date=2015&date=LATEST&select=date&select=entity&select=value&select=variable&variable.dcids=LandCoverFraction_Forest"
+		// Fulton County
+		expression = "entity.dcids=geoId/13121";
+
+		//var dates = ['2016', '2017','2018', '2019'];
+		//alert(encodeURIComponent(dates.join(',')));
+
+		url = u + expression + "&date=2019&select=date&select=entity&select=value&select=variable&variable.dcids=LandCoverFraction_Forest"
 	} else if (hash.feed == "311") {
 		$('#pageTitle').html("See Click Fix - v2");
 		url = `https://seeclickfix.com/api/v2/issues?lat=${latitude}&lng=${longitude}&zoom=8&per_page=10`;
@@ -659,7 +669,7 @@ function updateAPIKeyInURL(url, apikey, keyname) {
 
 <div class="content contentpadding">
 
-	<div style="float:right; border-left:3px #ccc solid;padding-left:15px"> <a href="../">Feed Player</a><br><a href="/data-commons/docs/jobs/">Data Commons</a></div>
+	<div style="float:right; border-left:3px #ccc solid;padding-left:15px"> <a href="../intro.html">Feed Player</a><br><a href="/data-commons/docs/jobs/">Data Commons</a></div>
 
 	<!--h1 id="pageTitle"></h1-->
 	<select id="apiFeeds" onchange="goHash({'feed':this.value})"></select>
@@ -715,6 +725,20 @@ function updateAPIKeyInURL(url, apikey, keyname) {
 	<div id="resultFull"></div>
 
 </div>
+
+<script>
+// To try
+var apiKey = 'YOUR_API_KEY_HERE';
+var entities = ['country/USA', 'country/FRA', 'country/DEU'];
+var variables = ['Count_Person'];
+var dates = ['2018', '2019', '2020', '2021', '2022'];
+
+var url = 'https://api.datacommons.org/v2/observation' +
+          '?key=' + apiKey +
+          '&entities=' + entities.join(',') +
+          '&variables=' + variables.join(',') +
+          '&date=' + dates.join(',');
+</script>
 
 </body>
 </html>
