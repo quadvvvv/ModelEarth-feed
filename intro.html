@@ -19,11 +19,14 @@
 // Because placing these two include here brakes the build:
 // <script type="module" crossorigin src="/feed/dist/assets/index-123d251f.js"><!--/script-->
 // <link rel="stylesheet" href="/feed/dist/assets/index-de0c0210.css">
-
+/*  
+  i know this was just set aside for the moment it seems as though
+     the files in dist folder already get loaded automatically so
+      excluding them serves no purpose */
 function loadFilesIfNotInDist(jsFile, cssFile) {
   // Get the current path
   var currentPath = window.location.pathname;
-
+ console.log("the current path is  " +currentPath);
   // Check if the path does not contain "/dist/"
   if (!currentPath.includes('/dist/')) {
     // Function to load a script file
@@ -55,7 +58,9 @@ function loadFilesIfNotInDist(jsFile, cssFile) {
 // IMPORTANT: After building, update to new names generated for index-XXXXXXX.js and index-XXXXXXX.css here.
 // TO DO: We are working on always generting copies called feedplayer.js and feedplayer.css
 // to avoid manually fixing each time.
-loadFilesIfNotInDist('/feed/dist/assets/index-c7f1f1ae.js', '/feed/dist/assets/index-445cb8a7.css');
+//loadFilesIfNotInDist('/feed/dist/assets/index-61ddd40b.js', '/feed/dist/assets/index-445cb8a7.css');
+loadFilesIfNotInDist('/feed/src/feedplayer.js', '/feed/src/feedplayer.css');
+//*/
 </script>
 
 </head>
