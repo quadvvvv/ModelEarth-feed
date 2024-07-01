@@ -204,6 +204,15 @@ function VideoPlayer() {
         }
     }, [videoList, setCurrentVideoSrc]);
 
+    // Auto-play when media source changes
+    useEffect(() => {
+        if (isImageFile(currentVideoSrc)) {
+            playImage();
+        } else {
+            play();
+        }
+    }, []);
+
     return (
         <div className="VideoPlayerWrapper">
             <div className="VideoPlayer">
