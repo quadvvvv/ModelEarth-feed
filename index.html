@@ -4,9 +4,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png">
   <link rel="manifest" href="favicons/site.webmanifest">
   <link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="msapplication-TileColor" content="#da532c">
@@ -18,21 +15,14 @@
   <script>
   loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
   </script>
- 
- <!-- Doesn't do anything at the moment; was just trying to make it work a bit 
-  <script type="text/javascript" src="./src/feedplayer.js"></script>
-  <script>
-    
-   // loadFilesIfNotInDist('/feed/src/feedplayer.js', '/feed/src/feedplayer.css');
-  </script>
--->
+
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 
-  <div class="content contentpadding large-list">
+  <div class="content contentpadding large-list" style="padding-top:10px">
     <div id="readmeDiv"></div>
   </div>
 
