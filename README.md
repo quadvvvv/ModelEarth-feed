@@ -121,6 +121,17 @@ On Windows, the second line is:
    yarn
    ```
 
+If the package-lock.json file change significantly, revert and 
+try this yarn install command:
+
+   ```
+   yarn install --immutable --immutable-cache --check-cache
+   ```
+
+The command above requires yarn 2 and prevents third-parties from altering the checked-in packages before submitting them. [Source](https://stackoverflow.com/questions/58482655/what-is-the-closest-to-npm-ci-in-yarn).  
+It's the equivalent to `npm ci` to avoid updating package-lock.json, which occurs with `npm install`.
+
+
 ### 3. Start the development server
 
 <!--Skip this step. Port 5173 does not currently work because the files are looking for a base path containing "feed".-->
@@ -190,3 +201,4 @@ If you have any questions, requests or feedback, please post an issue in our
 
 
 Happy feed viewing! 🎥🍿
+
