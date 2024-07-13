@@ -9,12 +9,12 @@ function VideoPlayer() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentVolume, setCurrentVolume] = useState(1);
     const [isMute, setIsMute] = useState(false);
-    const [imageTimer, setImageTimer] = useState(null);
     const [imageElapsed, setImageElapsed] = useState(0); // Elapsed time for image playback
     const videoRef = useRef(null);
     const videoRangeRef = useRef(null);
     const volumeRangeRef = useRef(null);
     let currentVideoIndex = useRef(0);
+    const imageTimerRef = useRef(null); // Timer ref for image playback
 
     const [duration, setDuration] = useState([0, 0]);
     const [currentTime, setCurrentTime] = useState([0, 0]);
@@ -57,7 +57,7 @@ function VideoPlayer() {
 
     const stop = () => {
         if (isImageFile(currentVideoSrc)) {
-            clearInterval(imageTimer);
+            clearInterval(imageTimerRef.current);
             setImageElapsed(0);
         } else {
             videoRef.current.pause();
@@ -79,12 +79,12 @@ function VideoPlayer() {
                 return prev + 1;
             });
         }, 1000);
-        setImageTimer(timer);
+        imageTimerRef.current = timer;
     };
 
     const pauseImage = () => {
         setIsPlaying(false);
-        clearInterval(imageTimer);
+        clearInterval(imageTimerRef.current);
     };
 
     const handleNext = useCallback(() => {
@@ -113,11 +113,11 @@ function VideoPlayer() {
         if (isImageFile(currentVideoSrc)) {
             const newTime = videoRangeRef.current.value;
             setImageElapsed(newTime);
-            clearInterval(imageTimer);
+            clearInterval(imageTimerRef.current);
             const remainingTime = imageDuration - newTime;
-            setImageTimer(setTimeout(() => {
+            imageTimerRef.current = setTimeout(() => {
                 handleNext();
-            }, remainingTime * 2000));
+            }, remainingTime * 1000);
         } else {
             videoRef.current.currentTime = videoRangeRef.current.value;
             setCurrentTimeSec(videoRangeRef.current.value);
@@ -183,7 +183,7 @@ function VideoPlayer() {
 
         if (isImageFile(currentVideoSrc)) {
             playImage();
-            return () => clearInterval(imageTimer);
+            return () => clearInterval(imageTimerRef.current);
         } else if (videoRef.current) {
             videoRef.current.addEventListener('loadeddata', handleLoadedData, false);
             videoRef.current.addEventListener('ended', handleEnded);
