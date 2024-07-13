@@ -21,33 +21,29 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if your working on an update.
 
-1.) Marco: Update Yarn Build to save feedplayer.js and feedplayer.css in dist/assets.  
-1a.) Replace vite.config.js with vite.config-upcoming.js while testing Yarn Build locally.  
-1b.) Debug vite-plugin-copy.js to save copies of the index-[code].js and index-[code].css as feedplayer.js and feedplayer.css.  
-1c.) Edit the "WIDGET EMBED SAMPLE" in feed/intro.html to use feedplayer.js and feedplayer.css.  
+1.) TO DO: Update Yarn Build to make the player into an embeddable widget by saving a copy of the index-xxxx.js and index-xxxx.css files as feedplayer.js and feedplayer.css in dist/assets.  We've replaced vite.config.js with vite.config-upcoming.js as one possible way to copy the files, but it's not working yet.  Once generating, change the "WIDGET EMBED SAMPLE" in feed/intro.html to use feedplayer.js and feedplayer.css.  
 
-2.) Fanyi: Update the code to display images within the video sequence.
+2.) DONE: Update the code to display images within the video sequence - By Fanyi
 
 3.) TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)
 
-4.) Gary: Pulling image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing).
+4.) DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
-5.) Copy the feed paths from our [feed/view index.html page](view) into our Google Sheet. Include all of each feed's properties, Path, Title, Description, etc. as columns.
+5.) TO DO: Add columns for Title and Description in the Google Sheet
 
-6.) Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
+6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
 
-7.) Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
+7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
-8.) Pull in multiple Bluesky RSS feed links by passing in a comma separated list.
+8.) TO DO: Pull in multiple Bluesky RSS feed links by passing in a comma separated list.
 
-9.) Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
+### Building Transparency
 
-10.) Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
+9.) TO DO: Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
+
+10.) TO DO: Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
 
 11.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
-
-12.) Integrate with https://holocron.so to edit content on GitHub.
-
 
 
 ## Features
