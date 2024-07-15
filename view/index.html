@@ -126,6 +126,7 @@ and (max-device-width : 480px) {
 		{"value":"none","name":"Select a feed..."},
 		{"value":"food","name":"USDA Food List"},
 		{"value":"usda","name":"USDA Nutrition Label"},
+		{"value":"farmfresh","name":"Farm Fresh (Michigan)"},
     {"value":"nasa","name":"NASA Image Feed"},
     {"value":"serp","name":"Serp API (CORS)"},
 
@@ -304,6 +305,9 @@ function displayFeed() {
 		url = "https://api.nal.usda.gov/fdc/v1/food/2015943?api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
 		//selected_array = ["foodAttributes"];
 		$('#pageTitleText').html("View <a href='/OpenFootprint'>Label Template</a>.<br><br>");
+	} else if (hash.feed == "farmfresh") {
+		$('#pageTitle').html("Farm Fresh");
+		url = "https://www.usdalocalfoodportal.com/api/farmersmarket/?apikey=UXLbsdPdCU&state=mi";
 	} else if (hash.feed == "jobs") {
 		$('#pageTitle').html("Jobs Random Forest Accuracy");
 		url = "/RealityStream/output/jobs/CV-RandomForestClassifier_accuracy.yaml";
