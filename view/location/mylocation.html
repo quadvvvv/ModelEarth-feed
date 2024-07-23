@@ -7,50 +7,26 @@
 <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 <title>Location Projects</title>
 
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-<script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true&showsearch=true"></script>
+<!-- External Libraries -->
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-<style>
-     .autocomplete-container {
-        position: relative;
-        width: 300px;
-      }
-      .autocomplete-input {
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-      }
-      .autocomplete-results {
-        position: absolute;
-        width: 100%;
-        border: 1px solid #ccc;
-        max-height: 200px;
-        overflow-y: auto;
-        background-color: white;
-        z-index: 1000;
-      }
-      .autocomplete-item {
-        padding: 10px;
-        cursor: pointer;
-      }
-      .autocomplete-item-highlighted {
-        background-color: lightgray;
-      }
-</style>
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="locationSearchStyles.css">
 </head>
 
 <body>
 
+<!-- Autocomplete Component -->
 <div class="autocomplete-container">
-    <input type="text" id="autocomplete-input" class="autocomplete-input" autocomplete="off"/>
-    <div id="loading" style="display: none;">Loading...</div>
+    <input type="text" id="autocomplete-input" class="autocomplete-input" autocomplete="off" placeholder="Search for a location..."/>
+    <div id="loading">Loading...</div>
     <ul id="autocomplete-results" class="autocomplete-results"></ul>
 </div>
 
+<!-- Content Section -->
 <div class="content contentpadding">
   <button id="btnlocate" onclick="getGeolocation()">
     Get my coordinates!
@@ -59,6 +35,7 @@
   <div id="requests"></div>
 </div>
 
+<!-- Custom JS -->
 <script src="locationSearch.js"></script>
 
 <script>
@@ -81,7 +58,9 @@ function getGeolocation() {
         mycoords.innerHTML = 'Geolocation is not supported by this browser.';
     }
 }
+
 getGeolocation();
+
 window.onload = function() {
     var button = document.getElementById("btnlocate");
     button.addEventListener("click", updateGlobalAddress);
