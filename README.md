@@ -39,7 +39,7 @@ In the existing code, we tried to automate copying the index-xxxxxxxx.js and ind
 
 8.) TO DO: Pull in multiple Bluesky RSS feed links by passing in a pipe | separated list of feed urls. Add loop when pipes found in the url value in both JQuery feed/view and in our Google Sheet and split on the pipe in the React Feed Player.
 
-9.) Try to add the posts for each Bluesky post in the feed. Use the screen-grab technique that we use to grab images from news sites that are listed in the feed. Scrape the posts from the Bluesky website.  If the process doesn't work, leave the attempt commented out.
+9.) Try to pull the replies for each Bluesky post in the feed. Use the screen-grab technique that we use to grab images from news sites that are listed in the feed. Scrape the posts from the Bluesky website.  Grab replies for the top 3 posts. If the process doesn't work, leave the attempt commented out.  
 
 ### Building Transparency
 
