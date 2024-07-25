@@ -19,7 +19,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 ## Team Projects
 
-Place your name here if your working on an update.
+Place your name here if you're working on an update.
 
 1.) TO DO: Update the Yarn Build to make the player an embeddable widget. Here's possible <a href="https://chatgpt.com/share/b847e2c7-732b-4f28-b069-7a58bc107d93">setup info in ChatGPT</a>.
 
@@ -114,6 +114,9 @@ On Windows, the second line is:
    ```
    cd feed
    ```
+
+If you don't have yarn yet, install it with `npm install --global yarn`
+You can check if you have yarn with `yarn --version`
 
 ### 2. Install the required dependencies:
 
