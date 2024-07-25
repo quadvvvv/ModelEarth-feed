@@ -37,7 +37,7 @@ In the existing code, we tried to automate copying the index-xxxxxxxx.js and ind
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
-8.) TO DO: Pull in multiple Bluesky RSS feed links by passing in a comma separated list.
+8.) TO DO: Pull in multiple Bluesky RSS feed links by passing in a pipe | separated list of feed urls. Add loop when pipes found in the url value in both JQuery feed/view and in our Google Sheet and split on the pipe in the React Feed Player.
 
 ### Building Transparency
 
