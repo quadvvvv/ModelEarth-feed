@@ -8,6 +8,7 @@
 Welcome to our Feed-Player React Project! This project provides a modern and user-friendly interface for viewing a series of images and video pulled from RSS, JSON, CSV and YAML. The UI is built using Vite, ReactJS, HTML, CSS, and JavaScript. The Feed-Player is designed to be fully responsive and packed with a range of features to enhance your viewing experience.
 
 <!-- https://video-player-sahilatahar.netlify.app -->
+
 [Check out the Live Preview](intro.html) of the Feed-Player project on model.earth.
 
 ## Feed Samples
@@ -21,7 +22,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if your working on an update.
 
-1.) TO DO: Update Yarn Build to make the player into an embeddable widget by saving a copy of the index-xxxx.js and index-xxxx.css files as feedplayer.js and feedplayer.css in dist/assets.  We've replaced vite.config.js with vite.config-upcoming.js as one possible way to copy the files, but it's not working yet.  Once generating, change the "WIDGET EMBED SAMPLE" in feed/intro.html to use feedplayer.js and feedplayer.css.  
+1.) TO DO: Update Yarn Build to make the player into an embeddable widget by saving a copy of the index-xxxx.js and index-xxxx.css files as feedplayer.js and feedplayer.css in dist/assets. We've replaced vite.config.js with vite.config-upcoming.js as one possible way to copy the files, but it's not working yet. Once generating, change the "WIDGET EMBED SAMPLE" in feed/intro.html to use feedplayer.js and feedplayer.css.
 
 2.) DONE: Update the code to display images within the video sequence - By Fanyi
 
@@ -29,9 +30,9 @@ Place your name here if your working on an update.
 
 4.) DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
-5.) TO DO: Add columns for Title and Description in the Google Sheet
+5.) TO DO: Add columns for Title and Description in the Google Sheet - Matt B
 
-6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
+6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
@@ -44,7 +45,6 @@ Place your name here if your working on an update.
 10.) TO DO: Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
 
 11.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
-
 
 ## Features
 
@@ -68,7 +68,6 @@ Fork our two repos (localsite and feed) and clone into your webroot
       git clone https://github.com/[your account]/localsite.git
       git clone https://github.com/[your account]/feed.git
 
-
 ### Folders in your website root
 
 ```ini
@@ -84,14 +83,14 @@ website
    └─ .gitignore
 ```
 
-
 ### Start a web server in your webroot
 
-   ```
-   python3 -m venv env
-   source env/bin/activate
-   python -m http.server 8887
-   ```
+```
+python3 -m venv env
+source env/bin/activate
+python -m http.server 8887
+```
+
 On Windows, the second line is:
 
       env\Scripts\activate
@@ -101,50 +100,63 @@ On Windows, the second line is:
 [Feed Player - localhost:8887/feed](http://localhost:8887/feed/)
 [Feed View - localhost:8887/feed/view](http://localhost:8887/feed/view/)
 
-
-
 ## Edit and build the "feed" project locally
 
 ### 1. Navigate into the feed directory:
 
-   ```
-   cd feed
-   ```
+```
+cd feed
+```
 
 ### 2. Install the required dependencies:
 
-   ```
-   yarn
-   ```
+Check if yarn is installed:
 
-If the package-lock.json file change significantly, revert and 
+```
+yarn --version
+```
+
+Install yarn if you don't have it yet:
+
+```
+npm install --global yarn
+```
+
+Install the required dependecies:
+
+```
+yarn
+```
+
+If the package-lock.json file change significantly, revert and
 try this yarn install command:
 
-   ```
-   yarn install --immutable --immutable-cache --check-cache
-   ```
+```
+yarn install --immutable --immutable-cache --check-cache
+```
 
 The command above requires yarn 2 and prevents third-parties from altering the checked-in packages before submitting them. [Source](https://stackoverflow.com/questions/58482655/what-is-the-closest-to-npm-ci-in-yarn).  
 It's the equivalent to `npm ci` to avoid updating package-lock.json, which occurs with `npm install`.
-
 
 ### 3. Start the development server
 
 <!--Skip this step. Port 5173 does not currently work because the files are looking for a base path containing "feed".-->
 
-   ```
-   yarn dev
-   ```
+```
+yarn dev
+```
 
 Or you can skip "yarn dev" and view at [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
+
 <!--
-Since we might include /feed in the base path, the feed player may not always work at: [localhost:5173/dist](http://localhost:5173/dist/)  
+Since we might include /feed in the base path, the feed player may not always work at: [localhost:5173/dist](http://localhost:5173/dist/)
 -->
+
 ### 4. Build the app to the dist folder
 
-   ```
-   yarn build
-   ```
+```
+yarn build
+```
 
 View at: [http://localhost:8887/feed](http://localhost:8887/feed/) and [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
 
@@ -166,7 +178,6 @@ Another option would be to add localsite as a [submodule](https://model.earth/lo
 
       <link type="text/css" rel="stylesheet" href="https://model.earth/localsite/css/base.css" id="/localsite/css/base.css" />
       <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
-
 
 ## Technologies Used
 
@@ -191,10 +202,7 @@ which means you are free to use, modify, and distribute the code as you see fit.
 
 We hope you enjoy using the Feed-Player!
 
-
-If you have any questions, requests or feedback, please post an issue in our 
+If you have any questions, requests or feedback, please post an issue in our
 [Feed Player repo](http://github.com/modelearth/feed) or the parent [Video Player repo](https://github.com/sahilatahar/Video-Player).
 
-
 Happy feed viewing! 🎥🍿
-

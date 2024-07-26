@@ -6,15 +6,11 @@ import Papa from 'papaparse';
 const Context = createContext();
 
 export default function ContextProvider({ children }) {
-
-    //const [videoList, setVideoList] = useState(videosURLs);
-    //const [currentVideoSrc, setCurrentVideoSrc] = useState(videoList[0]);
-    const [videoList, setVideoList] = useState([]);
-    const [currentVideoSrc, setCurrentVideoSrc] = useState('');
-
+    const [mediaList, setMediaList] = useState([]);
+    const [currentMedia, setCurrentMedia] = useState(null);
 
     useEffect(() => {
-        const fetchVideos = async () => {
+        const fetchMedia = async () => {
             try {
                 // Pulls from this Google Sheet: https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing
                 // Add comments in the sheet above to request additions.
@@ -22,23 +18,28 @@ export default function ContextProvider({ children }) {
                 Papa.parse(response.data, {
                     header: true,  // Assuming your CSV has headers
                     complete: (results) => {
-                        const videos = results.data.map(row => row.URL);  // Adjust based on your CSV header for the URL column
-                        setVideoList(videos);
-                        if (videos.length > 0) {
-                            setCurrentVideoSrc(videos[0]); // Set the first video as the current video source
+                        const media = results.data.map(row => ({
+                            url: row.URL,
+                            title: row.Title,
+                            text: row.Text
+                        }));
+                        console.log('Fetched media:', media);  // Log the fetched media
+                        setMediaList(media);
+                        if (media.length > 0) {
+                            setCurrentMedia(media[0]); // Set the first media item as the current media
                         }
                     }
                 });
             } catch (error) {
-                console.error('Error fetching videos:', error);
+                console.error('Error fetching media:', error);
             }
         };
 
-        fetchVideos();
+        fetchMedia();
     }, []);
    
     return (
-        <Context.Provider value={{ videoList, setVideoList, currentVideoSrc, setCurrentVideoSrc }}>
+        <Context.Provider value={{ mediaList, setMediaList, currentMedia, setCurrentMedia }}>
             {children}
         </Context.Provider>
     );
