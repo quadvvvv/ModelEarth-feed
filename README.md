@@ -20,13 +20,15 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 ## Team Projects
 
-Place your name here if your working on an update.
+Place your name here if you're working on an update.
 
-1.) TO DO: Update Yarn Build to make the player into an embeddable widget by saving a copy of the index-xxxx.js and index-xxxx.css files as feedplayer.js and feedplayer.css in dist/assets. We've replaced vite.config.js with vite.config-upcoming.js as one possible way to copy the files, but it's not working yet. Once generating, change the "WIDGET EMBED SAMPLE" in feed/intro.html to use feedplayer.js and feedplayer.css.
+1.) TO DO: Update the Yarn Build to make the player an embeddable widget. Here's possible <a href="https://chatgpt.com/share/b847e2c7-732b-4f28-b069-7a58bc107d93">setup info in ChatGPT</a>.
+
+In the existing code, we tried to automate copying the index-xxxxxxxx.js and index-xxxxxxxx.css files to feedplayer.js and feedplayer.css within [dist/assets](https://github.com/ModelEarth/feed/tree/main/dist/assets).  We replaced vite.config.js with vite.config-upcoming.js, but it's not working yet (the copy might run before the build completes).  Once generating a consistant .js and .css file name, edit feed/intro.html to use feedplayer.js and feedplayer.css (or whatever .js file name is standard for a Vite widget).  Also adjust so the widget can be played on the main feed/index.html page.
 
 2.) DONE: Update the code to display images within the video sequence - By Fanyi
 
-3.) TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)
+3.) DONE: Aspect ratio of video remains the same when showing landscape image.<!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
 
 4.) DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
@@ -36,15 +38,17 @@ Place your name here if your working on an update.
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
-8.) TO DO: Pull in multiple Bluesky RSS feed links by passing in a comma separated list.
+8.) TO DO: Pull in multiple Bluesky RSS feed links by passing in a pipe | separated list of feed urls. Add loop when pipes found in the url value in both JQuery feed/view and in our Google Sheet and split on the pipe in the React Feed Player.
+
+9.) Try to pull the replies for each Bluesky post in the feed. Use the screen-grab technique that we use to grab images from news sites that are listed in the feed. Scrape the posts from the Bluesky website.  Grab replies for the top 3 posts. If the process doesn't work, leave the attempt commented out.  
 
 ### Building Transparency
 
-9.) TO DO: Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
+10.) TO DO: Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
 
-10.) TO DO: Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
+11.) TO DO: Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
 
-11.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
+12.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
 
 ## Features
 
@@ -107,6 +111,9 @@ On Windows, the second line is:
 ```
 cd feed
 ```
+
+If you don't have yarn yet, install it with `npm install --global yarn`
+You can check if you have yarn with `yarn --version`
 
 ### 2. Install the required dependencies:
 
