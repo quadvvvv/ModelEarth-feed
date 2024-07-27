@@ -1,13 +1,10 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
 
 function VideoPlayer() {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
-
-    console.log('Media List from Context:', mediaList);
-    console.log('Current Media from Context:', currentMedia);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentVolume, setCurrentVolume] = useState(1);
@@ -26,55 +23,54 @@ function VideoPlayer() {
 
     const imageDuration = 4;
 
-    // Ensure each media item has a unique identifier
-    useEffect(() => {
-        if (mediaList.length > 0 && !mediaList[0].id) {
-            const updatedMediaList = mediaList.map((media, index) => ({
-                ...media,
-                id: `media-${index}`
-            }));
-            // Assuming you have a way to update the mediaList in the context
-            // If not, you might need to modify your context to allow this
-            // setMediaList(updatedMediaList);
-            console.log('Updated media list with IDs:', updatedMediaList);
-        }
-    }, [mediaList]);
-
     const isImageFile = (src) => {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
         return src && imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
     };
 
+    const isVideoFile = (src) => {
+        const videoExtensions = ['.mp4', '.webm', '.ogg'];
+        return src && videoExtensions.some(extension => src.toLowerCase().endsWith(extension));
+    };
+
     const handlePlayPause = () => {
-        if (currentMedia && isImageFile(currentMedia.url)) {
-            isPlaying ? pauseImage() : playImage();
+        if (isPlaying) {
+            pause();
         } else {
-            isPlaying ? pause() : play();
+            play();
         }
+        setIsPlaying(!isPlaying);
     };
 
     const play = async () => {
-        if (currentMedia && !isImageFile(currentMedia.url) && videoRef.current) {
-            setIsPlaying(true);
-            try {
-                await videoRef.current.play();
-            } catch (error) {
-                console.log("Can't play video", error);
-                setIsPlaying(false);
+        if (currentMedia) {
+            if (isImageFile(currentMedia.url)) {
+                playImage();
+            } else if (isVideoFile(currentMedia.url) && videoRef.current) {
+                try {
+                    await videoRef.current.play();
+                    console.log("Video started playing:", currentMedia.url);
+                } catch (error) {
+                    console.log("Can't play video", error);
+                    handleNext();
+                }
             }
         }
     };
 
     const pause = () => {
-        if (currentMedia && !isImageFile(currentMedia.url) && videoRef.current) {
-            setIsPlaying(false);
-            videoRef.current.pause();
+        if (currentMedia) {
+            if (isImageFile(currentMedia.url)) {
+                pauseImage();
+            } else if (isVideoFile(currentMedia.url) && videoRef.current) {
+                videoRef.current.pause();
+            }
         }
     };
 
     const stop = () => {
         if (currentMedia && isImageFile(currentMedia.url)) {
-            clearInterval(imageTimerRef.current);
+            clearTimeout(imageTimerRef.current);
             setImageElapsed(0);
         } else if (videoRef.current) {
             videoRef.current.pause();
@@ -85,29 +81,21 @@ function VideoPlayer() {
     };
 
     const playImage = () => {
-        setIsPlaying(true);
-        const timer = setInterval(() => {
-            setImageElapsed((prev) => {
-                if (prev >= imageDuration) {
-                    clearInterval(timer);
-                    handleNext();
-                    return prev;
-                }
-                return prev + 1;
-            });
-        }, 1000);
+        clearTimeout(imageTimerRef.current);
+        const timer = setTimeout(() => {
+            handleNext();
+        }, (imageDuration - imageElapsed) * 1000);
         imageTimerRef.current = timer;
     };
 
     const pauseImage = () => {
-        setIsPlaying(false);
-        clearInterval(imageTimerRef.current);
+        clearTimeout(imageTimerRef.current);
     };
 
     const handleNext = useCallback(() => {
         setCurrentMediaIndex((prevIndex) => {
             const nextIndex = (prevIndex + 1) % mediaList.length;
-            console.log('Next media index:', nextIndex);
+            console.log("Moving to next media. New index:", nextIndex);
             return nextIndex;
         });
     }, [mediaList.length]);
@@ -115,21 +103,13 @@ function VideoPlayer() {
     const handlePrev = useCallback(() => {
         setCurrentMediaIndex((prevIndex) => {
             const nextIndex = (prevIndex - 1 + mediaList.length) % mediaList.length;
-            console.log('Previous media index:', nextIndex);
+            console.log("Moving to previous media. New index:", nextIndex);
             return nextIndex;
         });
     }, [mediaList.length]);
 
     const handleVideoRange = () => {
-        if (currentMedia && isImageFile(currentMedia.url)) {
-            const newTime = videoRangeRef.current.value;
-            setImageElapsed(newTime);
-            clearInterval(imageTimerRef.current);
-            const remainingTime = imageDuration - newTime;
-            imageTimerRef.current = setTimeout(() => {
-                handleNext();
-            }, remainingTime * 1000);
-        } else if (videoRef.current) {
+        if (currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
             videoRef.current.currentTime = videoRangeRef.current.value;
             setCurrentTimeSec(videoRangeRef.current.value);
         }
@@ -173,14 +153,11 @@ function VideoPlayer() {
 
     useEffect(() => {
         let interval;
-
-        if (isPlaying && currentMedia && !isImageFile(currentMedia.url)) {
+        if (isPlaying && currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
             interval = setInterval(() => {
-                if (videoRef.current) {
-                    const { min, sec } = formatTime(videoRef.current.currentTime);
-                    setCurrentTimeSec(videoRef.current.currentTime);
-                    setCurrentTime([min, sec]);
-                }
+                const { min, sec } = formatTime(videoRef.current.currentTime);
+                setCurrentTimeSec(videoRef.current.currentTime);
+                setCurrentTime([min, sec]);
             }, 1000);
         } else {
             clearInterval(interval);
@@ -194,29 +171,36 @@ function VideoPlayer() {
                 setDurationSec(videoRef.current.duration);
                 const { min, sec } = formatTime(videoRef.current.duration);
                 setDuration([min, sec]);
-                play();
             }
         };
 
-        const handleEnded = handleNext;
+        const handleEnded = () => {
+            console.log("Video ended. Moving to next media.");
+            handleNext();
+        };
 
         if (currentMedia) {
             if (isImageFile(currentMedia.url)) {
-                playImage();
-                return () => clearInterval(imageTimerRef.current);
-            } else if (videoRef.current) {
-                videoRef.current.addEventListener('loadeddata', handleLoadedData, false);
+                if (isPlaying) {
+                    playImage();
+                }
+            } else if (isVideoFile(currentMedia.url) && videoRef.current) {
+                videoRef.current.addEventListener('loadeddata', handleLoadedData);
                 videoRef.current.addEventListener('ended', handleEnded);
-
-                return () => {
-                    if (videoRef.current) {
-                        videoRef.current.removeEventListener('loadeddata', handleLoadedData);
-                        videoRef.current.removeEventListener('ended', handleEnded);
-                    }
-                };
+                if (isPlaying) {
+                    play();
+                }
             }
         }
-    }, [currentMedia, handleNext]);
+
+        return () => {
+            clearTimeout(imageTimerRef.current);
+            if (videoRef.current) {
+                videoRef.current.removeEventListener('loadeddata', handleLoadedData);
+                videoRef.current.removeEventListener('ended', handleEnded);
+            }
+        };
+    }, [currentMedia, isPlaying, handleNext]);
 
     useEffect(() => {
         if (mediaList.length > 0) {
@@ -237,16 +221,15 @@ function VideoPlayer() {
         console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
         setCurrentTimeSec(0);
         setImageElapsed(0);
-        setIsPlaying(false);
         
         if (currentMedia) {
-            if (isImageFile(currentMedia.url)) {
-                playImage();
-            } else {
+            if (isPlaying) {
                 play();
+            } else {
+                pause();
             }
         }
-    }, [currentMedia]);
+    }, [currentMedia, currentMediaIndex, isPlaying]);
 
     if (!currentMedia) {
         return <div>Loading...</div>;
@@ -258,7 +241,7 @@ function VideoPlayer() {
                 {isImageFile(currentMedia.url) ? (
                     <img className="video-image" src={currentMedia.url} alt={currentMedia.title || 'Media'} />
                 ) : (
-                    <video ref={videoRef} src={currentMedia.url} onClick={handlePlayPause} poster='src/assets/videos/intro.jpg'></video>
+                    <video ref={videoRef} src={currentMedia.url} poster='src/assets/videos/intro.jpg'></video>
                 )}
                 <div className="VideoPlayer__overlay">
                     <div className="VideoPlayer__info">
@@ -266,37 +249,24 @@ function VideoPlayer() {
                         <p>{currentMedia.text || 'No description available'}</p>
                     </div>
                 </div>
-                <button className="control-button prev" onClick={handlePrev}>
-                    <i className="ri-skip-back-fill icon"></i>
-                </button>
-                <button className="control-button next" onClick={handleNext}>
-                    <i className="ri-skip-forward-fill icon"></i>
-                </button>
             </div>
             <div className="VideoPlayer__controls">
                 <div className="control-group control-group-btn">
+                    <button className="control-button prev" onClick={handlePrev}>
+                        <i className="ri-skip-back-fill icon"></i>
+                    </button>
                     <button className="control-button play-pause" onClick={handlePlayPause}>
                         <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
                     </button>
                     <button className="control-button stop" onClick={stop}>
                         <i className="ri-stop-fill icon"></i>
                     </button>
+                    <button className="control-button next" onClick={handleNext}>
+                        <i className="ri-skip-forward-fill icon"></i>
+                    </button>
                 </div>
                 <div className="control-group control-group-slider">
-                    {isImageFile(currentMedia.url) ? (
-                        <>
-                            <input
-                                type="range"
-                                className="range-input"
-                                ref={videoRangeRef}
-                                onChange={handleVideoRange}
-                                max={imageDuration}
-                                value={imageElapsed}
-                                min={0}
-                            />
-                            <span className="time">{imageElapsed} / {imageDuration}</span>
-                        </>
-                    ) : (
+                    {isVideoFile(currentMedia.url) && (
                         <>
                             <input
                                 type="range"
