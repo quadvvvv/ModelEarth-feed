@@ -85,6 +85,7 @@ function VideoPlayer({ autoplay = false }) {
             videoRef.current.currentTime = 0;
         }
         setCurrentTimeSec(0);
+        setCurrentTime([0, 0]);  // Reset currentTime to [0, 0]
         setIsPlaying(false);
     };
 
@@ -220,6 +221,7 @@ function VideoPlayer({ autoplay = false }) {
     useEffect(() => {
         console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
         setCurrentTimeSec(0);
+        setCurrentTime([0, 0]);  // Reset currentTime when media changes
         setImageElapsed(0);
         setIsPlaying(false);  // Reset playing state when media changes
         
