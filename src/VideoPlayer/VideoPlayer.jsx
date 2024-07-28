@@ -3,12 +3,12 @@ import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
 
-function VideoPlayer() {
+function VideoPlayer({ autoplay = false }) {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
 
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
-    const [isMute, setIsMute] = useState(false);
+    const [isMute, setIsMute] = useState(true);  // Start muted
     const [imageElapsed, setImageElapsed] = useState(0);
     const videoRef = useRef(null);
     const videoRangeRef = useRef(null);
@@ -34,38 +34,46 @@ function VideoPlayer() {
     };
 
     const handlePlayPause = () => {
+        console.log("Play/Pause clicked. Current isPlaying:", isPlaying);
         if (isPlaying) {
             pause();
         } else {
             play();
         }
-        setIsPlaying(!isPlaying);
     };
 
     const play = async () => {
+        console.log("Play function called");
         if (currentMedia) {
             if (isImageFile(currentMedia.url)) {
                 playImage();
+                setIsPlaying(true);
             } else if (isVideoFile(currentMedia.url) && videoRef.current) {
                 try {
+                    videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
                     await videoRef.current.play();
+                    setIsPlaying(true);
                     console.log("Video started playing:", currentMedia.url);
                 } catch (error) {
-                    console.log("Can't play video", error);
+                    console.error("Can't play video", error);
                     handleNext();
+                    return;
                 }
             }
         }
     };
 
     const pause = () => {
+        console.log("Pause function called");
         if (currentMedia) {
             if (isImageFile(currentMedia.url)) {
                 pauseImage();
             } else if (isVideoFile(currentMedia.url) && videoRef.current) {
                 videoRef.current.pause();
+                console.log("Video paused:", currentMedia.url);
             }
         }
+        setIsPlaying(false);
     };
 
     const stop = () => {
@@ -133,6 +141,7 @@ function VideoPlayer() {
             let volume = volumeRangeRef.current.value;
             if (videoRef.current) {
                 videoRef.current.volume = volume;
+                videoRef.current.muted = volume === '0';
             }
             setCurrentVolume(volume);
             setIsMute(volume === '0');
@@ -140,14 +149,9 @@ function VideoPlayer() {
     };
 
     const handleMute = () => {
+        setIsMute(!isMute);
         if (videoRef.current) {
-            if (isMute) {
-                videoRef.current.volume = currentVolume;
-                setIsMute(false);
-            } else {
-                videoRef.current.volume = 0;
-                setIsMute(true);
-            }
+            videoRef.current.muted = !isMute;
         }
     };
 
@@ -171,25 +175,21 @@ function VideoPlayer() {
                 setDurationSec(videoRef.current.duration);
                 const { min, sec } = formatTime(videoRef.current.duration);
                 setDuration([min, sec]);
+                console.log("Video loaded:", currentMedia.url);
             }
         };
 
         const handleEnded = () => {
-            console.log("Video ended. Moving to next media.");
+            console.log("Media ended. Moving to next media.");
+            setIsPlaying(false);
             handleNext();
         };
 
         if (currentMedia) {
-            if (isImageFile(currentMedia.url)) {
-                if (isPlaying) {
-                    playImage();
-                }
-            } else if (isVideoFile(currentMedia.url) && videoRef.current) {
+            if (isVideoFile(currentMedia.url) && videoRef.current) {
                 videoRef.current.addEventListener('loadeddata', handleLoadedData);
                 videoRef.current.addEventListener('ended', handleEnded);
-                if (isPlaying) {
-                    play();
-                }
+                videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
             }
         }
 
@@ -200,7 +200,7 @@ function VideoPlayer() {
                 videoRef.current.removeEventListener('ended', handleEnded);
             }
         };
-    }, [currentMedia, isPlaying, handleNext]);
+    }, [currentMedia, handleNext, isMute]);
 
     useEffect(() => {
         if (mediaList.length > 0) {
@@ -221,15 +221,12 @@ function VideoPlayer() {
         console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
         setCurrentTimeSec(0);
         setImageElapsed(0);
+        setIsPlaying(false);  // Reset playing state when media changes
         
-        if (currentMedia) {
-            if (isPlaying) {
-                play();
-            } else {
-                pause();
-            }
+        if (currentMedia && autoplay) {
+            play();
         }
-    }, [currentMedia, currentMediaIndex, isPlaying]);
+    }, [currentMedia, currentMediaIndex, autoplay]);
 
     if (!currentMedia) {
         return <div>Loading...</div>;
@@ -241,7 +238,7 @@ function VideoPlayer() {
                 {isImageFile(currentMedia.url) ? (
                     <img className="video-image" src={currentMedia.url} alt={currentMedia.title || 'Media'} />
                 ) : (
-                    <video ref={videoRef} src={currentMedia.url} poster='src/assets/videos/intro.jpg'></video>
+                    <video ref={videoRef} src={currentMedia.url} poster='src/assets/videos/intro.jpg' muted={isMute}></video>
                 )}
                 <div className="VideoPlayer__overlay">
                     <div className="VideoPlayer__info">
