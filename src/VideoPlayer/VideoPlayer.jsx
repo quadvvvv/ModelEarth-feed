@@ -258,11 +258,11 @@ function VideoPlayer() {
                     <button className="control-button play-pause" onClick={handlePlayPause}>
                         <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
                     </button>
-                    <button className="control-button stop" onClick={stop}>
-                        <i className="ri-stop-fill icon"></i>
-                    </button>
                     <button className="control-button next" onClick={handleNext}>
                         <i className="ri-skip-forward-fill icon"></i>
+                    </button>
+                    <button className="control-button stop" onClick={stop}>
+                        <i className="ri-stop-fill icon"></i>
                     </button>
                 </div>
                 <div className="control-group control-group-slider">
