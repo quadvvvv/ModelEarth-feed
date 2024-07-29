@@ -17,7 +17,7 @@ function App() {
       <div className="App">
         {!isPopup && <button className="popup-btn" onClick={() => setIsPopup(true)}><i className="ri-links-line"></i></button>}
         {isPopup && <Popup {...{ setVideoList, setCurrentVideoSrc, setIsPopup }} />}
-        <VideoPlayer />
+        <VideoPlayer autoplay={true}/>
       </div>
     </ContextProvider>
   );
