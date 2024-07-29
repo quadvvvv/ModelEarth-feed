@@ -26,7 +26,7 @@ Place your name here if you're working on an update.
 
 In the existing code, we tried to automate copying the index-xxxxxxxx.js and index-xxxxxxxx.css files to feedplayer.js and feedplayer.css within [dist/assets](https://github.com/ModelEarth/feed/tree/main/dist/assets).  We replaced vite.config.js with vite.config-upcoming.js, but it's not working yet (the copy might run before the build completes).  Once generating a consistant .js and .css file name, edit feed/intro.html to use feedplayer.js and feedplayer.css (or whatever .js file name is standard for a Vite widget).  Also adjust so the widget can be played on the main feed/index.html page.
 
-2.) DONE: Update the code to display images within the video sequence - By Fanyi
+2.) TO DO: Update the progress bar to include multiple clickable sections when there are sequences of images. - Matt B
 
 3.) DONE: Aspect ratio of video remains the same when showing landscape image.<!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
 
