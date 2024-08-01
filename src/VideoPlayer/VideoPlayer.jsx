@@ -21,6 +21,9 @@ function VideoPlayer({ autoplay = false }) {
     const [durationSec, setDurationSec] = useState(0);
     const [currentSec, setCurrentTimeSec] = useState(0);
 
+    const [isDropdownActive, setIsDropdownActive] = useState(false);  // Dropdown state
+
+
     const imageDuration = 4;
 
     const isImageFile = (src) => {
@@ -156,6 +159,7 @@ function VideoPlayer({ autoplay = false }) {
         }
     };
 
+
     useEffect(() => {
         let interval;
         if (isPlaying && currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
@@ -247,6 +251,28 @@ function VideoPlayer({ autoplay = false }) {
                         <h2>{currentMedia.title || 'Untitled'}</h2>
                         <p>{currentMedia.text || 'No description available'}</p>
                     </div>
+                </div>
+                <div className='VideoPlayer__dropdown'>
+                    <div className='VideoPlayer__select'
+                    onClick={() => setIsDropdownActive(!isDropdownActive)}
+                    >
+                         <span>{currentMedia ? currentMedia.title : 'Select Media'}</span>
+                        <div className='VideoPlayer__caret'></div>
+                    </div>
+                    <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
+                    {mediaList.map((media, index) => (
+                        <li
+                            key={index}
+                            className={currentMediaIndex === index ? 'active' : ''}
+                            onClick={() => {
+                                setCurrentMediaIndex(index);
+                                setIsDropdownActive(false);
+                            }}
+                        >
+                            {media.title || media.url}
+                        </li>
+                    ))}
+                </ul>
                 </div>
             </div>
             <div className="VideoPlayer__controls">
