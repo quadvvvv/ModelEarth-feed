@@ -21,6 +21,7 @@ function VideoPlayer({ autoplay = false }) {
     const [durationSec, setDurationSec] = useState(0);
     const [currentSec, setCurrentTimeSec] = useState(0);
 
+    const [isDropdownActive, setIsDropdownActive] = useState(false);  // Dropdown state
     const imageDuration = 4; // Actual duration in seconds
     const imageProgressMax = 1000; // New maximum value for image progress
 
