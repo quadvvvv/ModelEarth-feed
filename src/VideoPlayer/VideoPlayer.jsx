@@ -21,10 +21,8 @@ function VideoPlayer({ autoplay = false }) {
     const [durationSec, setDurationSec] = useState(0);
     const [currentSec, setCurrentTimeSec] = useState(0);
 
-    const [isDropdownActive, setIsDropdownActive] = useState(false);  // Dropdown state
-
-
-    const imageDuration = 4;
+    const imageDuration = 4; // Actual duration in seconds
+    const imageProgressMax = 1000; // New maximum value for image progress
 
     const isImageFile = (src) => {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
@@ -37,7 +35,6 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     const handlePlayPause = () => {
-        console.log("Play/Pause clicked. Current isPlaying:", isPlaying);
         if (isPlaying) {
             pause();
         } else {
@@ -46,34 +43,29 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     const play = async () => {
-        console.log("Play function called");
         if (currentMedia) {
             if (isImageFile(currentMedia.url)) {
                 playImage();
                 setIsPlaying(true);
             } else if (isVideoFile(currentMedia.url) && videoRef.current) {
                 try {
-                    videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
+                    videoRef.current.muted = isMute;
                     await videoRef.current.play();
                     setIsPlaying(true);
-                    console.log("Video started playing:", currentMedia.url);
                 } catch (error) {
                     console.error("Can't play video", error);
                     handleNext();
-                    return;
                 }
             }
         }
     };
 
     const pause = () => {
-        console.log("Pause function called");
         if (currentMedia) {
             if (isImageFile(currentMedia.url)) {
                 pauseImage();
             } else if (isVideoFile(currentMedia.url) && videoRef.current) {
                 videoRef.current.pause();
-                console.log("Video paused:", currentMedia.url);
             }
         }
         setIsPlaying(false);
@@ -81,49 +73,50 @@ function VideoPlayer({ autoplay = false }) {
 
     const stop = () => {
         if (currentMedia && isImageFile(currentMedia.url)) {
-            clearTimeout(imageTimerRef.current);
+            clearInterval(imageTimerRef.current);
             setImageElapsed(0);
         } else if (videoRef.current) {
             videoRef.current.pause();
             videoRef.current.currentTime = 0;
         }
         setCurrentTimeSec(0);
-        setCurrentTime([0, 0]);  // Reset currentTime to [0, 0]
+        setCurrentTime([0, 0]);
         setIsPlaying(false);
     };
 
     const playImage = () => {
-        clearTimeout(imageTimerRef.current);
-        const timer = setTimeout(() => {
-            handleNext();
-        }, (imageDuration - imageElapsed) * 1000);
+        clearInterval(imageTimerRef.current);
+        const timer = setInterval(() => {
+            setImageElapsed((prev) => {
+                if (prev >= imageProgressMax) {
+                    clearInterval(timer);
+                    handleNext();
+                    return 0;
+                }
+                return prev + (imageProgressMax / (imageDuration * 1000 / 10)); // Increment by smaller amounts
+            });
+        }, 10); // Update every 10ms for smoother animation
         imageTimerRef.current = timer;
     };
 
     const pauseImage = () => {
-        clearTimeout(imageTimerRef.current);
+        clearInterval(imageTimerRef.current);
     };
 
     const handleNext = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => {
-            const nextIndex = (prevIndex + 1) % mediaList.length;
-            console.log("Moving to next media. New index:", nextIndex);
-            return nextIndex;
-        });
+        setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % mediaList.length);
     }, [mediaList.length]);
 
     const handlePrev = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => {
-            const nextIndex = (prevIndex - 1 + mediaList.length) % mediaList.length;
-            console.log("Moving to previous media. New index:", nextIndex);
-            return nextIndex;
-        });
+        setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + mediaList.length) % mediaList.length);
     }, [mediaList.length]);
 
     const handleVideoRange = () => {
         if (currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
             videoRef.current.currentTime = videoRangeRef.current.value;
             setCurrentTimeSec(videoRangeRef.current.value);
+        } else if (currentMedia && isImageFile(currentMedia.url)) {
+            setImageElapsed(Number(videoRangeRef.current.value));
         }
     };
 
@@ -180,12 +173,10 @@ function VideoPlayer({ autoplay = false }) {
                 setDurationSec(videoRef.current.duration);
                 const { min, sec } = formatTime(videoRef.current.duration);
                 setDuration([min, sec]);
-                console.log("Video loaded:", currentMedia.url);
             }
         };
 
         const handleEnded = () => {
-            console.log("Media ended. Moving to next media.");
             setIsPlaying(false);
             handleNext();
         };
@@ -194,12 +185,12 @@ function VideoPlayer({ autoplay = false }) {
             if (isVideoFile(currentMedia.url) && videoRef.current) {
                 videoRef.current.addEventListener('loadeddata', handleLoadedData);
                 videoRef.current.addEventListener('ended', handleEnded);
-                videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
+                videoRef.current.muted = isMute;
             }
         }
 
         return () => {
-            clearTimeout(imageTimerRef.current);
+            clearInterval(imageTimerRef.current);
             if (videoRef.current) {
                 videoRef.current.removeEventListener('loadeddata', handleLoadedData);
                 videoRef.current.removeEventListener('ended', handleEnded);
@@ -210,7 +201,6 @@ function VideoPlayer({ autoplay = false }) {
     useEffect(() => {
         if (mediaList.length > 0) {
             setCurrentMedia(mediaList[currentMediaIndex]);
-            console.log('Current media set:', mediaList[currentMediaIndex], 'Index:', currentMediaIndex);
         }
     }, [currentMediaIndex, mediaList, setCurrentMedia]);
 
@@ -218,21 +208,19 @@ function VideoPlayer({ autoplay = false }) {
         if (mediaList.length > 0 && !currentMedia) {
             setCurrentMediaIndex(0);
             setCurrentMedia(mediaList[0]);
-            console.log('Initial media set:', mediaList[0], 'Index: 0');
         }
     }, [mediaList, currentMedia, setCurrentMedia]);
 
     useEffect(() => {
-        console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
         setCurrentTimeSec(0);
-        setCurrentTime([0, 0]);  // Reset currentTime when media changes
+        setCurrentTime([0, 0]);
         setImageElapsed(0);
-        setIsPlaying(false);  // Reset playing state when media changes
+        setIsPlaying(false);
         
         if (currentMedia && autoplay) {
             play();
         }
-    }, [currentMedia, currentMediaIndex, autoplay]);
+    }, [currentMedia, autoplay]);
 
     if (!currentMedia) {
         return <div>Loading...</div>;
@@ -291,7 +279,7 @@ function VideoPlayer({ autoplay = false }) {
                     </button>
                 </div>
                 <div className="control-group control-group-slider">
-                    {isVideoFile(currentMedia.url) && (
+                    {isVideoFile(currentMedia.url) ? (
                         <>
                             <input
                                 type="range"
@@ -303,6 +291,21 @@ function VideoPlayer({ autoplay = false }) {
                                 min={0}
                             />
                             <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
+                        </>
+                    ) : (
+                        <>
+                            <input
+                                type="range"
+                                className="range-input"
+                                ref={videoRangeRef}
+                                onChange={handleVideoRange}
+                                max={imageProgressMax}
+                                value={imageElapsed}
+                                min={0}
+                            />
+                            <span className="time">
+                                {(imageElapsed / imageProgressMax * imageDuration).toFixed(1)} / {imageDuration}
+                            </span>
                         </>
                     )}
                 </div>
