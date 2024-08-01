@@ -91,9 +91,16 @@ function VideoPlayer({ autoplay = false }) {
 
     const playImage = () => {
         clearTimeout(imageTimerRef.current);
-        const timer = setTimeout(() => {
-            handleNext();
-        }, (imageDuration - imageElapsed) * 1000);
+        const timer = setInterval(() => {
+            setImageElapsed((prev) => {
+                if (prev >= imageDuration) {
+                    clearInterval(timer);
+                    handleNext();
+                    return 0;
+                }
+                return prev + 1;
+            });
+        }, 1000);
         imageTimerRef.current = timer;
     };
 
@@ -121,6 +128,8 @@ function VideoPlayer({ autoplay = false }) {
         if (currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
             videoRef.current.currentTime = videoRangeRef.current.value;
             setCurrentTimeSec(videoRangeRef.current.value);
+        } else if (currentMedia && isImageFile(currentMedia.url)) {
+            setImageElapsed(Number(videoRangeRef.current.value));
         }
     };
 
@@ -265,7 +274,7 @@ function VideoPlayer({ autoplay = false }) {
                     </button>
                 </div>
                 <div className="control-group control-group-slider">
-                    {isVideoFile(currentMedia.url) && (
+                    {isVideoFile(currentMedia.url) ? (
                         <>
                             <input
                                 type="range"
@@ -277,6 +286,19 @@ function VideoPlayer({ autoplay = false }) {
                                 min={0}
                             />
                             <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
+                        </>
+                    ) : (
+                        <>
+                            <input
+                                type="range"
+                                className="range-input"
+                                ref={videoRangeRef}
+                                onChange={handleVideoRange}
+                                max={imageDuration}
+                                value={imageElapsed}
+                                min={0}
+                            />
+                            <span className="time">{imageElapsed} / {imageDuration}</span>
                         </>
                     )}
                 </div>
