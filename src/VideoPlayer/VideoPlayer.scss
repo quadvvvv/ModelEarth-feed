@@ -76,6 +76,97 @@
     transition: all 0.3s ease;
   }
 
+
+  &__dropdown {
+    position: absolute;
+    top: 6px;
+    right: 22px;
+    width: 140px;
+    min-width: 1.8em;
+    margin: 0.5em;
+    z-index: 10;  // Ensure the dropdown is above other elements
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+
+    * {
+      font-weight: bold;
+      box-sizing: border-box;
+    }
+  }
+
+  &__select {
+    background-color: rgba(255, 255, 255, 0.5);  // Transparent white background
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid rgba(222, 224, 229, 0.5);  // Transparent edges
+    border-radius: 0.5em;
+    padding: 0.1em;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.7);  // Slightly less transparent on hover
+    }
+  }
+
+  &__caret {
+    margin-left: 0.5em;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid black;
+  }
+
+  &__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: rgba(255, 255, 255, 0.7);;
+    border: 2px solid rgba(222, 224, 229, 0.5);  // Transparent edges
+    border-radius: 0.5em;
+    max-height: 200px;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+    &.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    &::-webkit-scrollbar {
+      width: 8px; // Width of the scrollbar
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.7); // Match the background of the menu
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(222, 224, 229, 0.5); // Match the edges of the menu
+      border-radius: 0.5em;
+    }
+  }
+
+  &__menu li {
+    padding: 0.5em 1em;
+    cursor: pointer;
+    color: black;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);  // Light gray background on hover
+    }
+
+    &.active {
+      background-color: rgba(0, 0, 0, 0.2);  // Slightly darker background for active item
+    }
+  }
+
+
+
   &__info {
     color: white;
     transition: all 0.3s ease;
@@ -90,7 +181,7 @@
       font-size: 14px;
       margin: 0;
       max-height: 0;
-      overflow: hidden;
+      display: hidden;
       opacity: 0;
       transition: all 0.3s ease;
     }
@@ -112,6 +203,10 @@
         font-size: 16px;
         margin-top: 10px;
       }
+    }
+
+    .VideoPlayer__dropdown{
+      opacity: 1;
     }
   }
 
