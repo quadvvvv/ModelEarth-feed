@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
+import axios from 'axios'; //Tp fetch the urls of the API
 
 function VideoPlayer({ autoplay = false }) {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
@@ -25,9 +26,64 @@ function VideoPlayer({ autoplay = false }) {
     const imageDuration = 4; // Actual duration in seconds
     const imageProgressMax = 1000; // New maximum value for image progress
 
+    // To fetch the urls and then fetch the image urls from the API
+
+    const [processedMediaList, setProcessedMediaList] = useState([]);
+
+    useEffect(() => {
+        processMediaList(mediaList);
+    }, [mediaList]);
+
+    const processMediaList = (list) => {
+        const processedListPromises = list.map((media) => {
+            if (isAPIURL(media)) {
+                return fetchMediaFromAPI(media.url).then((mediaItems) => {
+                    if (Array.isArray(mediaItems)) {
+                        return mediaItems.map(item => ({ ...media, ...item }));
+                    }
+                    return [{ ...media, ...mediaItems }];
+                });
+            } else {
+                return Promise.resolve([media]);
+            }
+        });
+
+        Promise.all(processedListPromises).then((results) => {
+            // Flatten the array if there are nested arrays
+            const flattenedResults = results.flat();
+            console.log("Processed Media List ", flattenedResults);
+            setProcessedMediaList(flattenedResults);
+        });
+    };
+
+
     const isImageFile = (src) => {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
         return src && imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
+    };
+
+    // Check if the src is API Url
+    const isAPIURL = (src) => {
+        const apiPatterns = ['API URL'];
+        return apiPatterns.some(pattern => src.text.includes(pattern));
+    };
+
+    // Fetch the image/video url from API url
+
+    const fetchMediaFromAPI = async (apiUrl) => {
+        try {
+            const response = await axios.get(apiUrl);
+            
+            console.log("Response from API URL ", response);
+            return response.data.map(item => ({
+                url: item.hdurl || item.url,
+                text: item.explanation || 'No description available',
+                title:item.title
+            }));
+        } catch (error) {
+            console.error('Error fetching from API:', error);
+            return [];
+        }
     };
 
     const isVideoFile = (src) => {
@@ -105,12 +161,12 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     const handleNext = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % mediaList.length);
-    }, [mediaList.length]);
+        setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % processedMediaList.length);
+    }, [processedMediaList.length]);
 
     const handlePrev = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + mediaList.length) % mediaList.length);
-    }, [mediaList.length]);
+        setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + processedMediaList.length) % processedMediaList.length);
+    }, [processedMediaList.length]);
 
     const handleVideoRange = () => {
         if (currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
@@ -152,7 +208,6 @@ function VideoPlayer({ autoplay = false }) {
             videoRef.current.muted = !isMute;
         }
     };
-
 
     useEffect(() => {
         let interval;
@@ -200,17 +255,17 @@ function VideoPlayer({ autoplay = false }) {
     }, [currentMedia, handleNext, isMute]);
 
     useEffect(() => {
-        if (mediaList.length > 0) {
-            setCurrentMedia(mediaList[currentMediaIndex]);
+        if (processedMediaList.length > 0) {
+            setCurrentMedia(processedMediaList[currentMediaIndex]);
         }
-    }, [currentMediaIndex, mediaList, setCurrentMedia]);
+    }, [currentMediaIndex, processedMediaList, setCurrentMedia]);
 
     useEffect(() => {
-        if (mediaList.length > 0 && !currentMedia) {
+        if (processedMediaList.length > 0 && !currentMedia) {
             setCurrentMediaIndex(0);
-            setCurrentMedia(mediaList[0]);
+            setCurrentMedia(processedMediaList[0]);
         }
-    }, [mediaList, currentMedia, setCurrentMedia]);
+    }, [processedMediaList, currentMedia, setCurrentMedia]);
 
     useEffect(() => {
         setCurrentTimeSec(0);
@@ -249,7 +304,7 @@ function VideoPlayer({ autoplay = false }) {
                         <div className='VideoPlayer__caret'></div>
                     </div>
                     <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
-                    {mediaList.map((media, index) => (
+                    {processedMediaList.map((media, index) => (
                         <li
                             key={index}
                             className={currentMediaIndex === index ? 'active' : ''}
