@@ -38,9 +38,9 @@ In the existing code, we tried to automate copying the index-xxxxxxxx.js and ind
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
-8a.) TO DO: Pull NASA feed into React Feed Player and show images. - Noopur
+8a.) TO DO: Pull NASA feed into React Feed Player and show images. - Noopur : Done
 
-8b.) TO DO: In Javascript feed/view page, pull in multiple Bluesky RSS feed links by passing in a pipe | separated list of feed urls. Add loop when pipes found in the url value in both JQuery feed/view - Noopur
+8b.) TO DO: In Javascript feed/view page, pull in multiple Bluesky RSS feed links by passing in a pipe | separated list of feed urls. Add loop when pipes found in the url value in both JQuery feed/view - Noopur : Done
 
 8c.) In React Feed Player, using [Feeds tab CSV pull from Google Sheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vSxfv7lxikjrmro3EJYGE_134vm5HdDszZKt4uKswHhsNJ_-afSaG9RoA4oeNV656r4mTuG3wTu38pM/pub?gid=889452679&single=true&output=csv), split on the pipe in the React Feed Player. - Noopur
 
