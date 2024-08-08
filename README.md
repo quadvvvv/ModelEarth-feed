@@ -24,7 +24,7 @@ Place your name here if you're working on an update.
 
 1.) TO DO: Update the Yarn Build to make the player an embeddable widget. Here's possible <a href="https://chatgpt.com/share/b847e2c7-732b-4f28-b069-7a58bc107d93">setup info in ChatGPT</a>.
 
-In the existing code, we tried to automate copying the index-xxxxxxxx.js and index-xxxxxxxx.css files to feedplayer.js and feedplayer.css within [dist/assets](https://github.com/ModelEarth/feed/tree/main/dist/assets).  We replaced vite.config.js with vite.config-upcoming.js, but it's not working yet (the copy might run before the build completes).  Once generating a consistant .js and .css file name, edit feed/intro.html to use feedplayer.js and feedplayer.css (or whatever .js file name is standard for a Vite widget).  Also adjust so the widget can be played on the main feed/index.html page. - Ben R
+In the existing code, we tried to automate copying the index-xxxxxxxx.js and index-xxxxxxxx.css files to feedplayer.js and feedplayer.css within [dist/assets](https://github.com/ModelEarth/feed/tree/main/dist/assets).  We replaced vite.config.js with vite.config-upcoming.js, but it's not working yet (the copy might run before the build completes).  Once generating a consistant .js and .css file name, edit feed/intro.html to use feedplayer.js and feedplayer.css (or whatever .js file name is standard for a Vite widget).  Also adjust so the widget can be played on the main feed/index.html page. Marco shared a link to [How to copy images in DIST folder from assets in Vite js](https://stackoverflow.com/questions/78076268/how-to-copy-images-in-dist-folder-from-assets-in-vite-js)
 
 2.) TO DO: Update the progress bar to include multiple clickable sections when there are sequences of images. - Matt B
 
@@ -34,7 +34,7 @@ In the existing code, we tried to automate copying the index-xxxxxxxx.js and ind
 
 5.) DONE: Add columns for Title and Description in the Google Sheet - Matt B
 
-6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time
+6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time - Srinath
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
