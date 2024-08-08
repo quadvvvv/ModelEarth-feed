@@ -2,9 +2,10 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
+import axios from 'axios'; //Tp fetch the urls of the API
 
 function VideoPlayer({ autoplay = false }) {
-    const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
+    const { mediaList, currentMedia, setCurrentMedia, feedlist, setFeedlist } = useContext(Context);
 
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
@@ -22,12 +23,68 @@ function VideoPlayer({ autoplay = false }) {
     const [currentSec, setCurrentTimeSec] = useState(0);
 
     const [isDropdownActive, setIsDropdownActive] = useState(false);  // Dropdown state
-    const imageDuration = 4; // Actual duration in seconds
-    const imageProgressMax = 1000; // New maximum value for image progress
+    const [index, setIndex] = useState(0);//Setting the current drop down title
+
+    const imageDuration = 4;
+
+    // To fetch the urls and then fetch the image urls from the API
+
+    const [processedMediaList, setProcessedMediaList] = useState([]);
+
+    useEffect(() => {
+        processMediaList(mediaList);
+    }, [mediaList]);
+
+    const processMediaList = (list) => {
+        const processedListPromises = list.map((media) => {
+            if (isAPIURL(media)) {
+                return fetchMediaFromAPI(media.url).then((mediaItems) => {
+                    if (Array.isArray(mediaItems)) {
+                        return mediaItems.map(item => ({ ...media, ...item }));
+                    }
+                    return [{ ...media, ...mediaItems }];
+                });
+            } else {
+                return Promise.resolve([media]);
+            }
+        });
+
+        Promise.all(processedListPromises).then((results) => {
+            // Flatten the array if there are nested arrays
+            const flattenedResults = results.flat();
+            console.log("Processed Media List ", flattenedResults);
+            setProcessedMediaList(flattenedResults);
+        });
+    };
+
 
     const isImageFile = (src) => {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
         return src && imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
+    };
+
+    // Check if the src is API Url
+    const isAPIURL = (src) => {
+        const apiPatterns = ['API URL'];
+        return apiPatterns.some(pattern => src.text.includes(pattern));
+    };
+
+    // Fetch the image/video url from API url
+
+    const fetchMediaFromAPI = async (apiUrl) => {
+        try {
+            const response = await axios.get(apiUrl);
+            
+            console.log("Response from API URL ", response);
+            return response.data.map(item => ({
+                url: item.hdurl || item.url,
+                text: item.explanation || 'No description available',
+                title:item.title
+            }));
+        } catch (error) {
+            console.error('Error fetching from API:', error);
+            return [];
+        }
     };
 
     const isVideoFile = (src) => {
@@ -36,6 +93,7 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     const handlePlayPause = () => {
+        console.log("Play/Pause clicked. Current isPlaying:", isPlaying);
         if (isPlaying) {
             pause();
         } else {
@@ -44,29 +102,34 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     const play = async () => {
+        console.log("Play function called");
         if (currentMedia) {
             if (isImageFile(currentMedia.url)) {
                 playImage();
                 setIsPlaying(true);
             } else if (isVideoFile(currentMedia.url) && videoRef.current) {
                 try {
-                    videoRef.current.muted = isMute;
+                    videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
                     await videoRef.current.play();
                     setIsPlaying(true);
+                    console.log("Video started playing:", currentMedia.url);
                 } catch (error) {
                     console.error("Can't play video", error);
                     handleNext();
+                    return;
                 }
             }
         }
     };
 
     const pause = () => {
+        console.log("Pause function called");
         if (currentMedia) {
             if (isImageFile(currentMedia.url)) {
                 pauseImage();
             } else if (isVideoFile(currentMedia.url) && videoRef.current) {
                 videoRef.current.pause();
+                console.log("Video paused:", currentMedia.url);
             }
         }
         setIsPlaying(false);
@@ -74,50 +137,50 @@ function VideoPlayer({ autoplay = false }) {
 
     const stop = () => {
         if (currentMedia && isImageFile(currentMedia.url)) {
-            clearInterval(imageTimerRef.current);
+            clearTimeout(imageTimerRef.current);
             setImageElapsed(0);
         } else if (videoRef.current) {
             videoRef.current.pause();
             videoRef.current.currentTime = 0;
         }
         setCurrentTimeSec(0);
-        setCurrentTime([0, 0]);
+        setCurrentTime([0, 0]);  // Reset currentTime to [0, 0]
         setIsPlaying(false);
     };
 
     const playImage = () => {
-        clearInterval(imageTimerRef.current);
-        const timer = setInterval(() => {
-            setImageElapsed((prev) => {
-                if (prev >= imageProgressMax) {
-                    clearInterval(timer);
-                    handleNext();
-                    return 0;
-                }
-                return prev + (imageProgressMax / (imageDuration * 1000 / 10)); // Increment by smaller amounts
-            });
-        }, 10); // Update every 10ms for smoother animation
+        clearTimeout(imageTimerRef.current);
+        const timer = setTimeout(() => {
+            handleNext();
+        }, (imageDuration - imageElapsed) * 1000);
         imageTimerRef.current = timer;
     };
 
     const pauseImage = () => {
-        clearInterval(imageTimerRef.current);
+        clearTimeout(imageTimerRef.current);
     };
 
     const handleNext = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % mediaList.length);
+
+        setCurrentMediaIndex((prevIndex) => {
+            const nextIndex = (prevIndex + 1) % mediaList.length;
+            console.log("Moving to next media. New index:", nextIndex);
+            return nextIndex;
+        });
     }, [mediaList.length]);
 
     const handlePrev = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => (prevIndex - 1 + mediaList.length) % mediaList.length);
+        setCurrentMediaIndex((prevIndex) => {
+            const nextIndex = (prevIndex - 1 + mediaList.length) % mediaList.length;
+            console.log("Moving to previous media. New index:", nextIndex);
+            return nextIndex;
+        });
     }, [mediaList.length]);
 
     const handleVideoRange = () => {
         if (currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
             videoRef.current.currentTime = videoRangeRef.current.value;
             setCurrentTimeSec(videoRangeRef.current.value);
-        } else if (currentMedia && isImageFile(currentMedia.url)) {
-            setImageElapsed(Number(videoRangeRef.current.value));
         }
     };
 
@@ -153,7 +216,6 @@ function VideoPlayer({ autoplay = false }) {
         }
     };
 
-
     useEffect(() => {
         let interval;
         if (isPlaying && currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
@@ -174,10 +236,12 @@ function VideoPlayer({ autoplay = false }) {
                 setDurationSec(videoRef.current.duration);
                 const { min, sec } = formatTime(videoRef.current.duration);
                 setDuration([min, sec]);
+                console.log("Video loaded:", currentMedia.url);
             }
         };
 
         const handleEnded = () => {
+            console.log("Media ended. Moving to next media.");
             setIsPlaying(false);
             handleNext();
         };
@@ -186,12 +250,12 @@ function VideoPlayer({ autoplay = false }) {
             if (isVideoFile(currentMedia.url) && videoRef.current) {
                 videoRef.current.addEventListener('loadeddata', handleLoadedData);
                 videoRef.current.addEventListener('ended', handleEnded);
-                videoRef.current.muted = isMute;
+                videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
             }
         }
 
         return () => {
-            clearInterval(imageTimerRef.current);
+            clearTimeout(imageTimerRef.current);
             if (videoRef.current) {
                 videoRef.current.removeEventListener('loadeddata', handleLoadedData);
                 videoRef.current.removeEventListener('ended', handleEnded);
@@ -200,28 +264,34 @@ function VideoPlayer({ autoplay = false }) {
     }, [currentMedia, handleNext, isMute]);
 
     useEffect(() => {
+
         if (mediaList.length > 0) {
             setCurrentMedia(mediaList[currentMediaIndex]);
+            console.log('Current media set:', mediaList[currentMediaIndex], 'Index:', currentMediaIndex);
+
         }
-    }, [currentMediaIndex, mediaList, setCurrentMedia]);
+    }, [currentMediaIndex, processedMediaList, setCurrentMedia]);
 
     useEffect(() => {
-        if (mediaList.length > 0 && !currentMedia) {
+        if (processedMediaList.length > 0 && !currentMedia) {
             setCurrentMediaIndex(0);
+
             setCurrentMedia(mediaList[0]);
+            console.log('Initial media set:', mediaList[0], 'Index: 0');
         }
-    }, [mediaList, currentMedia, setCurrentMedia]);
+    }, [processedMediaList, currentMedia, setCurrentMedia]);
 
     useEffect(() => {
+        console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
         setCurrentTimeSec(0);
-        setCurrentTime([0, 0]);
+        setCurrentTime([0, 0]);  // Reset currentTime when media changes
         setImageElapsed(0);
-        setIsPlaying(false);
+        setIsPlaying(false);  // Reset playing state when media changes
         
         if (currentMedia && autoplay) {
             play();
         }
-    }, [currentMedia, autoplay]);
+    }, [currentMedia, currentMediaIndex, autoplay]);
 
     if (!currentMedia) {
         return <div>Loading...</div>;
@@ -245,20 +315,23 @@ function VideoPlayer({ autoplay = false }) {
                     <div className='VideoPlayer__select'
                     onClick={() => setIsDropdownActive(!isDropdownActive)}
                     >
-                         <span>{currentMedia ? currentMedia.title : 'Select Media'}</span>
+                         <span>{feedlist ? feedlist[index].feed : 'Select Media'}</span>
                         <div className='VideoPlayer__caret'></div>
                     </div>
                     <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
-                    {mediaList.map((media, index) => (
+                    
+                    {feedlist.map((media, index) => (
+
                         <li
                             key={index}
                             className={currentMediaIndex === index ? 'active' : ''}
-                            onClick={() => {
-                                setCurrentMediaIndex(index);
+                            onClick={(e) => {
+                                //console.log("current index is: ",index);
+                                setIndex(index);
                                 setIsDropdownActive(false);
                             }}
                         >
-                            {media.title || media.url}
+                            {media.feed || media.url}
                         </li>
                     ))}
                 </ul>
@@ -280,7 +353,7 @@ function VideoPlayer({ autoplay = false }) {
                     </button>
                 </div>
                 <div className="control-group control-group-slider">
-                    {isVideoFile(currentMedia.url) ? (
+                    {isVideoFile(currentMedia.url) && (
                         <>
                             <input
                                 type="range"
@@ -292,21 +365,6 @@ function VideoPlayer({ autoplay = false }) {
                                 min={0}
                             />
                             <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
-                        </>
-                    ) : (
-                        <>
-                            <input
-                                type="range"
-                                className="range-input"
-                                ref={videoRangeRef}
-                                onChange={handleVideoRange}
-                                max={imageProgressMax}
-                                value={imageElapsed}
-                                min={0}
-                            />
-                            <span className="time">
-                                {(imageElapsed / imageProgressMax * imageDuration).toFixed(1)} / {imageDuration}
-                            </span>
                         </>
                     )}
                 </div>
