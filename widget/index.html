@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="data:application/manifest+json;base64,ewogICAgIm5hbWUiOiAiIiwKICAgICJzaG9ydF9uYW1lIjogIiIsCiAgICAiaWNvbnMiOiBbCiAgICAgICAgewogICAgICAgICAgICAic3JjIjogIi9mYXZpY29ucy9hbmRyb2lkLWNocm9tZS0xOTJ4MTkyLnBuZyIsCiAgICAgICAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgICAic3JjIjogIi9mYXZpY29ucy9hbmRyb2lkLWNocm9tZS01MTJ4NTEyLnBuZyIsCiAgICAgICAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgICAgIH0KICAgIF0sCiAgICAidGhlbWVfY29sb3IiOiAiI2ZmZmZmZiIsCiAgICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAgICJkaXNwbGF5IjogInN0YW5kYWxvbmUiCn0=">
+  <link rel="mask-icon" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iNzAwLjAwMDAwMHB0IiBoZWlnaHQ9IjcwMC4wMDAwMDBwdCIgdmlld0JveD0iMCAwIDcwMC4wMDAwMDAgNzAwLjAwMDAwMCIKIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiPgo8bWV0YWRhdGE+CkNyZWF0ZWQgYnkgcG90cmFjZSAxLjE0LCB3cml0dGVuIGJ5IFBldGVyIFNlbGluZ2VyIDIwMDEtMjAxNwo8L21ldGFkYXRhPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCw3MDAuMDAwMDAwKSBzY2FsZSgwLjEwMDAwMCwtMC4xMDAwMDApIgpmaWxsPSIjMDAwMDAwIiBzdHJva2U9Im5vbmUiPgo8cGF0aCBkPSJNMzQ0NyA2MzY0IGMtMSAtMSAtNDIgLTUgLTkyIC04IC04NCAtNiAtMjE4IC0yMSAtMjc1IC0zMiAtMTQgLTIKLTQxIC03IC02MCAtMTAgLTU0MSAtODcgLTExMzUgLTM4NCAtMTUwNSAtNzUxIC0xMjYgLTEyNSAtMjUwIC0yNjcgLTMwOCAtMzUzCi05IC0xNCAtMzEgLTQ1IC00OCAtNzAgLTIyOSAtMzIxIC00MzMgLTg0OSAtNDg0IC0xMjU1IC00IC0yNyAtOCAtNjEgLTExIC03NQotMzEgLTE4MCAtMjUgLTY3NiAxMSAtODY5IDEgLTkgNiAtNDEgMTEgLTcxIDQgLTMwIDggLTU3IDkgLTYwIDEgLTMgNyAtMzIgMTQKLTY1IDMwIC0xNDEgMTE0IC00MjEgMTMyIC00NDAgNSAtNSA5IC0xNSA5IC0yMiAwIC0yNyAxMDYgLTI1MCAxNzggLTM3NSAxODAKLTMxMiAzOTMgLTU1MyA3MjAgLTgxNiAxODAgLTE0NSA0NjAgLTMwMiA3MDcgLTM5NyAxNDMgLTU1IDM5NCAtMTI3IDQ4NSAtMTQwCjE3IC0yIDk2IC0xNiAxMjUgLTIxIDExIC0yIDQzIC03IDcwIC0xMCAyOCAtMyA2NiAtNyA4NSAtMTAgMjIyIC0yNiA2NDUgLTIzCjgxMCA1IDg4NSAxNTIgMTU2MSA1NzcgMjAyNiAxMjc0IDE0IDIxIDMzIDUzIDQzIDcwIDEwIDE4IDM1IDYwIDU1IDk1IDEyNgoyMjEgMjQ5IDU1MSAzMDAgODAyIDMgMTQgNyAzNSAxMCA0NiAyIDEyIDcgMzcgMTAgNTUgMyAxOSA4IDQ1IDExIDU5IDMgMTQgOAo1MiAxMSA4NSA0IDMzIDggNjMgMTAgNjYgNSA5IDE4IDI2OSAxNyAzNjEgLTEgMTc1IC0xMyAzMTQgLTQzIDQ4OCAtMjggMTYyCi0yOCAxNjQgLTU2IDI2OSAtMTIwIDQ1MCAtMzA5IDgyNiAtNTg3IDExNjYgLTYwIDczIC0yNTkgMjczIC0zMjUgMzI3IC0zMSAyNQotNzMgNjAgLTkyIDc3IC0xOSAxNyAtMzkgMzEgLTQzIDMxIC01IDAgLTE1IDcgLTIzIDE1IC0xOCAxOCAtMTkxIDEzMiAtMjQ5CjE2NSAtOTggNTUgLTI3NiAxNDEgLTM3NiAxODEgLTE0OCA1OSAtNDA5IDEzNSAtNTQ2IDE1OCAtMzIgNiAtNjkgMTIgLTgzIDE1Ci00OCA5IC0xODUgMjUgLTI3NSAzMiAtNzggNiAtMzczIDEyIC0zNzggOHoiLz4KPC9nPgo8L3N2Zz4K" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>Video Player</title>
+  <!-- Correct the CSS link or remove if not needed -->
+  <link rel="stylesheet" href="/dist/assets/undefined"> 
+  
+  <script>
+    loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
+
+    // Delay the execution of the external script
+    setTimeout(() => {
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://model.earth/localsite/js/localsite.js?showheader=true';
+      document.head.appendChild(script);
+    }, 5000); // Delay by 5 seconds (adjust as needed)
+  </script>
+
+  <script type="module" crossorigin src="./assets/feedplayer.js"></script>
+  <link rel="stylesheet" href="./assets/feedplayer.css">
+</head>
+
+<body>
+  <div id="root"></div> <!-- React app will mount here -->
+   <!-- Ensure the path is correct -->
+
+  <div class="content contentpadding large-list" style="padding-top:10px">
+    <div id="readmeDiv"></div>
+  </div>
+
+</body>
+
+</html>

@@ -4,283 +4,123 @@ import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
 
 function VideoPlayer() {
-    const { videoList, currentVideoSrc, setCurrentVideoSrc } = useContext(Context);
+  const { videoList, currentVideoSrc, setCurrentVideoSrc } = useContext(Context);
 
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [currentVolume, setCurrentVolume] = useState(1);
-    const [isMute, setIsMute] = useState(false);
-    const [imageElapsed, setImageElapsed] = useState(0); // Elapsed time for image playback
-    const videoRef = useRef(null);
-    const videoRangeRef = useRef(null);
-    const volumeRangeRef = useRef(null);
-    let currentVideoIndex = useRef(0);
-    const imageTimerRef = useRef(null); // Timer ref for image playback
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentVolume, setCurrentVolume] = useState(1);
+  const [isMute, setIsMute] = useState(false);
+  const [imageElapsed, setImageElapsed] = useState(0); // Elapsed time for image playback
+  const videoRef = useRef(null);
+  const videoRangeRef = useRef(null);
+  const volumeRangeRef = useRef(null);
+  const currentVideoIndex = useRef(0);
+  const imageTimerRef = useRef(null); // Timer ref for image playback
 
-    const [duration, setDuration] = useState([0, 0]);
-    const [currentTime, setCurrentTime] = useState([0, 0]);
-    const [durationSec, setDurationSec] = useState(0);
-    const [currentSec, setCurrentTimeSec] = useState(0);
+  const [duration, setDuration] = useState([0, 0]);
+  const [currentTime, setCurrentTime] = useState([0, 0]);
+  const [durationSec, setDurationSec] = useState(0);
+  const [currentSec, setCurrentTimeSec] = useState(0);
 
-    const imageDuration = 4; // Image display duration in seconds
+  const imageDuration = 4; // Image display duration in seconds
 
-    const isImageFile = (src) => {
-        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-        return imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
-    };
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = currentVolume;
+    }
+  }, [currentVolume]);
 
-    const handlePlayPause = () => {
-        if (isImageFile(currentVideoSrc)) {
-            isPlaying ? pauseImage() : playImage();
-        } else {
-            isPlaying ? pause() : play();
-        }
-    };
+  const isImageFile = (src) => {
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+    return imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
+  };
 
-    const play = async () => {
-        if (!isImageFile(currentVideoSrc)) {
-            setIsPlaying(true);
-            try {
-                await videoRef.current.play();
-            } catch (error) {
-                console.log("Can't play video");
-                setIsPlaying(false);
-            }
-        }
-    };
+  const handlePlayPause = () => {
+    if (isImageFile(currentVideoSrc)) {
+      isPlaying ? pauseImage() : playImage();
+    } else {
+      isPlaying ? pause() : play();
+    }
+  };
 
-    const pause = () => {
-        if (!isImageFile(currentVideoSrc)) {
-            setIsPlaying(false);
-            videoRef.current.pause();
-        }
-    };
-
-    const stop = () => {
-        if (isImageFile(currentVideoSrc)) {
-            clearInterval(imageTimerRef.current);
-            setImageElapsed(0);
-        } else {
-            videoRef.current.pause();
-            videoRef.current.currentTime = 0;
-        }
-        setCurrentTimeSec(0);
+  const play = async () => {
+    if (videoRef.current && !isImageFile(currentVideoSrc)) {
+      setIsPlaying(true);
+      try {
+        await videoRef.current.play();
+      } catch (error) {
+        console.log("Can't play video:", error);
         setIsPlaying(false);
-    };
+      }
+    }
+  };
 
-    const playImage = () => {
-        setIsPlaying(true);
-        const timer = setInterval(() => {
-            setImageElapsed((prev) => {
-                if (prev >= imageDuration) {
-                    clearInterval(timer);
-                    handleNext();
-                    return prev;
-                }
-                return prev + 1;
-            });
-        }, 1000);
-        imageTimerRef.current = timer;
-    };
+  const pause = () => {
+    if (videoRef.current && !isImageFile(currentVideoSrc)) {
+      setIsPlaying(false);
+      videoRef.current.pause();
+    }
+  };
 
-    const pauseImage = () => {
-        setIsPlaying(false);
-        clearInterval(imageTimerRef.current);
-    };
-
-    const handleNext = useCallback(() => {
-        currentVideoIndex.current++;
-        if (currentVideoIndex.current >= videoList.length) {
-            currentVideoIndex.current = 0;
+  const playImage = () => {
+    setIsPlaying(true);
+    imageTimerRef.current = setInterval(() => {
+      setImageElapsed(prev => {
+        const nextElapsed = prev + 1;
+        if (nextElapsed >= imageDuration) {
+          clearInterval(imageTimerRef.current);
+          setIsPlaying(false);
         }
-        setCurrentVideoSrc(videoList[currentVideoIndex.current]);
-        setCurrentTimeSec(0);
-        setImageElapsed(0);
-        setIsPlaying(false); // Reset isPlaying to false so the next useEffect can handle play
-    }, [videoList, setCurrentVideoSrc]);
+        return nextElapsed;
+      });
+    }, 1000);
+  };
 
-    const handlePrev = () => {
-        currentVideoIndex.current--;
-        if (currentVideoIndex.current < 0) {
-            currentVideoIndex.current = videoList.length - 1;
-        }
-        setCurrentTimeSec(0);
-        setImageElapsed(0);
-        setCurrentVideoSrc(videoList[currentVideoIndex.current]);
-        setIsPlaying(false); // Reset isPlaying to false so the next useEffect can handle play
-    };
+  const pauseImage = () => {
+    clearInterval(imageTimerRef.current);
+    setIsPlaying(false);
+  };
 
-    const handleVideoRange = () => {
-        if (isImageFile(currentVideoSrc)) {
-            const newTime = videoRangeRef.current.value;
-            setImageElapsed(newTime);
-            clearInterval(imageTimerRef.current);
-            const remainingTime = imageDuration - newTime;
-            imageTimerRef.current = setTimeout(() => {
-                handleNext();
-            }, remainingTime * 1000);
-        } else {
-            videoRef.current.currentTime = videoRangeRef.current.value;
-            setCurrentTimeSec(videoRangeRef.current.value);
-        }
-    };
+  const handleMute = () => {
+    setIsMute(!isMute);
+    if (videoRef.current) {
+      videoRef.current.muted = !isMute;
+    }
+  };
 
-    const handleFullScreen = () => {
-        const elem = videoRef.current;
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { /* Safari */
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE11 */
-            elem.msRequestFullscreen();
-        }
-    };
+  const handleVolumeRange = (e) => {
+    const volume = parseFloat(e.target.value);
+    setCurrentVolume(volume);
+    if (videoRef.current) {
+      videoRef.current.volume = volume;
+    }
+  };
 
-    const handleVolumeRange = () => {
-        let volume = volumeRangeRef.current.value;
-        videoRef.current.volume = volume;
-        setCurrentVolume(volume);
-        if (volume === 0) {
-            setIsMute(true);
-        } else {
-            setIsMute(false);
-        }
-    };
+  const handleFullScreen = () => {
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      } else if (videoRef.current.mozRequestFullScreen) { /* Firefox */
+        videoRef.current.mozRequestFullScreen();
+      } else if (videoRef.current.webkitRequestFullscreen) { /* Chrome, Safari, and Opera */
+        videoRef.current.webkitRequestFullscreen();
+      } else if (videoRef.current.msRequestFullscreen) { /* IE/Edge */
+        videoRef.current.msRequestFullscreen();
+      }
+    }
+  };
 
-    const handleMute = () => {
-        if (isMute) {
-            videoRef.current.volume = currentVolume;
-            setIsMute(false);
-        } else {
-            videoRef.current.volume = 0;
-            setIsMute(true);
-        }
-    };
-
-    useEffect(() => {
-        let interval;
-
-        if (isPlaying && !isImageFile(currentVideoSrc)) {
-            interval = setInterval(() => {
-                const { min, sec } = formatTime(videoRef.current.currentTime);
-                setCurrentTimeSec(videoRef.current.currentTime);
-                setCurrentTime([min, sec]);
-            }, 1000);
-        } else {
-            clearInterval(interval);
-        }
-        return () => clearInterval(interval);
-    }, [isPlaying, currentVideoSrc]);
-
-    useEffect(() => {
-        const handleLoadedData = () => {
-            setDurationSec(videoRef.current.duration);
-            const { min, sec } = formatTime(videoRef.current.duration);
-            setDuration([min, sec]);
-            play();
-        };
-
-        const handleEnded = handleNext;
-
-        if (isImageFile(currentVideoSrc)) {
-            playImage();
-            return () => clearInterval(imageTimerRef.current);
-        } else if (videoRef.current) {
-            videoRef.current.addEventListener('loadeddata', handleLoadedData, false);
-            videoRef.current.addEventListener('ended', handleEnded);
-
-            return () => {
-                if (videoRef.current) {
-                    videoRef.current.removeEventListener('loadeddata', handleLoadedData);
-                    videoRef.current.removeEventListener('ended', handleEnded);
-                }
-            };
-        }
-    }, [currentVideoSrc, handleNext]);
-
-    useEffect(() => {
-        if (videoList.length > 0) {
-            setCurrentVideoSrc(videoList[0]);
-            currentVideoIndex.current = 0;
-        }
-    }, [videoList, setCurrentVideoSrc]);
-
-    // Auto-play when media source changes
-    useEffect(() => {
-        if (isImageFile(currentVideoSrc)) {
-            playImage();
-        } else {
-            play();
-        }
-    }, []);
-
-    return (
-        <div className="VideoPlayerWrapper">
-            <div className="VideoPlayer">
-                <div className="VideoPlayer__video-container">
-                    {isImageFile(currentVideoSrc) ? (
-                        <img className="video-image" src={currentVideoSrc} alt="Current media" />
-                    ) : (
-                        <video ref={videoRef} src={currentVideoSrc} onClick={handlePlayPause} poster='src/assets/videos/intro.jpg'></video>
-                    )}
-                </div>
-                <div className="VideoPlayer__controls">
-                    <div className="control-group control-group-btn">
-                        <button className="control-button prev" onClick={handlePrev}>
-                            <i className="ri-skip-back-fill icon"></i>
-                        </button>
-                        <button className="control-button play-pause" onClick={handlePlayPause}>
-                            <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
-                        </button>
-                        <button className="control-button next" onClick={handleNext}>
-                            <i className="ri-skip-forward-fill icon"></i>
-                        </button>
-                        <button className="control-button stop" onClick={stop}>
-                            <i className="ri-stop-fill icon"></i>
-                        </button>
-                        
-                    </div>
-                    <div className="control-group control-group-slider">
-                        {isImageFile(currentVideoSrc) ? (
-                            <>
-                                <input
-                                    type="range"
-                                    className="range-input"
-                                    ref={videoRangeRef}
-                                    onChange={handleVideoRange}
-                                    max={imageDuration}
-                                    value={imageElapsed}
-                                    min={0}
-                                />
-                                <span className="time">{imageElapsed} / {imageDuration}</span>
-                            </>
-                        ) : (
-                            <>
-                                <input
-                                    type="range"
-                                    className="range-input"
-                                    ref={videoRangeRef}
-                                    onChange={handleVideoRange}
-                                    max={durationSec}
-                                    value={currentSec}
-                                    min={0}
-                                />
-                                <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
-                            </>
-                        )}
-                    </div>
-                    <div className="control-group control-group-volume">
-                        <button className="control-button volume" onClick={handleMute}>
-                            <i className={`ri-volume-${isMute ? 'mute' : 'up'}-fill`}></i>
-                        </button>
-                        <input type="range" className='range-input' ref={volumeRangeRef} max={1} min={0} value={currentVolume} onChange={handleVolumeRange} step={0.1} />
-                        <button className="control-button full-screen" onClick={handleFullScreen}>
-                            <i className="ri-fullscreen-line"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <div className="video-player">
+      <video ref={videoRef} src={currentVideoSrc} controls />
+      <div className="controls">
+        <button onClick={handlePlayPause}>{isPlaying ? 'Pause' : 'Play'}</button>
+        <input type="range" ref={videoRangeRef} max={durationSec} value={currentSec} onChange={(e) => setCurrentTimeSec(parseFloat(e.target.value))} />
+        <button onClick={handleMute}>{isMute ? 'Unmute' : 'Mute'}</button>
+        <input type="range" ref={volumeRangeRef} max={1} min={0} value={currentVolume} onChange={handleVolumeRange} step={0.1} />
+        <button onClick={handleFullScreen}>Full Screen</button>
+      </div>
+    </div>
+  );
 }
 
 export default VideoPlayer;
