@@ -3,8 +3,6 @@ import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
 
-function VideoPlayer() {
-  const { videoList, currentVideoSrc, setCurrentVideoSrc } = useContext(Context);
 function VideoPlayer({ autoplay = false }) {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
 
@@ -175,32 +173,6 @@ function VideoPlayer({ autoplay = false }) {
       videoRef.current.volume = volume;
     }
   };
-    const pauseImage = () => {
-        clearTimeout(imageTimerRef.current);
-    };
-
-    const handleNext = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => {
-            const nextIndex = (prevIndex + 1) % mediaList.length;
-            console.log("Moving to next media. New index:", nextIndex);
-            return nextIndex;
-        });
-    }, [mediaList.length]);
-
-    const handlePrev = useCallback(() => {
-        setCurrentMediaIndex((prevIndex) => {
-            const nextIndex = (prevIndex - 1 + mediaList.length) % mediaList.length;
-            console.log("Moving to previous media. New index:", nextIndex);
-            return nextIndex;
-        });
-    }, [mediaList.length]);
-
-    const handleVideoRange = () => {
-        if (currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
-            videoRef.current.currentTime = videoRangeRef.current.value;
-            setCurrentTimeSec(videoRangeRef.current.value);
-        }
-    };
 
   const handleFullScreen = () => {
     if (videoRef.current) {
@@ -215,115 +187,6 @@ function VideoPlayer({ autoplay = false }) {
       }
     }
   };
-    const handleFullScreen = () => {
-        const elem = videoRef.current;
-        if (elem) {
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
-        }
-    };
-
-    const handleVolumeRange = () => {
-        if (volumeRangeRef.current) {
-            let volume = volumeRangeRef.current.value;
-            if (videoRef.current) {
-                videoRef.current.volume = volume;
-                videoRef.current.muted = volume === '0';
-            }
-            setCurrentVolume(volume);
-            setIsMute(volume === '0');
-        }
-    };
-
-    const handleMute = () => {
-        setIsMute(!isMute);
-        if (videoRef.current) {
-            videoRef.current.muted = !isMute;
-        }
-    };
-
-    useEffect(() => {
-        let interval;
-        if (isPlaying && currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
-            interval = setInterval(() => {
-                const { min, sec } = formatTime(videoRef.current.currentTime);
-                setCurrentTimeSec(videoRef.current.currentTime);
-                setCurrentTime([min, sec]);
-            }, 1000);
-        } else {
-            clearInterval(interval);
-        }
-        return () => clearInterval(interval);
-    }, [isPlaying, currentMedia]);
-
-    useEffect(() => {
-        const handleLoadedData = () => {
-            if (videoRef.current) {
-                setDurationSec(videoRef.current.duration);
-                const { min, sec } = formatTime(videoRef.current.duration);
-                setDuration([min, sec]);
-                console.log("Video loaded:", currentMedia.url);
-            }
-        };
-
-        const handleEnded = () => {
-            console.log("Media ended. Moving to next media.");
-            setIsPlaying(false);
-            handleNext();
-        };
-
-        if (currentMedia) {
-            if (isVideoFile(currentMedia.url) && videoRef.current) {
-                videoRef.current.addEventListener('loadeddata', handleLoadedData);
-                videoRef.current.addEventListener('ended', handleEnded);
-                videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
-            }
-        }
-
-        return () => {
-            clearTimeout(imageTimerRef.current);
-            if (videoRef.current) {
-                videoRef.current.removeEventListener('loadeddata', handleLoadedData);
-                videoRef.current.removeEventListener('ended', handleEnded);
-            }
-        };
-    }, [currentMedia, handleNext, isMute]);
-
-    useEffect(() => {
-        if (mediaList.length > 0) {
-            setCurrentMedia(mediaList[currentMediaIndex]);
-            console.log('Current media set:', mediaList[currentMediaIndex], 'Index:', currentMediaIndex);
-        }
-    }, [currentMediaIndex, mediaList, setCurrentMedia]);
-
-    useEffect(() => {
-        if (mediaList.length > 0 && !currentMedia) {
-            setCurrentMediaIndex(0);
-            setCurrentMedia(mediaList[0]);
-            console.log('Initial media set:', mediaList[0], 'Index: 0');
-        }
-    }, [mediaList, currentMedia, setCurrentMedia]);
-
-    useEffect(() => {
-        console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
-        setCurrentTimeSec(0);
-        setCurrentTime([0, 0]);  // Reset currentTime when media changes
-        setImageElapsed(0);
-        setIsPlaying(false);  // Reset playing state when media changes
-        
-        if (currentMedia && autoplay) {
-            play();
-        }
-    }, [currentMedia, currentMediaIndex, autoplay]);
-
-    if (!currentMedia) {
-        return <div>Loading...</div>;
-    }
 
   return (
     <div className="video-player">
