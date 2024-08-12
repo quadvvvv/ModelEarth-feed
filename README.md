@@ -8,6 +8,7 @@
 Welcome to our Feed-Player React Project! This project provides a modern and user-friendly interface for viewing a series of images and video pulled from RSS, JSON, CSV and YAML. The UI is built using Vite, ReactJS, HTML, CSS, and JavaScript. The Feed-Player is designed to be fully responsive and packed with a range of features to enhance your viewing experience.
 
 <!-- https://video-player-sahilatahar.netlify.app -->
+
 [Check out the Live Preview](intro.html) of the Feed-Player project on model.earth.
 
 ## Feed Samples
@@ -19,32 +20,41 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 ## Team Projects
 
-Place your name here if your working on an update.
+Place your name here if you're working on an update.
 
-1.) TO DO: Update Yarn Build to make the player into an embeddable widget by saving a copy of the index-xxxx.js and index-xxxx.css files as feedplayer.js and feedplayer.css in dist/assets.  We've replaced vite.config.js with vite.config-upcoming.js as one possible way to copy the files, but it's not working yet.  Once generating, change the "WIDGET EMBED SAMPLE" in feed/intro.html to use feedplayer.js and feedplayer.css.  
+1.) TO DO: Update the Yarn Build to make the player an embeddable widget. Here's possible <a href="https://chatgpt.com/share/b847e2c7-732b-4f28-b069-7a58bc107d93">setup info in ChatGPT</a>.
 
-2.) DONE: Update the code to display images within the video sequence - By Fanyi
+In the existing code, we tried to automate copying the index-xxxxxxxx.js and index-xxxxxxxx.css files to feedplayer.js and feedplayer.css within [dist/assets](https://github.com/ModelEarth/feed/tree/main/dist/assets).  We replaced vite.config.js with vite.config-upcoming.js, but it's not working yet (the copy might run before the build completes).  Once generating a consistant .js and .css file name, edit feed/intro.html to use feedplayer.js and feedplayer.css (or whatever .js file name is standard for a Vite widget).  Also adjust so the widget can be played on the main feed/index.html page. - Ben R
 
-3.) TO DO: To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)
+2.) TO DO: Update the progress bar to include multiple clickable sections when there are sequences of images. - Matt B
+
+3.) DONE: Aspect ratio of video remains the same when showing landscape image.<!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
 
 4.) DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
-5.) TO DO: Add columns for Title and Description in the Google Sheet
+5.) DONE: Add columns for Title and Description in the Google Sheet - Matt B
 
-6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time  
+6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
-8.) TO DO: Pull in multiple Bluesky RSS feed links by passing in a comma separated list.
+8a.) TO DO: Pull NASA feed into React Feed Player and show images. - Noopur
+
+8b.) TO DO: In Javascript feed/view page, pull in multiple Bluesky RSS feed links by passing in a pipe | separated list of feed urls. Add loop when pipes found in the url value in both JQuery feed/view - Noopur
+
+8c.) In React Feed Player, using [Feeds tab CSV pull from Google Sheet](https://docs.google.com/spreadsheets/d/e/2PACX-1vSxfv7lxikjrmro3EJYGE_134vm5HdDszZKt4uKswHhsNJ_-afSaG9RoA4oeNV656r4mTuG3wTu38pM/pub?gid=889452679&single=true&output=csv), split on the pipe in the React Feed Player. - Noopur
+
+9.) Pull the replies for each Bluesky post in the feed. Use the screen-grab technique that we use to grab images from news sites that are listed in the feed. Scrape the posts from the Bluesky website. Grab replies for the top 3 posts. If the process doesn't work, leave the attempt commented out. - Noopur
+
+10.) List of feeds on right of player with links to /feed/view/#feed= - Kalyan
 
 ### Building Transparency
 
-9.) TO DO: Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
+11.) TO DO: Update javascript in this Building Transparency [template page](/io/template/feed) to allow an API token to be pasted into the "Your API Key" field.
 
-10.) TO DO: Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
+12.) TO DO: Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
 
-11.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
-
+13.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
 
 ## Features
 
@@ -68,7 +78,6 @@ Fork our two repos (localsite and feed) and clone into your webroot
       git clone https://github.com/[your account]/localsite.git
       git clone https://github.com/[your account]/feed.git
 
-
 ### Folders in your website root
 
 ```ini
@@ -84,14 +93,14 @@ website
    └─ .gitignore
 ```
 
-
 ### Start a web server in your webroot
 
-   ```
-   python3 -m venv env
-   source env/bin/activate
-   python -m http.server 8887
-   ```
+```
+python3 -m venv env
+source env/bin/activate
+python -m http.server 8887
+```
+
 On Windows, the second line is:
 
       env\Scripts\activate
@@ -101,50 +110,66 @@ On Windows, the second line is:
 [Feed Player - localhost:8887/feed](http://localhost:8887/feed/)
 [Feed View - localhost:8887/feed/view](http://localhost:8887/feed/view/)
 
-
-
 ## Edit and build the "feed" project locally
 
 ### 1. Navigate into the feed directory:
 
-   ```
-   cd feed
-   ```
+```
+cd feed
+```
+
+If you don't have yarn yet, install it with `npm install --global yarn`
+You can check if you have yarn with `yarn --version`
 
 ### 2. Install the required dependencies:
 
-   ```
-   yarn
-   ```
+Check if yarn is installed:
 
-If the package-lock.json file change significantly, revert and 
+```
+yarn --version
+```
+
+Install yarn if you don't have it yet:
+
+```
+npm install --global yarn
+```
+
+Install the required dependecies:
+
+```
+yarn
+```
+
+If the package-lock.json file change significantly, revert and
 try this yarn install command:
 
-   ```
-   yarn install --immutable --immutable-cache --check-cache
-   ```
+```
+yarn install --immutable --immutable-cache --check-cache
+```
 
 The command above requires yarn 2 and prevents third-parties from altering the checked-in packages before submitting them. [Source](https://stackoverflow.com/questions/58482655/what-is-the-closest-to-npm-ci-in-yarn).  
 It's the equivalent to `npm ci` to avoid updating package-lock.json, which occurs with `npm install`.
-
 
 ### 3. Start the development server
 
 <!--Skip this step. Port 5173 does not currently work because the files are looking for a base path containing "feed".-->
 
-   ```
-   yarn dev
-   ```
+```
+yarn dev
+```
 
 Or you can skip "yarn dev" and view at [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
+
 <!--
-Since we might include /feed in the base path, the feed player may not always work at: [localhost:5173/dist](http://localhost:5173/dist/)  
+Since we might include /feed in the base path, the feed player may not always work at: [localhost:5173/dist](http://localhost:5173/dist/)
 -->
+
 ### 4. Build the app to the dist folder
 
-   ```
-   yarn build
-   ```
+```
+yarn build
+```
 
 View at: [http://localhost:8887/feed](http://localhost:8887/feed/) and [http://localhost:8887/feed/dist](http://localhost:8887/feed/dist)
 
@@ -166,7 +191,6 @@ Another option would be to add localsite as a [submodule](https://model.earth/lo
 
       <link type="text/css" rel="stylesheet" href="https://model.earth/localsite/css/base.css" id="/localsite/css/base.css" />
       <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
-
 
 ## Technologies Used
 
@@ -191,10 +215,7 @@ which means you are free to use, modify, and distribute the code as you see fit.
 
 We hope you enjoy using the Feed-Player!
 
-
-If you have any questions, requests or feedback, please post an issue in our 
+If you have any questions, requests or feedback, please post an issue in our
 [Feed Player repo](http://github.com/modelearth/feed) or the parent [Video Player repo](https://github.com/sahilatahar/Video-Player).
 
-
 Happy feed viewing! 🎥🍿
-

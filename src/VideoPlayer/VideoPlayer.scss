@@ -7,39 +7,35 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  
 
-  .video-image {
+  &__video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 450px; 
+    background-color: #f0f0f0; 
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    position: relative;
+    overflow: hidden;
+
+    video, .video-image {
       width: 100%;
       height: 100%;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-      object-fit: contain;
+      border-radius: 0.8rem 0.8rem 0rem 0rem;
+      object-fit: cover;
     }
 
-    .VideoPlayer__video-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 450px; 
-      background-color: #f0f0f0; 
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-      position: relative;
-  
-      video {
-        width: 100%;
-        height: 100%;
-        border-radius: 0.8rem 0.8rem 0rem 0rem;
-        object-fit: cover;
-      }
+    .video-image {
+      object-fit: contain;
+    }
 
     .control-button {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background-color: transparent;
+      background-color: rgba(0, 0, 0, 0.5);
       border: none;
       outline: none;
       font-size: 1.5rem;
@@ -48,6 +44,12 @@
       align-items: center;
       justify-content: center;
       padding: 0.5rem;
+      color: white;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
 
       &.prev {
         left: 0.5rem;
@@ -59,6 +61,56 @@
 
       .icon {
         font-size: 2rem;
+      }
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    padding: 20px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+
+  &__info {
+    color: white;
+    transition: all 0.3s ease;
+
+    h2 {
+      font-size: 18px;
+      margin: 0 0 5px 0;
+      color: white;
+    }
+
+    p {
+      font-size: 14px;
+      margin: 0;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+  }
+
+  &__video-container:hover {
+    .VideoPlayer__overlay {
+      background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    }
+
+    .VideoPlayer__info {
+      h2 {
+        font-size: 24px;
+      }
+
+      p {
+        max-height: 100px;
+        opacity: 1;
+        font-size: 16px;
+        margin-top: 10px;
       }
     }
   }
