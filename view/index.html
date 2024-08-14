@@ -143,6 +143,7 @@ and (max-device-width : 480px) {
 		{"value":"sectors","name":"USEEIO State Sectors"},
 		{"value":"flow","name":"USEEIO State Impact Flow"},
 		{"value":"Dmatrix","name":"USEEIO D Matrix Commodities"},
+		{"value":"demo","name":"DemocracyLab Projects"},
 		{"value":"civictechindex","name":"Civic Tech Organizations"},
 		{"value":"civictechlinks","name":"Civic Tech Links"},
 		{"value":"epd","name":"Environmental Product Declarations (EPD)"},
@@ -392,6 +393,9 @@ function displayFeed() {
 	} else if (hash.feed == "Dmatrix") {
 		$('#pageTitleText').html("D Matrix");
 		url = "https://raw.githubusercontent.com/ModelEarth/OpenFootprint/main/impacts/2020/GAEEIOv1.0-s-20/matrix/D.json";
+	} else if (hash.feed == "demo") {
+		// Limited domains - https://github.com/DemocracyLab/CivicTechExchange/issues/788
+		url = "https://www.democracylab.org/api/projects?page=2&sortField=-project_date_modified";
 	} else if (hash.feed == "civictechindex") {
 		$('#pageTitle').html("Civic Tech Organizations");
 		//url = "https://api-stage.civictechindex.org/swagger/?format=openapi"
