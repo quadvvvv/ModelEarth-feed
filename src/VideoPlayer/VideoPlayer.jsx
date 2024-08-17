@@ -1,12 +1,12 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
 import axios from 'axios'; //Tp fetch the urls of the API
+import PropTypes from 'prop-types';
 
 function VideoPlayer({ autoplay = false }) {
-    const { mediaList, currentMedia, setCurrentMedia, feedlist, setFeedlist } = useContext(Context);
-
+    const { mediaList, currentMedia, setCurrentMedia, feedlist } = useContext(Context);
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
     const [isMute, setIsMute] = useState(true);  // Start muted
@@ -381,5 +381,13 @@ function VideoPlayer({ autoplay = false }) {
         </div>
     );
 }
+
+VideoPlayer.propTypes = {
+    autoplay: PropTypes.bool,
+};
+
+VideoPlayer.defaultProps = {
+    autoplay: false, // Define default props
+};
 
 export default VideoPlayer;
