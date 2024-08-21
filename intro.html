@@ -1,3 +1,82 @@
-<script type="text/javascript">
-  window.location="dist/";
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
+  <link rel="manifest" href="favicons/site.webmanifest">
+  <link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>Feed Player - For Images, Video and Text</title>
+
+  <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
+
+<script>
+// Because placing these two include here brakes the build:
+// <script type="module" crossorigin src="/feed/dist/assets/feedplayer.js"><!--/script-->
+// <link rel="stylesheet" href="/feed/dist/assets/index-d9535706.css">
+
+function loadFilesIfNotInDist(jsFile, cssFile) {
+  // Get the current path
+  var currentPath = window.location.pathname;
+
+  // Check if the path does not contain "/dist/"
+  if (!currentPath.includes('/dist/')) {
+    // Function to load a script file
+    function loadScript(file) {
+      var script = document.createElement('script');
+      script.src = file;
+      script.type = 'module';
+      script.crossOrigin = 'anonymous';
+      document.head.appendChild(script);
+    }
+
+    // Function to load a CSS file
+    function loadCSS(file) {
+      var link = document.createElement('link');
+      link.href = file;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+
+    // Load the JS and CSS files
+    loadScript(jsFile);
+    loadCSS(cssFile);
+  } else {
+    console.log('Current path contains /dist/, files will not be loaded.');
+  }
+}
+
+// WIDGET EMBED SAMPLE
+
+// IMPORTANT: After building, update to new names generated for index-XXXXXXX.js and index-XXXXXXX.css here.
+
+// TO DO: We are working on always generting copies called feedplayer.js and feedplayer.css to avoid manually fixing each time.
+
+loadFilesIfNotInDist('/feed/dist/assets/index-ff2ec2bd.js', '/feed/dist/assets/index-388562d5.css');
 </script>
+
+</head>
+
+<body>
+
+<script>
+loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
+</script>
+
+<div id="root" style="text-align: center;line-height: 0px;"><img src="src/assets/images/intro-a.jpg" style="border-radius:20px;"><div style="margin-top:20px;z-index:1000">Broken by build. Manually update the index .js and .css files to include the newly built ID values.</div></div>
+<!--
+<script type="module" src="src/main.jsx"></script>
+-->
+
+<div class="content contentpadding large-list" style="padding-top:0px">
+  <div id="readmeDiv"></div>
+</div>
+
+  
+
+</body>
+
+</html>
