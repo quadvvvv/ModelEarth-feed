@@ -4,80 +4,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
-  <link rel="manifest" href="favicons/site.webmanifest">
-  <link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="manifest" href="data:application/manifest+json;base64,ewogICAgIm5hbWUiOiAiIiwKICAgICJzaG9ydF9uYW1lIjogIiIsCiAgICAiaWNvbnMiOiBbCiAgICAgICAgewogICAgICAgICAgICAic3JjIjogIi9mYXZpY29ucy9hbmRyb2lkLWNocm9tZS0xOTJ4MTkyLnBuZyIsCiAgICAgICAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgICAic3JjIjogIi9mYXZpY29ucy9hbmRyb2lkLWNocm9tZS01MTJ4NTEyLnBuZyIsCiAgICAgICAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgICAgIH0KICAgIF0sCiAgICAidGhlbWVfY29sb3IiOiAiI2ZmZmZmZiIsCiAgICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAgICJkaXNwbGF5IjogInN0YW5kYWxvbmUiCn0=">
+  <link rel="mask-icon" href="./assets/safari-pinned-tab-a1f6aaa7.svg" color="#5bbad5">
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
-  <title>Feed Player - For Images, Video and Text</title>
+  <title>Video Player</title>
 
   <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
+  
+  <script>
+  loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
+  </script>
 
-  <base href="/feed/dist">
-
-<script>
-// Because placing these two include here brakes the build:
-// <script type="module" crossorigin src="/feed/dist/assets/index-123d251f.js"><!--/script-->
-// <link rel="stylesheet" href="/feed/dist/assets/index-de0c0210.css">
-
-function loadFilesIfNotInDist(jsFile, cssFile) {
-  // Get the current path
-  var currentPath = window.location.pathname;
-
-  // Check if the path does not contain "/dist/"
-  if (!currentPath.includes('/dist/')) {
-    // Function to load a script file
-    function loadScript(file) {
-      var script = document.createElement('script');
-      script.src = file;
-      script.type = 'module';
-      script.crossOrigin = 'anonymous';
-      document.head.appendChild(script);
-    }
-
-    // Function to load a CSS file
-    function loadCSS(file) {
-      var link = document.createElement('link');
-      link.href = file;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }
-
-    // Load the JS and CSS files
-    loadScript(jsFile);
-    loadCSS(cssFile);
-  } else {
-    console.log('Current path contains /dist/, files will not be loaded.');
-  }
-}
-
-// WIDGET EMBED SAMPLE
-
-// IMPORTANT: After building, update to new names generated for index-XXXXXXX.js and index-XXXXXXX.css here.
-
-// TO DO: We are working on always generting copies called feedplayer.js and feedplayer.css to avoid manually fixing each time.
-
-loadFilesIfNotInDist('/feed/widget/index.js', '/feed/widget/index.css');
-</script>
-
+  <link rel="stylesheet" href="./assets/index-388562d5.css">
+  <script type="module" crossorigin src="./assets/index.js"></script>
 </head>
 
 <body>
-
-<script>
-loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
-</script>
-
-<div id="root" style="text-align: center;line-height: 0px;"><img src="../src/assets/images/intro-a.jpg" style="border-radius:20px;"><div style="margin-top:20px;margin-bottom:20px;z-index:1000"><a href="../dist/">View Player</a>. Something is preventing the widget from playing. Update the index.js and index.css values.</div></div>
-<!--
-<script type="module" src="src/main.jsx"></script>
--->
-
-<div class="content contentpadding large-list" style="padding-top:0px">
-  <div id="readmeDiv"></div>
-</div>
-
+  <div id="root"></div>
   
+
+  <div class="content contentpadding large-list" style="padding-top:10px">
+    <div id="readmeDiv"></div>
+  </div>
 
 </body>
 
