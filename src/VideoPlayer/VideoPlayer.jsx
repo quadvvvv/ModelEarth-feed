@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 
 function VideoPlayer({ autoplay = false }) {
     const { mediaList, currentMedia, setCurrentMedia, feedlist } = useContext(Context);
-
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
     const [isMute, setIsMute] = useState(true);  // Start muted
