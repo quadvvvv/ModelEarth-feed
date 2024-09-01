@@ -6,7 +6,7 @@ import axios from 'axios'; //Tp fetch the urls of the API
 import PropTypes from 'prop-types';
 
 function VideoPlayer({ autoplay = false }) {
-    const { mediaList, currentMedia, setCurrentMedia, feedlist } = useContext(Context);
+    const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
     const [isMute, setIsMute] = useState(true);  // Start muted
@@ -29,62 +29,95 @@ function VideoPlayer({ autoplay = false }) {
 
     // To fetch the urls and then fetch the image urls from the API
 
-    const [processedMediaList, setProcessedMediaList] = useState([]);
+    const [selectedMediaList, setSelectedMediaList] = useState([]);
+    const[listofMedia,setListofMedia]=useState({});
 
     useEffect(() => {
-        processMediaList(mediaList);
+        //console.log("Use Effect 1 mediaList",mediaList);
+        processMediaList();
     }, [mediaList]);
 
-    const processMediaList = (list) => {
-        const processedListPromises = list.map((media) => {
-            if (isAPIURL(media)) {
-                return fetchMediaFromAPI(media.url).then((mediaItems) => {
-                    if (Array.isArray(mediaItems)) {
-                        return mediaItems.map(item => ({ ...media, ...item }));
-                    }
-                    return [{ ...media, ...mediaItems }];
-                });
-            } else {
-                return Promise.resolve([media]);
+    // useEffect(() => {
+    //     // This will log the updated selectedMediaList after it changes
+    //     console.log("selectedMediaList updated: ", selectedMediaList);
+    //     console.log("listofMedia 2.0", listofMedia);
+    // }, [selectedMediaList]);
+    
+
+    const processMediaList = () => {
+        const templistofMedia = {};
+    
+        // Collect all promises from the map operation
+        const processedListPromises = mediaList.map((media) => {
+            return fetchMediaFromAPI(media).then((mediaItems) => {
+                if (Array.isArray(mediaItems)) {
+                    console.log(`mediaItems for ${media.title}`, mediaItems);
+                    templistofMedia[media.title] = mediaItems;
+                } else {
+                    console.log(`mediaItems for ${media.title} (single item)`, mediaItems);
+                    templistofMedia[media.title] = [mediaItems];
+                }
+            }).catch((error) => {
+                console.error(`Error processing media with title ${media.title}:`, error);
+                templistofMedia[media.title] = []; // Handle error by setting an empty array or any default value
+            });
+        });
+    
+        // Wait for all fetch operations to complete
+        Promise.all(processedListPromises).then(() => {
+            if (mediaList && mediaList.length > 0) {
+                // console.log("First media title:", mediaList[0].title);
+                // console.log("Final listofMedia:", templistofMedia);
+                setListofMedia(templistofMedia);
+                setSelectedMediaList(templistofMedia[mediaList[0].title]);
+                setCurrentMedia(templistofMedia[mediaList[0].title][0]);
             }
         });
-
-        Promise.all(processedListPromises).then((results) => {
-            // Flatten the array if there are nested arrays
-            const flattenedResults = results.flat();
-            console.log("Processed Media List ", flattenedResults);
-            setProcessedMediaList(flattenedResults);
-        });
     };
-
+    
+    const fetchMediaFromAPI = async (media) => {
+        try {
+            //console.log("Fetching API for:", media.title, "with feed type:", media.feed.trim());
+            const response = await axios.get(media.url);
+            //console.log("API Response for", media.title, response);
+    
+            if (media.feed.trim() === "seeclickfix-311") {
+                return response.data.issues.map(item => ({
+                    url: item.media.image_full || item.media.representative_image_url,
+                    text: item.description || 'No description available',
+                    title: item.summary
+                }));
+            } else if (media.feed.trim() === "film-scouting") {
+                return response.data.flatMap(item => {
+                    const photos = [];
+                    for (let i = 1; i <= 10; i++) {
+                        const photoKey = `photo${i}`;
+                        if (item[photoKey]) {
+                            photos.push({
+                                url: item[photoKey],
+                                text: item.description || 'No description available',
+                                title: item[`photoText${i}`] || 'No title available'
+                            });
+                        }
+                    }
+                    return photos;
+                });
+            } else {
+                return response.data.map(item => ({
+                    url: item.hdurl || item.url,
+                    text: item.explanation || 'No description available',
+                    title: item.title
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching from API for', media.title, ':', error);
+            return [];
+        }
+    };
 
     const isImageFile = (src) => {
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
         return src && imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
-    };
-
-    // Check if the src is API Url
-    const isAPIURL = (src) => {
-        const apiPatterns = ['API URL'];
-        return apiPatterns.some(pattern => src.text.includes(pattern));
-    };
-
-    // Fetch the image/video url from API url
-
-    const fetchMediaFromAPI = async (apiUrl) => {
-        try {
-            const response = await axios.get(apiUrl);
-            
-            console.log("Response from API URL ", response);
-            return response.data.map(item => ({
-                url: item.hdurl || item.url,
-                text: item.explanation || 'No description available',
-                title:item.title
-            }));
-        } catch (error) {
-            console.error('Error fetching from API:', error);
-            return [];
-        }
     };
 
     const isVideoFile = (src) => {
@@ -217,6 +250,7 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     useEffect(() => {
+        //console.log("Use Effect 2")
         let interval;
         if (isPlaying && currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
             interval = setInterval(() => {
@@ -231,6 +265,7 @@ function VideoPlayer({ autoplay = false }) {
     }, [isPlaying, currentMedia]);
 
     useEffect(() => {
+        //console.log("Use Effect 3")
         const handleLoadedData = () => {
             if (videoRef.current) {
                 setDurationSec(videoRef.current.duration);
@@ -264,25 +299,30 @@ function VideoPlayer({ autoplay = false }) {
     }, [currentMedia, handleNext, isMute]);
 
     useEffect(() => {
-
-        if (mediaList.length > 0) {
-            setCurrentMedia(mediaList[currentMediaIndex]);
-            console.log('Current media set:', mediaList[currentMediaIndex], 'Index:', currentMediaIndex);
+        //console.log("Use Effect 4")
+        if (selectedMediaList.length > 0) {
+            setCurrentMedia(selectedMediaList[currentMediaIndex]);
+            console.log('Current media set:', selectedMediaList[currentMediaIndex], 'Index:', currentMediaIndex);
 
         }
-    }, [currentMediaIndex, processedMediaList, setCurrentMedia]);
+    }, [currentMediaIndex, mediaList, setCurrentMedia]);
 
     useEffect(() => {
-        if (processedMediaList.length > 0 && !currentMedia) {
+        //console.log("Use Effect 5")
+        if (selectedMediaList.length > 0 && !currentMedia) {
             setCurrentMediaIndex(0);
 
-            setCurrentMedia(mediaList[0]);
-            console.log('Initial media set:', mediaList[0], 'Index: 0');
+            setCurrentMedia(selectedMediaList[0]);
+            console.log('Initial media set:', selectedMediaList[0], 'Index: 0');
         }
-    }, [processedMediaList, currentMedia, setCurrentMedia]);
+    }, [selectedMediaList, currentMedia, setCurrentMedia]);
 
     useEffect(() => {
         console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
+        // if(currentMediaIndex && currentMediaIndex>=0){
+        //     setSelectedMediaList(listofMedia[mediaList[currentMediaIndex].title]);
+        //     setCurrentMedia(listofMedia[mediaList[currentMediaIndex].title][0]);
+        // }
         setCurrentTimeSec(0);
         setCurrentTime([0, 0]);  // Reset currentTime when media changes
         setImageElapsed(0);
@@ -291,7 +331,7 @@ function VideoPlayer({ autoplay = false }) {
         if (currentMedia && autoplay) {
             play();
         }
-    }, [currentMedia, currentMediaIndex, autoplay]);
+    }, [currentMedia, currentMediaIndex, autoplay,listofMedia,mediaList]);
 
     if (!currentMedia) {
         return <div>Loading...</div>;
@@ -315,23 +355,25 @@ function VideoPlayer({ autoplay = false }) {
                     <div className='VideoPlayer__select'
                     onClick={() => setIsDropdownActive(!isDropdownActive)}
                     >
-                         <span>{feedlist ? feedlist[index].feed : 'Select Media'}</span>
+                         <span>{mediaList ? mediaList[index].title : 'Select Media'}</span>
                         <div className='VideoPlayer__caret'></div>
                     </div>
                     <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
                     
-                    {feedlist.map((media, index) => (
+                    {mediaList.map((media, index) => (
 
                         <li
                             key={index}
                             className={currentMediaIndex === index ? 'active' : ''}
                             onClick={(e) => {
-                                //console.log("current index is: ",index);
+                                console.log("current index is: ",index);
                                 setIndex(index);
                                 setIsDropdownActive(false);
+                                setCurrentMediaIndex(index);
+                                setSelectedMediaList(listofMedia[mediaList[index].title]);
                             }}
                         >
-                            {media.feed || media.url}
+                            {media.title || media.feed}
                         </li>
                     ))}
                 </ul>

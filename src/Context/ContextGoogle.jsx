@@ -10,7 +10,7 @@ export default function ContextProvider({ children }) {
     const [currentMedia, setCurrentMedia] = useState(null);
 
     //I am creating a sample feedlist state to fetch the data
-    const [feedlist, setFeedlist] = useState([]);
+    // const [feedlist, setFeedlist] = useState([]);
 
     useEffect(() => {
         const fetchMedia = async () => {
@@ -24,32 +24,19 @@ export default function ContextProvider({ children }) {
                 Papa.parse(sampleResponse.data, {
                     header: true,  // Assuming your CSV has headers
                     complete: (results) => {
-                        const feedMedia = results.data.map(row => ({
+                        const feedMedia = results.data.filter(row => row.Text === 'TRUE')
+                        .map(row => ({
                             feed: row.Feed,
                             title: row.Title,
+                            text: row.Text,
                             description: row.Description,
                             url: row.URL,
                         }));
-                        //console.log('Fetched media: from sample sheet', feedMedia);  // Log the fetched media
-                        setFeedlist(feedMedia);
+                        console.log('Fetched media: from sample sheet', feedMedia);  // Log the fetched media
+                        setMediaList(feedMedia);
                         // if (feedMedia.length > 0) {
-                        //     setFeedlist(media[0]); // Set the first media item as the current media
+                        //     setCurrentMedia(feedMedia[0]); // Set the first media item as the current media
                         // }
-                    }
-                });
-                Papa.parse(response.data, {
-                    header: true,  // Assuming your CSV has headers
-                    complete: (results) => {
-                        const media = results.data.map(row => ({
-                            url: row.URL,
-                            title: row.Title,
-                            text: row.Text
-                        }));
-                        //console.log('Fetched media:', media);  // Log the fetched media
-                        setMediaList(media);
-                        if (media.length > 0) {
-                            setCurrentMedia(media[0]); // Set the first media item as the current media
-                        }
                     }
                 });
             } catch (error) {
@@ -61,7 +48,7 @@ export default function ContextProvider({ children }) {
     }, []);
    
     return (
-        <Context.Provider value={{ mediaList, setMediaList, currentMedia, setCurrentMedia, feedlist, setFeedlist }}>
+        <Context.Provider value={{ mediaList, setMediaList,currentMedia, setCurrentMedia}}>
             {children}
         </Context.Provider>
     );
