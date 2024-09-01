@@ -22,19 +22,20 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if you're working on an update.
 
-1.) TO DO: Update the Yarn Build to make the player an embeddable widget. Here's possible <a href="https://chatgpt.com/share/b847e2c7-732b-4f28-b069-7a58bc107d93">setup info in ChatGPT</a>.
+DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
-In the existing code, we tried to automate copying the index-xxxxxxxx.js and index-xxxxxxxx.css files to feedplayer.js and feedplayer.css within [dist/assets](https://github.com/ModelEarth/feed/tree/main/dist/assets).  We replaced vite.config.js with vite.config-upcoming.js, but it's not working yet (the copy might run before the build completes).  Once generating a consistant .js and .css file name, edit feed/intro.html to use feedplayer.js and feedplayer.css (or whatever .js file name is standard for a Vite widget).  Also adjust so the widget can be played on the main feed/index.html page. Marco shared a link to [How to copy images in DIST folder from assets in Vite js](https://stackoverflow.com/questions/78076268/how-to-copy-images-in-dist-folder-from-assets-in-vite-js)
+DONE: Add columns for Title and Description in the Google Sheet - Matt B
 
-2.) TO DO: Update the progress bar to include multiple clickable sections when there are sequences of images. - Matt B
+1.) TO DO: When the text is longer than the display area, allow it to scroll.
 
-3.) DONE: Aspect ratio of video remains the same when showing landscape image.<!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
+2.) TO DO: Show the progress bar for the feed images. Update the progress bar to include multiple clickable sections when there are sequences of images. We could tap Matt B. who worked with the progress bar previously.
 
-4.) DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
+<!-- 
+Let's revisit this for a modile orienation.
+3.) DONE: Aspect ratio of video remains the same when showing landscape image.--><!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
 
-5.) DONE: Add columns for Title and Description in the Google Sheet - Matt B
 
-6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in the "feed" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time - Srinath
+6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in our "[swiper](/swiper)" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time - Srinath
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
@@ -55,6 +56,13 @@ In the existing code, we tried to automate copying the index-xxxxxxxx.js and ind
 12.) TO DO: Create a Python process using Github Actions that automatically pulls a new Building Transparency API token every 24 hours. See our existing Python for sample of refreshing the API using a username (email) and password.
 
 13.) Supabase integration - Add a process for saving posts, links and comments related to feed items in Supabase within the [Earthscape NextJS repo](../earthscape/app). Save the ids of the RSS feed item hierarchy from BlueSky and relate it to threaded replies.
+
+
+1.) TO DO: Update the Yarn Build to make the player an embeddable widget. Here's possible <a href="https://chatgpt.com/share/b847e2c7-732b-4f28-b069-7a58bc107d93">setup info in ChatGPT</a>.
+
+In the existing code, we tried to automate copying the index-xxxxxxxx.js and index-xxxxxxxx.css files to feedplayer.js and feedplayer.css within [dist/assets](https://github.com/ModelEarth/feed/tree/main/dist/assets).  We replaced vite.config.js with vite.config-upcoming.js, but it's not working yet (the copy might run before the build completes).  Once generating a consistant .js and .css file name, edit feed/intro.html to use feedplayer.js and feedplayer.css (or whatever .js file name is standard for a Vite widget).  Also adjust so the widget can be played on the main feed/index.html page. Marco shared a link to [How to copy images in DIST folder from assets in Vite js](https://stackoverflow.com/questions/78076268/how-to-copy-images-in-dist-folder-from-assets-in-vite-js)
+
+
 
 ## Features
 
