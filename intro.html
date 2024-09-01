@@ -15,8 +15,8 @@
 
 <script>
 // Because placing these two include here brakes the build:
-// <script type="module" crossorigin src="/feed/dist/assets/index-DyYjKwuR.js"><!--/script-->
-// <link rel="stylesheet" href="/feed/dist/assets/index-CRdmvd4D.css">
+// <script type="module" crossorigin src="/feed/dist/assets/index-BSBw5XdR.js"><!--/script-->
+// <link rel="stylesheet" href="/feed/dist/assets/index-BxDx0fHm.css">
 
 function loadFilesIfNotInDist(jsFile, cssFile) {
   // Get the current path
@@ -53,9 +53,10 @@ function loadFilesIfNotInDist(jsFile, cssFile) {
 
 // IMPORTANT: After building, update to new names generated for index-XXXXXXX.js and index-XXXXXXX.css here.
 
-// TO DO: We are working on always generting copies called feedplayer.js and feedplayer.css to avoid manually fixing each time.
+// TO DO: We are working on automatically generting copies called feedplayer.js and feedplayer.css to avoid manually fixing each time. (Recent work in vite.configBen.js)
 
-loadFilesIfNotInDist('/feed/dist/assets/index-DyYjKwuR.js', '/feed/dist/assets/index-CRdmvd4D.css');
+// For now we manually move into widget and rename.
+loadFilesIfNotInDist('widget/assets/feedplayer.js', 'widget/assets/feedplayer.css');
 </script>
 
 </head>
