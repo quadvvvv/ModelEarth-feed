@@ -342,7 +342,7 @@ function displayFeed() {
 		$("#apiKeyHolder").show();
 		} else if (hash.feed == "water") {
 		
-		url = "https://api.datacommons.org/v2/observation?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&date=LATEST&entity.dcids=dc/g/SDG_6";
+		url = "https://api.datacommons.org/v2/node?key=AIzaSyCTI4Xz-UW_G2Q2RfknhcfdAnTHq5X5XuI&nodes=dc/g/SDG_6&property=-%3E*";
 
 	} else if (hash.feed == "US:Count_Person") {
 		$('#pageTitle').html("US State Populations");
