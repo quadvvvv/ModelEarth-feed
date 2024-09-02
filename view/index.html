@@ -249,6 +249,7 @@ function displayFeed() {
 		}
 	}
 	$("#resultFull").hide();
+	$("#resultCascade").hide();
 	$("#resultJson").html("");
 	$("#resultLoading").show(); // .text("Loading...");
 	$('#pageTitleText').html("");
@@ -310,7 +311,7 @@ function displayFeed() {
 		$('#pageTitle').html("Nutrition label");
 		url = "https://api.nal.usda.gov/fdc/v1/food/2015943?api_key=bLecediTVa2sWd8AegmUZ9o7DxYFSYoef9B4i1Ml";
 		//selected_array = ["foodAttributes"];
-		$('#pageTitleText').html("View <a href='/OpenFootprint'>Label Template</a>.<br><br>");
+		$('#pageTitleText').html("View <a href='/data-commons/docs/food/'>Label Template</a>.<br><br>");
 	} else if (hash.feed == "farmfresh") {
 		$('#pageTitle').html("Farm Fresh");
 		url = "https://www.usdalocalfoodportal.com/api/farmersmarket/?apikey=UXLbsdPdCU&state=mi";
@@ -469,9 +470,17 @@ function refreshDisplay(url) {
 }
 function displayJson(url){
 	$("#resultJson").hide();
+	$("#resultCascade").hide();
 	$("#resultFull").hide();
 	let hash = getHash();
   d3.json(url).then(function(json) {
+  	$("#resultJson").html(JSON.stringify(json));
+
+  	const container = document.getElementById('resultCascade');
+    displayData(json, container);
+    $("#resultCascade").show();
+
+    // From localhost
   	var fullHtml = '';
   	if (hash.feed == "LandCoverFraction_Forest") { // Limit to list of states
   		json = json.byVariable.LandCoverFraction_Forest.byEntity;
@@ -482,7 +491,7 @@ function displayJson(url){
   	// Key, Value, Level, Params
   	fullHtml += formatRow("",json,0); // Resides in localsite.js
 
-  	$("#resultJson").html(JSON.stringify(json));
+  	
   	//$("#resultJson").show();
   	
     //resultFull.innerHTML = fullHtml;
@@ -497,6 +506,7 @@ function displayJson(url){
 }
 function displayRequestsCorsAnywhere(urlItem) {
 	$("#resultFull").hide();
+	$("#resultCascase").hide();
 	let errorOutput;
   const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use your own proxy if available
 
@@ -741,13 +751,17 @@ function updateAPIKeyInURL(url, apikey, keyname) {
 		<div id="resultJson" style="display:none;max-height:200px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
 	</div>
 	
+	<button id="open-all">Open All</button>
 
 	<!--
 	<div id="resultLoading" style="padding-top: 10px;">Loading..<br></div>
 	-->
-	<div id="resultFull"></div>
+	<div id="resultCascade"></div>
+	<div id="resultFull" style="border-top:1px solid #ccc; margin-top:10px"></div>
+
 
 </div>
+
 
 <script>
 // To try
@@ -763,5 +777,172 @@ var url = 'https://api.datacommons.org/v2/observation' +
           '&date=' + dates.join(',');
 </script>
 
+<style>
+.node {
+    margin-left: 20px;
+}
+.children {
+    display: none;
+}
+.arrow {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 5px;
+    transition: transform 0.3s ease;
+}
+.expanded > .arrow {
+    transform: rotate(90deg);
+}
+.truncate {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 400px;
+    display: inline-block;
+}
+.array-item {
+    margin-left: 20px;
+}
+</style>
+<script>
+/// NEW
+function isImageUrl(url) {
+        return /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/.test(url);
+    }
+
+    function createNodeElement(key, value, isArrayItem = false) {
+        const container = document.createElement('div');
+        container.className = 'node';
+
+        const arrow = document.createElement('span');
+        arrow.className = 'arrow';
+        arrow.innerHTML = '&#9654;';
+
+        const content = document.createElement('span');
+
+        if (Array.isArray(value)) {
+            if (!isArrayItem) {
+                content.innerHTML = `<strong>${key}:</strong>`;
+                content.prepend(arrow);
+            }
+
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'children';
+
+            value.forEach((item, index) => {
+                const itemContainer = createNodeElement("", item, true);
+                childrenContainer.appendChild(itemContainer);
+            });
+
+            container.appendChild(content);
+            container.appendChild(childrenContainer);
+
+            arrow.onclick = () => {
+                const isExpanded = container.classList.toggle('expanded');
+                arrow.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+                childrenContainer.style.display = isExpanded ? 'block' : 'none';
+                if (isExpanded) {
+                    openNestedSections(childrenContainer);
+                } else {
+                    closeNestedSections(childrenContainer);
+                }
+            };
+
+            if (!isArrayItem) {
+                // Attach the event handler only if it's not an array item
+                container.appendChild(content);
+                container.appendChild(childrenContainer);
+            }
+        } else if (typeof value === 'object' && value !== null) {
+            content.innerHTML = `<strong>${key}:</strong>`;
+            content.prepend(arrow);
+
+            const childrenContainer = document.createElement('div');
+            childrenContainer.className = 'children';
+
+            for (const [childKey, childValue] of Object.entries(value)) {
+                childrenContainer.appendChild(createNodeElement(childKey, childValue));
+            }
+
+            container.appendChild(content);
+            container.appendChild(childrenContainer);
+
+            content.onclick = () => {
+                const isExpanded = container.classList.toggle('expanded');
+                arrow.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
+                childrenContainer.style.display = isExpanded ? 'block' : 'none';
+                if (isExpanded) {
+                    openNestedSections(childrenContainer);
+                } else {
+                    closeNestedSections(childrenContainer);
+                }
+            };
+        } else {
+            if (isArrayItem) {
+                content.innerHTML = `${value}`;
+                content.prepend(arrow);
+            } else {
+                if (isImageUrl(value)) {
+                    content.innerHTML = `<strong>${key}:</strong> <img src="${value}" alt="${key}" style="max-width: 100px;">`;
+                } else if (typeof value === 'string' && value.startsWith('http')) {
+                    content.innerHTML = `<strong>${key}:</strong> <a href="${value}" target="_blank" class="truncate">${value}</a>`;
+                } else {
+                    content.innerHTML = `<strong>${key}:</strong> ${value}`;
+                }
+            }
+            container.appendChild(content);
+        }
+
+        return container;
+    }
+
+    function openNestedSections(container) {
+        const childNodes = container.querySelectorAll('.node');
+        childNodes.forEach(node => {
+            const arrow = node.querySelector('.arrow');
+            node.classList.add('expanded');
+            const children = node.querySelector('.children');
+            if (children) {
+                children.style.display = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+            }
+        });
+    }
+
+    function closeNestedSections(container) {
+        const childNodes = container.querySelectorAll('.node');
+        childNodes.forEach(node => {
+            const arrow = node.querySelector('.arrow');
+            node.classList.remove('expanded');
+            const children = node.querySelector('.children');
+            if (children) {
+                children.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+
+    function displayData(data, container) {
+        container.innerHTML = '';
+        for (const [key, value] of Object.entries(data)) {
+            container.appendChild(createNodeElement(key, value));
+        }
+    }
+
+    function openAll() {
+        const nodes = document.querySelectorAll('.node');
+        nodes.forEach(node => {
+            node.classList.add('expanded');
+            const arrow = node.querySelector('.arrow');
+            const children = node.querySelector('.children');
+            if (children) {
+                children.style.display = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+            }
+        });
+    }
+
+    document.getElementById('open-all').addEventListener('click', openAll);
+</script>
 </body>
 </html>
