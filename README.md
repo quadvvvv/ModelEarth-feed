@@ -35,7 +35,7 @@ Let's revisit this for a modile orienation.
 3.) DONE: Aspect ratio of video remains the same when showing landscape image.--><!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
 
 
-6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in our "[swiper](/swiper)" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time - Srinath
+6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in our "[swiper](https://github.com/modelearth/swiper)" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time - Srinath
 
 7.) TO DO: Load images into the Feed Player from our [requests repo](../requests/) CSV prompt file.
 
