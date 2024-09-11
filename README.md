@@ -9,7 +9,8 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 <!-- https://video-player-sahilatahar.netlify.app -->
 
-[Check out the Live Preview](intro.html) of the Feed-Player project on model.earth.
+<!-- [Check out the Live Preview](intro.html) -->
+[Check out the dist preview](dist/) of the Feed-Player project on model.earth.
 
 ## Feed Samples
 
@@ -26,7 +27,7 @@ DONE: Pulled image and video links from a Google Sheet by implementing the Conte
 
 DONE: Add columns for Title and Description in the Google Sheet - Matt B
 
-1.) TO DO: When the text is longer than the display area, allow it to scroll.
+1.) DONE: When the text is longer than the display area, allow it to scroll. - Shreyas
 
 2.) TO DO: Show the progress bar for the feed images. Update the progress bar to include multiple clickable sections when there are sequences of images. We could tap Matt B. who worked with the progress bar previously.
 
