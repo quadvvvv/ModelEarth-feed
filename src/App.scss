@@ -4,6 +4,15 @@
   align-items: center;
   /* min-height: 100vh; Caused gap to appear above player */
   position: relative;
+  flex-direction: column; /* Stacks children vertically */
+  align-items: center;    /* Center-aligns children horizontally */
+
+  .flex-container {
+    display: flex;                  /* Enables flexbox layout */
+    flex-direction: column;         /* Stacks items vertically */
+    align-items: center;            /* Centers items horizontally */
+    margin-top: 20px;              /* Adds space above the container */
+  }  
 
   .popup-btn {
     position: fixed;
@@ -18,5 +27,20 @@
     cursor: pointer;
     box-shadow: 0px 0px 29px 0px #bebebe;
     font-size: 1.5rem;
+  }
+
+  .toggle-btn {
+    margin-bottom: 20px;       /* Space between button and content below */
+    padding: 10px 20px;        /* Button padding */
+    font-size: 16px;           /* Button font size */
+    cursor: pointer;           /* Change cursor on hover */
+    border: none;              /* Remove default border */
+    background-color: #007BFF; /* Button background color */
+    color: white;              /* Button text color */
+    border-radius: 5px;       /* Rounded corners */
+  }
+  
+  .toggle-btn:hover {
+    background-color: #0056b3; /* Darken on hover */
   }
 }
