@@ -1,95 +1,173 @@
 .member-showcase {
     padding: 20px;
     text-align: center;
-  
+
     header {
-      margin-bottom: 20px; // Space below the header
+        margin-bottom: 20px; // Space below the header
     }
-  
+
     .members-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-bottom: 20px; // Space for pagination
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 20px; // Space for pagination
     }
-  
+
     .member-card {
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      overflow: hidden; // Ensure the avatar doesn't overflow the rounded corners
-      position: relative; // For hover effect
-      cursor: pointer;
-    }
-  
-    .member-card:hover {
-      transform: scale(1.05); // Zoom effect
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-  
-    .member-avatar {
-      border-radius: 50%;
-      width: 100px;
-      height: 100px;
-      margin: 10px 0;
-      transition: transform 0.3s ease; // Smooth transition
-    }
-  
-    .member-card:hover .member-avatar {
-      transform: scale(1.1); // Zoom avatar on hover
-    }
-  
-    .pagination {
-      display: flex;
-      justify-content: space-between; // Distribute space evenly
-      align-items: center;
-      margin-top: 20px; // Space above pagination
-      position: relative; // Relative positioning for the spinner
-  
-      .prev-button, .next-button {
-        padding: 8px 15px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden; // Ensure the avatar doesn't overflow the rounded corners
+        position: relative; // For hover effect
         cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-  
-      .prev-button:hover, .next-button:hover {
-        background-color: #0056b3; // Darker shade on hover
-      }
-  
-      .prev-button:disabled, .next-button:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
-  
-      .page-info {
-        display: flex;
-        align-items: center; // Center align items
-        
-        span {
-          margin: 0 10px; // Space around the page number
-          font-weight: bold; // Make the page number bold
+        padding: 10px; // Added padding
+
+        .member-avatar {
+            width: 135px; // Increased avatar size
+            height: 135px; // Increased avatar size
+            border-radius: 75%; // Makes the shape round
+            object-fit: cover; // Maintains the aspect ratio
+            margin: 10px 0; // Space around the avatar
+            transition: transform 0.3s ease; // Smooth transition
         }
-  
-        .loading-spinner {
-          border: 4px solid #f3f3f3; // Light grey
-          border-top: 4px solid #3498db; // Blue
-          border-radius: 50%;
-          width: 20px; // Spinner size
-          height: 20px; // Spinner size
-          animation: spin 1s linear infinite;
-          margin-left: 5px; // Space between the spinner and page text
+
+        .member-name {
+            font-size: 0.6em; // Scaled down name size
+            font-weight: bold;
+            margin: 5px 0; // Space around the name
         }
-      }
+
+        .badge {
+            background: rgba(130, 223, 125, 0.815);
+            color: white;
+            border-radius: 5px;
+            padding: 4px 8px; // Adjusted padding to align with font height
+            margin-left: 10px;
+            font-size: 0.6em; // Scaled down font size
+            line-height: 1.2; // Ensure height matches the name's font height
+            display: inline-flex; // Use flex for vertical centering
+            align-items: center; // Center align text inside badge
+        }
+
+        .view-profile-button {
+            margin-top: 10px;
+            padding: 6px 10px; // Scaled down padding
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.8em; // Scaled down font size
+        }
+
+        .view-profile-button:hover {
+            background-color: #0056b3; // Darker shade on hover
+        }
+
+        .member-email {
+            font-size: 0.8em; // Smaller email size
+            color: #666; // Lighter color for email
+            margin: 5px 0; // Space around the email
+        }
     }
-  }
-  
-  @keyframes spin {
+
+    .member-card:hover {
+        transform: scale(1.05); // Zoom effect
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: space-between; // Distribute space evenly
+        align-items: center;
+        margin-top: 20px; // Space above pagination
+        position: relative; // Relative positioning for the spinner
+
+        .prev-button, .next-button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em; // Scaled down font size for buttons
+        }
+
+        .prev-button:hover, .next-button:hover {
+            background-color: #0056b3; // Darker shade on hover
+        }
+
+        .prev-button:disabled, .next-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .page-info {
+            display: flex;
+            align-items: center; // Center align items
+
+            span {
+                margin: 0 10px; // Space around the page number
+                font-weight: bold; // Make the page number bold
+                font-size: 0.9em; // Scaled down font size
+            }
+
+            .loading-spinner {
+                border: 4px solid #f3f3f3; // Light grey
+                border-top: 4px solid #3498db; // Blue
+                border-radius: 50%;
+                width: 20px; // Spinner size
+                height: 20px; // Spinner size
+                animation: spin 1s linear infinite;
+                margin-left: 5px; // Space between the spinner and page text
+            }
+        }
+    }
+
+    // Profile Overlay Styles
+    .profile-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; // On top of other content
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            position: relative; // For close button
+
+            .close-button {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: transparent;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+            .profile-avatar {
+                border-radius: 50%; // Circular avatar
+                width: 80px; // Avatar size
+                height: 80px; // Avatar size
+            }
+        }
+    }
+}
+
+// Spinner Animation
+@keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-  }
-  
+}
