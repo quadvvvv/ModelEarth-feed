@@ -1,21 +1,94 @@
 .App {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  /* min-height: 100vh; Caused gap to appear above player */
-  position: relative;
-  flex-direction: column; /* Stacks children vertically */
-  align-items: center;    /* Center-aligns children horizontally */
+  flex-direction: column;
+  min-height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 
-  .flex-container {
-    display: flex;                  /* Enables flexbox layout */
-    flex-direction: column;         /* Stacks items vertically */
-    align-items: center;            /* Centers items horizontally */
-    margin-top: 20px;              /* Adds space above the container */
-  }  
+  .app-header {
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: 1.3rem;
+      margin: 0;
+      text-align: center;
+    }
+  }
+
+  .app-nav {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    button {
+      background: none;
+      border: none;
+      padding: 10px 15px;
+      margin: 0 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #333;
+
+      &:hover, &.active {
+        color: #007bff;
+      }
+    }
+
+    .dropdown {
+      position: relative;
+
+      &:hover .dropdown-content {
+        display: block;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+
+        button {
+          display: block;
+          width: 100%;
+          text-align: left;
+          padding: 12px 16px;
+
+          &:hover {
+            background-color: #f1f1f1;
+          }
+        }
+      }
+    }
+  }
+
+  .app-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    transition: opacity 0.3s ease;
+
+    &.fade-out {
+      opacity: 0;
+    }
+
+    &.fade-in {
+      opacity: 1;
+    }
+  }
+
+  .feed-player-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
 
   .popup-btn {
-    position: fixed;
+    position: absolute;
     top: 10px;
     right: 10px;
     z-index: 100;
@@ -27,20 +100,5 @@
     cursor: pointer;
     box-shadow: 0px 0px 29px 0px #bebebe;
     font-size: 1.5rem;
-  }
-
-  .toggle-btn {
-    margin-bottom: 20px;       /* Space between button and content below */
-    padding: 10px 20px;        /* Button padding */
-    font-size: 16px;           /* Button font size */
-    cursor: pointer;           /* Change cursor on hover */
-    border: none;              /* Remove default border */
-    background-color: #007BFF; /* Button background color */
-    color: white;              /* Button text color */
-    border-radius: 5px;       /* Rounded corners */
-  }
-  
-  .toggle-btn:hover {
-    background-color: #0056b3; /* Darken on hover */
   }
 }

@@ -1,119 +1,128 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './MemberShowcase.scss';
 
-const generateFakeMembers = (num) => {
-  const names = ["John", "Jane", "Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Hannah"];
-  const fakeMembers = [];
-
-  for (let i = 1; i <= num; i++) {
-    const randomName = names[Math.floor(Math.random() * names.length)];
-    const avatarUrl = `https://via.placeholder.com/150?text=${randomName}`;
-    fakeMembers.push({
-      id: i,
-      username: `${randomName} ${i}`,
-      avatar: avatarUrl,
-      email: i % 2 === 0 ? `${randomName.toLowerCase()}${i}@example.com` : null,
-      role: 'Unspecified' // Default role
-    });
-  }
-  return fakeMembers;
-};
-
-const MemberShowcase = () => {
-  const [members, setMembers] = useState([]);
+const MemberShowcase = ({ members }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMember, setSelectedMember] = useState(null);
+  const intervalDuration = 5000; // 5 seconds per page
   const membersPerPage = 9;
-  const [loading, setLoading] = useState(false);
-  const [selectedMember, setSelectedMember] = useState(null); // State for selected member
+
+  const filteredMembers = members.filter(member =>
+    member.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (member.email && member.email.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const totalPages = Math.ceil(filteredMembers.length / membersPerPage);
 
   useEffect(() => {
-    const fakeMembers = generateFakeMembers(100);
-    setMembers(fakeMembers);
-  }, []);
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
+          return 0;
+        }
+        return prevProgress + (100 / (intervalDuration / 100));
+      });
+    }, 100);
 
-  const currentMembers = members.slice(currentPage * membersPerPage, (currentPage + 1) * membersPerPage);
-  const totalPages = Math.ceil(members.length / membersPerPage);
+    return () => clearInterval(timer);
+  }, [totalPages, intervalDuration]);
 
-  const changePage = (newPage) => {
-    setLoading(true);
-    setTimeout(() => {
-      setCurrentPage(newPage);
-      setLoading(false);
-    }, 1000);
-  };
+  const handlePrevious = useCallback(() => {
+    setCurrentPage((prevPage) => (prevPage - 1 + totalPages) % totalPages);
+    setProgress(0);
+  }, [totalPages]);
 
-  const handleNext = () => {
-    const nextPage = (currentPage + 1) % totalPages;
-    changePage(nextPage);
-  };
+  const handleNext = useCallback(() => {
+    setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
+    setProgress(0);
+  }, [totalPages]);
 
-  const handlePrevious = () => {
-    const prevPage = (currentPage - 1 + totalPages) % totalPages;
-    changePage(prevPage);
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(0);
+    setProgress(0);
   };
 
   const openProfile = (member) => {
     setSelectedMember(member);
-    // Stop auto-pagination
-    clearInterval(autoPageChange.current);
   };
 
   const closeProfile = () => {
     setSelectedMember(null);
-    // Reset pagination countdown
-    autoPageChange.current = setInterval(() => {
-      handleNext();
-    }, 5000);
   };
 
-  const autoPageChange = useRef(null);
-
-  useEffect(() => {
-    autoPageChange.current = setInterval(() => {
-      handleNext();
-    }, 5000);
-    return () => clearInterval(autoPageChange.current);
-  }, [totalPages]);
+  const startIndex = currentPage * membersPerPage;
+  const displayedMembers = filteredMembers.slice(startIndex, startIndex + membersPerPage);
 
   return (
     <div className="member-showcase">
-
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Search members..."
+        value={searchTerm}
+        onChange={handleSearchChange}
+      />
       <div className="members-grid">
-        {currentMembers.map((member) => (
-          <div key={member.id} className="member-card">
+        {displayedMembers.map((member) => (
+          <div key={member.id} className="member-card" onClick={() => openProfile(member)}>
             <img src={member.avatar} alt={member.username} className="member-avatar" />
-            <h3>{member.username} <span className="badge">{member.role}</span></h3>
+            <h3>{member.username}</h3>
+            <span className="badge">{member.role}</span>
             {member.email && <p>{member.email}</p>}
-            <button onClick={() => openProfile(member)} className="view-profile-button">View Profile</button>
+            <button className="view-profile-button">View Profile</button>
           </div>
         ))}
       </div>
       <div className="pagination">
-        <button onClick={handlePrevious} disabled={loading} className="prev-button">
+        <button onClick={handlePrevious} className="prev-button" disabled={currentPage === 0}>
           Previous
         </button>
         <div className="page-info">
           <span>Page {currentPage + 1} of {totalPages}</span>
-          {loading && <div className="loading-spinner"></div>}
         </div>
-        <button onClick={handleNext} disabled={loading} className="next-button">
+        <button onClick={handleNext} className="next-button" disabled={currentPage === totalPages - 1}>
           Next
         </button>
       </div>
-
-      {selectedMember && (
-        <div className="profile-overlay">
-          <div className="profile-card">
-            <button className="close-button" onClick={closeProfile}>×</button>
-            <img src={selectedMember.avatar} alt={selectedMember.username} className="profile-avatar" />
-            <h3>{selectedMember.username}</h3>
-            {selectedMember.email && <p>{selectedMember.email}</p>}
-            <p>Role: {selectedMember.role}</p>
-            <p>Description: {/* Placeholder for description */}This is a placeholder for the user's description.</p>
-            <p>Links: {/* Placeholder for links */}<a href="#">Link 1</a>, <a href="#">Link 2</a></p>
-          </div>
-        </div>
-      )}
+      <div className="progress-bar-container">
+        <div className="progress-bar" style={{ width: `${progress}%` }} />
+      </div>
+      <AnimatePresence>
+        {selectedMember && (
+          <motion.div 
+            className="profile-overlay" 
+            onClick={closeProfile}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div 
+              className="profile-card" 
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <button className="close-button" onClick={closeProfile}>×</button>
+              <img src={selectedMember.avatar} alt={selectedMember.username} className="profile-avatar" />
+              <h3>{selectedMember.username}</h3>
+              {selectedMember.email && <p>{selectedMember.email}</p>}
+              <p>Role: {selectedMember.role || 'N/A'}</p>
+              <p className="role-description">Role Description: {selectedMember.roleDescription || 'N/A'}</p>
+              <a href={selectedMember.link || 'https://model.earth'} target="_blank" rel="noopener noreferrer" className="profile-link">
+                Profile Link
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
