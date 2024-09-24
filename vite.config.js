@@ -10,7 +10,7 @@ export default defineConfig({
     copyAssets(),
     renameHtml() // Add the plugin here
   ],
-  base: '', // base path
+  base: '', // Otherwise '/assets' is the default
   build: {
     rollupOptions: {
       input: "./feedplayer.html",
