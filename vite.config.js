@@ -1,13 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import copyAssets from './vite-plugin-copy';
 import fs from 'fs';
 import path from 'path';
 
 export default defineConfig({
   plugins: [
     react(),
-    copyAssets(),
     renameHtml() // Add the plugin here
   ],
   base: '', // Otherwise '/assets' is the default
