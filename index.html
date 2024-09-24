@@ -1,31 +1,28 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="favicons/site.webmanifest">
-  <link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#5bbad5">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
-  <title>Video Player</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
+<title>Feed Player - For Images, Video and Text</title>
 
-  <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
-  
-  <script>
-  loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
-  </script>
+<script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
 
+<script type="module" crossorigin src="dist/assets/feedplayer.js"></script>
+<link rel="stylesheet" crossorigin href="dist/assets/feedplayer.css">
+
+<script>
+loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
+</script>
 </head>
 
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
 
-  <div class="content contentpadding large-list" style="padding-top:10px">
-    <div id="readmeDiv"></div>
-  </div>
+<div id="root" style="text-align: center;line-height: 0px;"><img src="src/assets/images/intro-a.jpg" style="border-radius:20px;"><div style="margin-top:20px;z-index:1000">Broken by build. Manually update the index .js and .css files to include the newly built ID values.</div></div>
+
+<div class="content contentpadding large-list" style="padding-top:0px">
+  <div id="readmeDiv"></div>
+</div>
 
 </body>
-
 </html>
