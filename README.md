@@ -17,7 +17,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 [View Feeds](view) - The Feed Player is being designed to convert APIs, JSON and .CSV into video-like presentations.
 [Bluesky RSS Feeds](view/#feed=bsky) - Click "Turn on CORS passthrough". &nbsp;[About Bluesky RSS](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q).
 
-[JSON for video, image and feed links](src/Data/data.js) - We will also load from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing)
+[JSON for video, image and feed links](src/Data/data.js) - Feed APIs are loaded from a [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing)
 
 ## Team Projects
 
