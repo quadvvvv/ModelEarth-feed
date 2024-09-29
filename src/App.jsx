@@ -7,6 +7,9 @@ import { Context } from './Context/Context';
 import ContextProvider from "./Context/ContextGoogle";
 import reactToWebComponent from 'react-to-webcomponent';
 import MemberShowcase from './components/MemberShowcase';
+import DiscordChannelViewer from './components/DiscordChannelViewer';
+import FullScreenLoader from './components/FullScreenLoader';
+import { Video, Users, MessageCircle } from 'lucide-react';
 
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define('video-player-widget', VideoPlayerComponent);
@@ -28,19 +31,32 @@ function App() {
   const [members, setMembers] = useState([]);
   const { setVideoList, setCurrentVideoSrc } = useContext(Context);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fakeMembers = generateFakeMembers(100);
     setMembers(fakeMembers);
+    setTimeout(() => setIsLoading(false), 1000);
   }, []);
 
   const handleViewChange = (view) => {
     setIsTransitioning(true);
+    setIsLoading(true);
     setTimeout(() => {
       setCurrentView(view);
       setIsTransitioning(false);
+      setTimeout(() => setIsLoading(false), 500);
     }, 300);
   };
+
+  const navItems = [
+    { id: 'FeedPlayer', icon: Video, label: 'Feed Player' }
+  ];
+
+  const memberSenseDropdownItems = [
+    { id: 'Showcase', icon: Users, label: 'Member Showcase' },
+    { id: 'DiscordViewer', icon: MessageCircle, label: 'Discord Viewer' },
+  ];
 
   const renderContent = () => {
     switch(currentView) {
@@ -58,8 +74,8 @@ function App() {
         );
       case 'Showcase':
         return <MemberShowcase members={members} />;
-      case 'TBD':
-        return <div>TBD Content</div>;
+      case 'DiscordViewer':
+        return <DiscordChannelViewer />;
       default:
         return <div>Select a view</div>;
     }
@@ -68,33 +84,45 @@ function App() {
   return (
     <ContextProvider>
       <div className="App">
+        <FullScreenLoader isLoading={isLoading} />
         <div className="app-header">
-          <h2>Please choose from Showcase and Feed Player</h2>
+          <h2>Choose a view</h2>
         </div>
         <nav className="app-nav">
-          <button 
-            onClick={() => handleViewChange('FeedPlayer')}
-            className={currentView === 'FeedPlayer' ? 'active' : ''}
-          >
-            Feed Player
-          </button>
+          {/* Feed Player Button with icon and label */}
+          {navItems.map((item) => (
+            <button 
+              key={item.id}
+              onClick={() => handleViewChange(item.id)}
+              className={currentView === item.id ? 'active' : ''}
+              title={item.label}
+            >
+              <item.icon size={24} />
+              <span>{item.label}</span>
+            </button>
+          ))}
+          
+          {/* MemberSense Dropdown with Showcase and DiscordViewer */}
           <div className="dropdown">
-            <button className={currentView === 'Showcase' || currentView === 'TBD' ? 'active' : ''}>
-              MemberSense
+            <button 
+              className={currentView === 'Showcase' || currentView === 'DiscordViewer' ? 'active' : ''}
+              title="MemberSense"
+            >
+              <Users size={24} />
+              <span>MemberSense</span>
             </button>
             <div className="dropdown-content">
-              <button 
-                onClick={() => handleViewChange('Showcase')}
-                className={currentView === 'Showcase' ? 'active' : ''}
-              >
-                Showcase
-              </button>
-              <button 
-                onClick={() => handleViewChange('TBD')}
-                className={currentView === 'TBD' ? 'active' : ''}
-              >
-                TBD
-              </button>
+              {memberSenseDropdownItems.map((item) => (
+                <button 
+                  key={item.id}
+                  onClick={() => handleViewChange(item.id)}
+                  className={currentView === item.id ? 'active' : ''}
+                  title={item.label}
+                >
+                  <item.icon size={20} />
+                  <span>{item.label}</span>
+                </button>
+              ))}
             </div>
           </div>
         </nav>
