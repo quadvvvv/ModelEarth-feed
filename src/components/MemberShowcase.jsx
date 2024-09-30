@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import './MemberShowcase.scss';
 
 const MemberShowcase = ({ members }) => {
@@ -7,8 +8,10 @@ const MemberShowcase = ({ members }) => {
   const [progress, setProgress] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMember, setSelectedMember] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [membersPerPage, setMembersPerPage] = useState(9);
+  const containerRef = useRef(null);
   const intervalDuration = 5000; // 5 seconds per page
-  const membersPerPage = 9;
 
   const filteredMembers = members.filter(member =>
     member.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -16,6 +19,16 @@ const MemberShowcase = ({ members }) => {
   );
 
   const totalPages = Math.ceil(filteredMembers.length / membersPerPage);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulated delay
+      setIsLoading(false);
+    };
+
+    fetchMembers();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -31,6 +44,29 @@ const MemberShowcase = ({ members }) => {
     return () => clearInterval(timer);
   }, [totalPages, intervalDuration]);
 
+  useEffect(() => {
+    const updateMembersPerPage = () => {
+      if (containerRef.current) {
+        const { width, height } = containerRef.current.getBoundingClientRect();
+        const cardWidth = 200; // Approximate width of a card
+        const cardHeight = 250; // Approximate height of a card
+        const columns = Math.floor(width / cardWidth);
+        const rows = Math.floor(height / cardHeight);
+        setMembersPerPage(columns * rows);
+      }
+    };
+
+    updateMembersPerPage();
+    window.addEventListener('resize', updateMembersPerPage);
+    return () => window.removeEventListener('resize', updateMembersPerPage);
+  }, []);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(0);
+    setProgress(0);
+  };
+
   const handlePrevious = useCallback(() => {
     setCurrentPage((prevPage) => (prevPage - 1 + totalPages) % totalPages);
     setProgress(0);
@@ -40,12 +76,6 @@ const MemberShowcase = ({ members }) => {
     setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
     setProgress(0);
   }, [totalPages]);
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-    setCurrentPage(0);
-    setProgress(0);
-  };
 
   const openProfile = (member) => {
     setSelectedMember(member);
@@ -60,33 +90,59 @@ const MemberShowcase = ({ members }) => {
 
   return (
     <div className="member-showcase">
-      <input
-        type="text"
-        className="search-input"
-        placeholder="Search members..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-      />
-      <div className="members-grid">
-        {displayedMembers.map((member) => (
-          <div key={member.id} className="member-card" onClick={() => openProfile(member)}>
-            <img src={member.avatar} alt={member.username} className="member-avatar" />
-            <h3>{member.username}</h3>
-            <span className="badge">{member.role}</span>
-            {member.email && <p>{member.email}</p>}
-            <button className="view-profile-button">View Profile</button>
-          </div>
-        ))}
-      </div>
-      <div className="pagination">
-        <button onClick={handlePrevious} className="prev-button" disabled={currentPage === 0}>
-          Previous
-        </button>
-        <div className="page-info">
-          <span>Page {currentPage + 1} of {totalPages}</span>
+      <nav className="app-nav">
+        <div className="search-container">
+          <Search size={20} />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search members..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
-        <button onClick={handleNext} className="next-button" disabled={currentPage === totalPages - 1}>
-          Next
+      </nav>
+      <main className="app-content" ref={containerRef}>
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="loading-spinner"
+            >
+              <div className="spinner"></div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={currentPage}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="members-grid"
+            >
+              {displayedMembers.map((member) => (
+                <div key={member.id} className="member-card" onClick={() => openProfile(member)}>
+                  <img src={member.avatar} alt={member.username} className="member-avatar" />
+                  <h3>{member.username}</h3>
+                  <span className="badge">{member.role}</span>
+                  {member.email && <p>{member.email}</p>}
+                  <button className="view-profile-button">View Profile</button>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+      <div className="pagination">
+        <button onClick={handlePrevious} disabled={currentPage === 0 || isLoading}>
+          <ChevronLeft size={16} />
+        </button>
+        <span>Page {currentPage + 1} of {totalPages}</span>
+        <button onClick={handleNext} disabled={currentPage === totalPages - 1 || isLoading}>
+          <ChevronRight size={16} />
         </button>
       </div>
       <div className="progress-bar-container">
@@ -95,7 +151,7 @@ const MemberShowcase = ({ members }) => {
       <AnimatePresence>
         {selectedMember && (
           <motion.div 
-            className="profile-overlay" 
+            className="profile-overlay"
             onClick={closeProfile}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -103,7 +159,7 @@ const MemberShowcase = ({ members }) => {
             transition={{ duration: 0.3 }}
           >
             <motion.div 
-              className="profile-card" 
+              className="profile-card"
               onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
