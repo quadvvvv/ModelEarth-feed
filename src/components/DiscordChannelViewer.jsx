@@ -105,34 +105,36 @@ const DiscordChannelViewer = () => {
   return (
     <div className="discord-channel-viewer">
       <nav className="app-nav">
-        <div className="dropdown" ref={dropdownRef}>
-          <button 
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="dropdown-toggle"
-            title={channels.find(c => c.id === selectedChannel)?.name || 'Select Channel'}
-          >
-            <MessageCircle size={20} />
-            <ChannelName 
-              name={channels.find(c => c.id === selectedChannel)?.name || 'Select Channel'} 
-              maxLength={20}
-            />
-            <ChevronDown size={16} />
-          </button>
-          {isDropdownOpen && (
-            <div className="dropdown-content">
-              {channels.map((channel) => (
-                <button 
-                  key={channel.id}
-                  onClick={() => handleChannelSelect(channel.id)}
-                  className={selectedChannel === channel.id ? 'active' : ''}
-                  title={channel.name}
-                >
-                  <MessageCircle size={16} />
-                  <ChannelName name={channel.name} maxLength={25} />
-                </button>
-              ))}
-            </div>
-          )}
+        <div className="dropdown-container">
+          <div className="dropdown" ref={dropdownRef}>
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="dropdown-toggle"
+              title={channels.find(c => c.id === selectedChannel)?.name || 'Select Channel'}
+            >
+              <MessageCircle size={20} />
+              <ChannelName 
+                name={channels.find(c => c.id === selectedChannel)?.name || 'Select Channel'} 
+                maxLength={20}
+              />
+              <ChevronDown size={16} />
+            </button>
+            {isDropdownOpen && (
+              <div className="dropdown-content">
+                {channels.map((channel) => (
+                  <button 
+                    key={channel.id}
+                    onClick={() => handleChannelSelect(channel.id)}
+                    className={selectedChannel === channel.id ? 'active' : ''}
+                    title={channel.name}
+                  >
+                    <MessageCircle size={16} />
+                    <ChannelName name={channel.name} maxLength={25} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </nav>
       <main className="app-content">
@@ -144,7 +146,9 @@ const DiscordChannelViewer = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="loading-spinner"
-            />
+            >
+              <div className="spinner"></div>
+            </motion.div>
           ) : (
             <motion.div
               key="messages"
@@ -153,29 +157,33 @@ const DiscordChannelViewer = () => {
               exit={{ opacity: 0 }}
               className="message-container"
             >
-              {messages.map((message) => (
-                <div key={message.id} className="message">
-                  <img src={message.author.avatar} alt={message.author.name} className="avatar" />
-                  <div className="message-content">
-                    <h4>{message.author.name}</h4>
-                    <p>{message.content}</p>
-                    <span className="timestamp">{message.timestamp.toLocaleString()}</span>
+              {messages.length > 0 ? (
+                messages.map((message) => (
+                  <div key={message.id} className="message">
+                    <img src={message.author.avatar} alt={message.author.name} className="avatar" />
+                    <div className="message-content">
+                      <h4>{message.author.name}</h4>
+                      <p>{message.content}</p>
+                      <span className="timestamp">{message.timestamp.toLocaleString()}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="no-messages">No messages to display.</div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="pagination">
-          <button onClick={handlePrevious} disabled={currentPage === 1 || isLoading}>
-            <ChevronLeft size={16} />
-          </button>
-          <span>Page {currentPage}</span>
-          <button onClick={handleNext} disabled={messages.length < messagesPerPage || isLoading}>
-            <ChevronRight size={16} />
-          </button>
-        </div>
       </main>
+      <div className="pagination">
+        <button onClick={handlePrevious} disabled={currentPage === 1 || isLoading}>
+          <ChevronLeft size={16} />
+        </button>
+        <span>Page {currentPage}</span>
+        <button onClick={handleNext} disabled={messages.length < messagesPerPage || isLoading}>
+          <ChevronRight size={16} />
+        </button>
+      </div>
     </div>
   );
 };
