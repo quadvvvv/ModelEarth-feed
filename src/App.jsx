@@ -9,7 +9,8 @@ import reactToWebComponent from 'react-to-webcomponent';
 import MemberShowcase from './components/MemberShowcase';
 import DiscordChannelViewer from './components/DiscordChannelViewer';
 import FullScreenLoader from './components/FullScreenLoader';
-import { Video, Users, MessageCircle } from 'lucide-react';
+import { Video, Users, MessageCircle, AlertCircle } from 'lucide-react';
+import MemberSense from './components/MembersSense';
 
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define('video-player-widget', VideoPlayerComponent);
@@ -33,6 +34,9 @@ function App() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [error, setError] = useState('');
+  const [token, setToken] = useState('');
+
   useEffect(() => {
     const fakeMembers = generateFakeMembers(100);
     setMembers(fakeMembers);
@@ -40,6 +44,11 @@ function App() {
   }, []);
 
   const handleViewChange = (view) => {
+    if ((view === 'Showcase' || view === 'DiscordViewer') && !token) {
+      setError('Please enter a Discord Bot Token in MemberSense first.');
+      return;
+    }
+    setError('');
     setIsTransitioning(true);
     setIsLoading(true);
     setTimeout(() => {
@@ -49,8 +58,19 @@ function App() {
     }, 300);
   };
 
+  const handleValidToken = (validToken) => {
+    setToken(validToken);
+    setError('');
+  };
+
+  const handleLogout = () => {
+    setToken('');
+    setCurrentView('FeedPlayer');
+  };
+
   const navItems = [
-    { id: 'FeedPlayer', icon: Video, label: 'Feed Player' }
+    { id: 'FeedPlayer', icon: Video, label: 'Feed Player' },
+    { id: 'MemberSense', icon: Users, label: 'MemberSense' }
   ];
 
   const memberSenseDropdownItems = [
@@ -72,10 +92,12 @@ function App() {
             <VideoPlayer autoplay={true} />
           </div>
         );
+      case 'MemberSense':
+        return <MemberSense onValidToken={handleValidToken} initialToken={token} />;
       case 'Showcase':
-        return <MemberShowcase members={members} />;
+        return <MemberShowcase token={token} members={members} />;
       case 'DiscordViewer':
-        return <DiscordChannelViewer />;
+        return <DiscordChannelViewer token={token} />;
       default:
         return <div>Select a view</div>;
     }
@@ -89,7 +111,6 @@ function App() {
           <h2>Choose a view</h2>
         </div>
         <nav className="app-nav">
-          {/* Feed Player Button with icon and label */}
           {navItems.map((item) => (
             <button 
               key={item.id}
@@ -102,30 +123,42 @@ function App() {
             </button>
           ))}
           
-          {/* MemberSense Dropdown with Showcase and DiscordViewer */}
-          <div className="dropdown">
-            <button 
-              className={currentView === 'Showcase' || currentView === 'DiscordViewer' ? 'active' : ''}
-              title="MemberSense"
-            >
-              <Users size={24} />
-              <span>MemberSense</span>
-            </button>
-            <div className="dropdown-content">
-              {memberSenseDropdownItems.map((item) => (
+          {token && (
+            <>
+              <div className="dropdown">
                 <button 
-                  key={item.id}
-                  onClick={() => handleViewChange(item.id)}
-                  className={currentView === item.id ? 'active' : ''}
-                  title={item.label}
+                  className={currentView === 'Showcase' || currentView === 'DiscordViewer' ? 'active' : ''}
+                  title="MemberSense Features"
                 >
-                  <item.icon size={20} />
-                  <span>{item.label}</span>
+                  <Users size={24} />
+                  <span>MemberSense Features</span>
                 </button>
-              ))}
-            </div>
-          </div>
+                <div className="dropdown-content">
+                  {memberSenseDropdownItems.map((item) => (
+                    <button 
+                      key={item.id}
+                      onClick={() => handleViewChange(item.id)}
+                      className={currentView === item.id ? 'active' : ''}
+                      title={item.label}
+                    >
+                      <item.icon size={20} />
+                      <span>{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button onClick={handleLogout} className="logout-btn">
+                Logout
+              </button>
+            </>
+          )}
         </nav>
+        {error && (
+          <div className="error-message">
+            <AlertCircle className="error-icon" />
+            <p>{error}</p>
+          </div>
+        )}
         <main className={`app-content ${isTransitioning ? 'fade-out' : 'fade-in'}`}>
           {renderContent()}
         </main>
