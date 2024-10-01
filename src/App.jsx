@@ -62,10 +62,15 @@ function App() {
     setToken(validToken);
     setError('');
   };
-
   const handleLogout = () => {
-    setToken('');
-    setCurrentView('FeedPlayer');
+    setIsTransitioning(true);
+    setIsLoading(true);
+    setTimeout(() => {
+      setToken('');
+      setCurrentView('MemberSense');
+      setIsTransitioning(false);
+      setTimeout(() => setIsLoading(false), 500);
+    }, 300);
   };
 
   const navItems = [

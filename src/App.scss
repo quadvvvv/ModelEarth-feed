@@ -99,7 +99,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease-in-out;
 
     &.fade-out {
       opacity: 0;
@@ -136,6 +136,12 @@
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+    &.transitioning {
+      opacity: 0;
+      transform: translateY(20px);
+    }
 
     h2 {
       text-align: center;
@@ -195,6 +201,13 @@
       ul {
         padding-left: 20px;
       }
+    }
+
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
     }
   }
 

@@ -1,58 +1,69 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, AlertCircle, CheckCircle, Server } from 'lucide-react';
 import './MemberSense.scss';
+import Spinner from './Spinner';
 
-const MemberSense = ({ onValidToken, initialToken }) => {
+const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) => {
   const [showToken, setShowToken] = useState(false);
   const [inputToken, setInputToken] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const [validationMessage, setValidationMessage] = useState(null);
   const [serverInfo, setServerInfo] = useState(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     if (initialToken) {
-      setServerInfo({ name: "Cool Discord Server" }); // Replace with actual server info fetch
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setServerInfo({ name: "Someone's Discord Server" });
+        setIsTransitioning(false);
+      }, 300);
+    } else {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setServerInfo(null);
+        setInputToken('');
+        setValidationMessage(null);
+        setIsTransitioning(false);
+      }, 300);
     }
   }, [initialToken]);
 
   const handleTokenSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsValidating(true);
     setValidationMessage(null);
 
     try {
-      // Simulating API call to validate token
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/validate-token', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ token: inputToken }),
-      // });
-      // const data = await response.json();
-      
-      // Simulating successful validation
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulating API call
       const data = { success: true, serverName: "Someone's Discord Server" };
 
-      if (data.success) {
-        setValidationMessage({ type: 'success', text: 'Token validated successfully!' });
-        setServerInfo({ name: data.serverName });
-        onValidToken(inputToken);
-      } else {
-        setValidationMessage({ type: 'error', text: 'Invalid token. Please try again.' });
-      }
+      setIsTransitioning(true);
+      setTimeout(() => {
+        if (data.success) {
+          setValidationMessage({ type: 'success', text: 'Token validated successfully!' });
+          setServerInfo({ name: data.serverName });
+          onValidToken(inputToken);
+        } else {
+          setValidationMessage({ type: 'error', text: 'Invalid token. Please try again.' });
+        }
+        setIsValidating(false);
+        setIsTransitioning(false);
+      }, 300);
     } catch (error) {
       setValidationMessage({ type: 'error', text: 'An error occurred. Please try again.' });
-    } finally {
-      setIsLoading(false);
+      setIsValidating(false);
     }
   };
 
   return (
-    <div className="member-sense-container">
+    <div className={`member-sense-container ${isTransitioning ? 'transitioning' : ''}`}>
       <h2 className="member-sense-title">MemberSense</h2>
-      {!serverInfo ? (
+      {parentLoading ? (
+        <div className="loading-container">
+          <Spinner />
+        </div>
+      ) : !serverInfo ? (
         <form onSubmit={handleTokenSubmit} className="token-form">
           <div className="token-input-wrapper">
             <input
@@ -61,21 +72,23 @@ const MemberSense = ({ onValidToken, initialToken }) => {
               onChange={(e) => setInputToken(e.target.value)}
               placeholder="Enter Discord Bot Token"
               className="token-input"
+              disabled={isValidating}
             />
             <button
               type="button"
               className="toggle-visibility-btn"
               onClick={() => setShowToken(!showToken)}
+              disabled={isValidating}
             >
               {showToken ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
           <button 
             type="submit" 
-            className={`submit-btn ${isLoading ? 'loading' : ''}`}
-            disabled={isLoading}
+            className={`submit-btn ${isValidating ? 'loading' : ''}`}
+            disabled={isValidating}
           >
-            {isLoading ? 'Validating...' : 'Submit'}
+            {isValidating ? 'Validating...' : 'Submit'}
           </button>
         </form>
       ) : (
@@ -108,6 +121,13 @@ const MemberSense = ({ onValidToken, initialToken }) => {
           <li>View Server Insights</li>
         </ul>
       </div>
+
+      {isValidating && (
+        <div className="overlay">
+          <Spinner />
+          <p>Validating token...</p>
+        </div>
+      )}
     </div>
   );
 };
