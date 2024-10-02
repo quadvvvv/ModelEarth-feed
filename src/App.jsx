@@ -15,37 +15,135 @@ import MemberSense from './components/MembersSense';
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define('video-player-widget', VideoPlayerComponent);
 
-const generateFakeMembers = (num) => {
-  const names = ["John", "Jane", "Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Hannah"];
-  return Array.from({ length: num }, (_, i) => ({
-    id: i + 1,
-    username: `${names[i % names.length]} ${i + 1}`,
-    avatar: `https://via.placeholder.com/150?text=${names[i % names.length]}`,
-    email: i % 2 === 0 ? `${names[i % names.length].toLowerCase()}${i + 1}@example.com` : null,
-    role: 'Member'
-  }));
-};
+const API_BASE_URL = 'http://localhost:3000/api'; // Update this for production
 
 function App() {
   const [isPopup, setIsPopup] = useState(false);
   const [currentView, setCurrentView] = useState('FeedPlayer');
   const [members, setMembers] = useState([]);
+  const [channels, setChannels] = useState([]);
+  const [messages, setMessages] = useState([]);
   const { setVideoList, setCurrentVideoSrc } = useContext(Context);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
   const [error, setError] = useState('');
   const [token, setToken] = useState('');
-
+  const [sessionId, setSessionId] = useState('');
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  
   useEffect(() => {
-    const fakeMembers = generateFakeMembers(100);
-    setMembers(fakeMembers);
+    // Simulate initial loading
     setTimeout(() => setIsLoading(false), 1000);
   }, []);
 
+  useEffect(() => {
+    if (sessionId) {
+      fetchMembers();
+      fetchChannels();
+    } else {
+      setMembers([]);
+      setChannels([]);
+      setMessages([]);
+    }
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (sessionId && selectedChannel) {
+      fetchMessages(selectedChannel);
+    }
+  }, [sessionId, selectedChannel]);
+
+  const fetchMembers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/members`, {
+        headers: { 'Authorization': sessionId }
+      });
+      if (!response.ok) throw new Error('Failed to fetch members');
+      const data = await response.json();
+      setMembers(data);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+      setError('Failed to fetch members. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchChannels = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/channels`, {
+        headers: { 'Authorization': sessionId }
+      });
+      if (!response.ok) throw new Error('Failed to fetch channels');
+      const data = await response.json();
+      setChannels(data);
+      if (data.length > 0 && !selectedChannel) {
+        setSelectedChannel(data[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching channels:', error);
+      setError('Failed to fetch channels. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchMessages = async (channelId) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/messages?channelId=${channelId}`, {
+        headers: { 'Authorization': sessionId }
+      });
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      const data = await response.json();
+      setMessages(data);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      setError('Failed to fetch messages. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogin = async (inputToken) => {
+    setToken(inputToken);
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: inputToken })
+      });
+      if (!response.ok) throw new Error('Login failed');
+      const data = await response.json();
+      setSessionId(data.sessionId);
+      setError('');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Login failed. Please check your token and try again.');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        headers: { 'Authorization': sessionId }
+      });
+      if (!response.ok) throw new Error('Logout failed');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setToken('');
+      setSessionId('');
+      setCurrentView('MemberSense');
+    }
+  };
+
   const handleViewChange = (view) => {
-    if ((view === 'Showcase' || view === 'DiscordViewer') && !token) {
-      setError('Please enter a Discord Bot Token in MemberSense first.');
+    if ((view === 'Showcase' || view === 'DiscordViewer') && !sessionId) {
+      setError('Please log in with a Discord Bot Token in MemberSense first.');
       return;
     }
     setError('');
@@ -53,21 +151,6 @@ function App() {
     setIsLoading(true);
     setTimeout(() => {
       setCurrentView(view);
-      setIsTransitioning(false);
-      setTimeout(() => setIsLoading(false), 500);
-    }, 300);
-  };
-
-  const handleValidToken = (validToken) => {
-    setToken(validToken);
-    setError('');
-  };
-  const handleLogout = () => {
-    setIsTransitioning(true);
-    setIsLoading(true);
-    setTimeout(() => {
-      setToken('');
-      setCurrentView('MemberSense');
       setIsTransitioning(false);
       setTimeout(() => setIsLoading(false), 500);
     }, 300);
@@ -98,15 +181,24 @@ function App() {
           </div>
         );
       case 'MemberSense':
-        return <MemberSense onValidToken={handleValidToken} initialToken={token} />;
+        return <MemberSense onValidToken={handleLogin} initialToken={token} isLoading={isLoading} />;
       case 'Showcase':
-        return <MemberShowcase token={token} members={members} />;
+        return <MemberShowcase members={members} isLoading={isLoading} />;
       case 'DiscordViewer':
-        return <DiscordChannelViewer token={token} />;
+        return (
+          <DiscordChannelViewer 
+            channels={channels} 
+            messages={messages} 
+            selectedChannel={selectedChannel}
+            onChannelSelect={setSelectedChannel}
+            isLoading={isLoading}
+          />
+        );
       default:
         return <div>Select a view</div>;
     }
   };
+
 
   return (
     <ContextProvider>

@@ -13,19 +13,12 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
 
   useEffect(() => {
     if (initialToken) {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setServerInfo({ name: "Someone's Discord Server" });
-        setIsTransitioning(false);
-      }, 300);
+      setInputToken(initialToken);
+      setServerInfo({ name: "Someone's Discord Server" });
     } else {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setServerInfo(null);
-        setInputToken('');
-        setValidationMessage(null);
-        setIsTransitioning(false);
-      }, 300);
+      setServerInfo(null);
+      setInputToken('');
+      setValidationMessage(null);
     }
   }, [initialToken]);
 
@@ -35,26 +28,62 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
     setValidationMessage(null);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulating API call
-      const data = { success: true, serverName: "Someone's Discord Server" };
-
+      await onValidToken(inputToken);
       setIsTransitioning(true);
       setTimeout(() => {
-        if (data.success) {
-          setValidationMessage({ type: 'success', text: 'Token validated successfully!' });
-          setServerInfo({ name: data.serverName });
-          onValidToken(inputToken);
-        } else {
-          setValidationMessage({ type: 'error', text: 'Invalid token. Please try again.' });
-        }
+        setValidationMessage({ type: 'success', text: 'Token validated successfully!' });
+        setServerInfo({ name: "Discord Server" });
         setIsValidating(false);
         setIsTransitioning(false);
       }, 300);
     } catch (error) {
-      setValidationMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      console.error('Error validating token:', error);
+      setValidationMessage({ type: 'error', text: 'Authentication failed. Please try again.' });
+      setServerInfo(null);
       setIsValidating(false);
     }
   };
+
+  const renderTokenForm = () => (
+    <form onSubmit={handleTokenSubmit} className="token-form">
+      <div className="token-input-wrapper">
+        <input
+          type={showToken ? "text" : "password"}
+          value={inputToken}
+          onChange={(e) => setInputToken(e.target.value)}
+          placeholder="Enter Discord Bot Token"
+          className="token-input"
+          disabled={isValidating}
+        />
+        <button
+          type="button"
+          className="toggle-visibility-btn"
+          onClick={() => setShowToken(!showToken)}
+          disabled={isValidating}
+        >
+          {showToken ? <EyeOff size={20} /> : <Eye size={20} />}
+        </button>
+      </div>
+      <button 
+        type="submit" 
+        className={`submit-btn ${isValidating ? 'loading' : ''}`}
+        disabled={isValidating}
+      >
+        {isValidating ? 'Validating...' : 'Submit'}
+      </button>
+    </form>
+  );
+
+  const renderServerInfo = () => (
+    <div className="server-info">
+      <Server size={48} className="server-icon" />
+      <h3 className="server-name">Welcome to {serverInfo.name}!</h3>
+      <p className="server-message">
+        You're all set to explore MemberSense features. 
+        Use the navigation menu to access Member Showcase and Discord Viewer.
+      </p>
+    </div>
+  );
 
   return (
     <div className={`member-sense-container ${isTransitioning ? 'transitioning' : ''}`}>
@@ -63,64 +92,31 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
         <div className="loading-container">
           <Spinner />
         </div>
-      ) : !serverInfo ? (
-        <form onSubmit={handleTokenSubmit} className="token-form">
-          <div className="token-input-wrapper">
-            <input
-              type={showToken ? "text" : "password"}
-              value={inputToken}
-              onChange={(e) => setInputToken(e.target.value)}
-              placeholder="Enter Discord Bot Token"
-              className="token-input"
-              disabled={isValidating}
-            />
-            <button
-              type="button"
-              className="toggle-visibility-btn"
-              onClick={() => setShowToken(!showToken)}
-              disabled={isValidating}
-            >
-              {showToken ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-          <button 
-            type="submit" 
-            className={`submit-btn ${isValidating ? 'loading' : ''}`}
-            disabled={isValidating}
-          >
-            {isValidating ? 'Validating...' : 'Submit'}
-          </button>
-        </form>
       ) : (
-        <div className="server-info">
-          <Server size={48} className="server-icon" />
-          <h3 className="server-name">Welcome to {serverInfo.name}!</h3>
-          <p className="server-message">
-            You're all set to explore MemberSense features. 
-            Use the navigation menu to access Member Showcase and Discord Viewer.
-          </p>
-        </div>
-      )}
-      
-      {validationMessage && (
-        <div className={`validation-message ${validationMessage.type}`}>
-          {validationMessage.type === 'success' ? 
-            <CheckCircle className="message-icon" size={20} /> : 
-            <AlertCircle className="message-icon" size={20} />
-          }
-          {validationMessage.text}
-        </div>
-      )}
+        <>
+          {serverInfo ? renderServerInfo() : renderTokenForm()}
+          
+          {validationMessage && (
+            <div className={`validation-message ${validationMessage.type}`}>
+              {validationMessage.type === 'success' ? 
+                <CheckCircle className="message-icon" size={20} /> : 
+                <AlertCircle className="message-icon" size={20} />
+              }
+              {validationMessage.text}
+            </div>
+          )}
 
-      <div className="permissions-info">
-        <h4>Required Bot Permissions:</h4>
-        <ul>
-          <li>Read Messages/View Channels</li>
-          <li>Send Messages</li>
-          <li>Read Message History</li>
-          <li>View Server Insights</li>
-        </ul>
-      </div>
+          <div className="permissions-info">
+            <h4>Required Bot Permissions:</h4>
+            <ul>
+              <li>Read Messages/View Channels</li>
+              <li>Send Messages</li>
+              <li>Read Message History</li>
+              <li>View Server Insights</li>
+            </ul>
+          </div>
+        </>
+      )}
 
       {isValidating && (
         <div className="overlay">

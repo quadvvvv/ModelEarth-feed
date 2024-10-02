@@ -3,13 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import './MemberShowcase.scss';
 
-const MemberShowcase = ({ members }) => {
+const MemberShowcase = ({ members, isLoading, sessionId }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [progress, setProgress] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [membersPerPage, setMembersPerPage] = useState(9);
+  const [selectedMember, setSelectedMember] = useState(null);
   const containerRef = useRef(null);
   const intervalDuration = 5000; // 5 seconds per page
 
@@ -21,28 +20,20 @@ const MemberShowcase = ({ members }) => {
   const totalPages = Math.ceil(filteredMembers.length / membersPerPage);
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulated delay
-      setIsLoading(false);
-    };
+    if (!isLoading) {
+      const timer = setInterval(() => {
+        setProgress((prevProgress) => {
+          if (prevProgress >= 100) {
+            setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
+            return 0;
+          }
+          return prevProgress + (100 / (intervalDuration / 100));
+        });
+      }, 100);
 
-    fetchMembers();
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 100) {
-          setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
-          return 0;
-        }
-        return prevProgress + (100 / (intervalDuration / 100));
-      });
-    }, 100);
-
-    return () => clearInterval(timer);
-  }, [totalPages, intervalDuration]);
+      return () => clearInterval(timer);
+    }
+  }, [totalPages, intervalDuration, isLoading]);
 
   useEffect(() => {
     const updateMembersPerPage = () => {
