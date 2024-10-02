@@ -25,17 +25,14 @@ function App() {
   const [messages, setMessages] = useState([]);
   const { setVideoList, setCurrentVideoSrc } = useContext(Context);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [token, setToken] = useState('');
   const [sessionId, setSessionId] = useState('');
+  const [serverInfo, setServerInfo] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   
-  useEffect(() => {
-    // Simulate initial loading
-    setTimeout(() => setIsLoading(false), 1000);
-  }, []);
-
   useEffect(() => {
     if (sessionId) {
       fetchMembers();
@@ -108,7 +105,8 @@ function App() {
   };
 
   const handleLogin = async (inputToken) => {
-    setToken(inputToken);
+    setIsLoading(true);
+    setError('');
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
@@ -117,15 +115,28 @@ function App() {
       });
       if (!response.ok) throw new Error('Login failed');
       const data = await response.json();
+      setToken(inputToken);
       setSessionId(data.sessionId);
-      setError('');
+      setServerInfo({
+        serverName: data.serverName,
+        memberCount: data.memberCount,
+        iconURL: data.iconURL
+      });
+      return true; // Indicate successful login
     } catch (error) {
       console.error('Login error:', error);
       setError('Login failed. Please check your token and try again.');
+      setToken('');
+      setSessionId('');
+      setServerInfo(null);
+      return false; // Indicate failed login
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
       const response = await fetch(`${API_BASE_URL}/auth/logout`, {
         method: 'POST',
@@ -135,9 +146,13 @@ function App() {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      setToken('');
-      setSessionId('');
-      setCurrentView('MemberSense');
+      setTimeout(() => {
+        setToken('');
+        setSessionId('');
+        setServerInfo(null);
+        setCurrentView('MemberSense');
+        setIsLoggingOut(false);
+      }, 300); // Match this with your CSS transition duration
     }
   };
 
@@ -148,11 +163,13 @@ function App() {
     }
     setError('');
     setIsTransitioning(true);
-    setIsLoading(true);
+    setIsLoading(view === 'FeedPlayer');
     setTimeout(() => {
       setCurrentView(view);
       setIsTransitioning(false);
-      setTimeout(() => setIsLoading(false), 500);
+      if (view === 'FeedPlayer') {
+        setTimeout(() => setIsLoading(false), 500);
+      }
     }, 300);
   };
 
@@ -181,7 +198,16 @@ function App() {
           </div>
         );
       case 'MemberSense':
-        return <MemberSense onValidToken={handleLogin} initialToken={token} isLoading={isLoading} />;
+        return (
+          <MemberSense 
+            onValidToken={handleLogin} 
+            initialToken={token} 
+            isLoading={isLoading}
+            error={error}
+            isLoggingOut={isLoggingOut}
+            serverInfo={serverInfo}
+          />
+        );
       case 'Showcase':
         return <MemberShowcase members={members} isLoading={isLoading} />;
       case 'DiscordViewer':
@@ -199,11 +225,10 @@ function App() {
     }
   };
 
-
   return (
     <ContextProvider>
       <div className="App">
-        <FullScreenLoader isLoading={isLoading} />
+        {currentView === 'FeedPlayer' && <FullScreenLoader isLoading={isLoading} />}
         <div className="app-header">
           <h2>Choose a view</h2>
         </div>
@@ -250,13 +275,7 @@ function App() {
             </>
           )}
         </nav>
-        {error && (
-          <div className="error-message">
-            <AlertCircle className="error-icon" />
-            <p>{error}</p>
-          </div>
-        )}
-        <main className={`app-content ${isTransitioning ? 'fade-out' : 'fade-in'}`}>
+        <main className={`app-content ${isTransitioning || isLoggingOut ? 'fade-out' : 'fade-in'}`}>
           {renderContent()}
         </main>
       </div>

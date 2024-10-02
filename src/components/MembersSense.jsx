@@ -1,45 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, AlertCircle, CheckCircle, Server } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, CheckCircle, Server, Users, Image } from 'lucide-react';
 import './MemberSense.scss';
 import Spinner from './Spinner';
 
-const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) => {
+const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading, error, isLoggingOut, serverInfo: initialServerInfo }) => {
   const [showToken, setShowToken] = useState(false);
   const [inputToken, setInputToken] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [validationMessage, setValidationMessage] = useState(null);
-  const [serverInfo, setServerInfo] = useState(null);
+  const [serverInfo, setServerInfo] = useState(initialServerInfo);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     if (initialToken) {
       setInputToken(initialToken);
-      setServerInfo({ name: "Someone's Discord Server" });
+      setServerInfo(initialServerInfo);
     } else {
       setServerInfo(null);
       setInputToken('');
       setValidationMessage(null);
     }
-  }, [initialToken]);
+  }, [initialToken, initialServerInfo]);
 
   const handleTokenSubmit = async (e) => {
     e.preventDefault();
     setIsValidating(true);
     setValidationMessage(null);
 
+    const minValidationTime = 2000;
+    const validationStartTime = Date.now();
+
     try {
-      await onValidToken(inputToken);
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setValidationMessage({ type: 'success', text: 'Token validated successfully!' });
-        setServerInfo({ name: "Discord Server" });
-        setIsValidating(false);
-        setIsTransitioning(false);
-      }, 300);
+      const success = await onValidToken(inputToken);
+
+      const elapsedTime = Date.now() - validationStartTime;
+      const remainingTime = Math.max(0, minValidationTime - elapsedTime);
+      
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
+
+      if (success) {
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setValidationMessage({ type: 'success', text: 'Token validated successfully!' });
+          setIsTransitioning(false);
+        }, 300);
+      } else {
+        throw new Error('Login failed');
+      }
     } catch (error) {
       console.error('Error validating token:', error);
       setValidationMessage({ type: 'error', text: 'Authentication failed. Please try again.' });
       setServerInfo(null);
+    } finally {
       setIsValidating(false);
     }
   };
@@ -76,8 +88,18 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
 
   const renderServerInfo = () => (
     <div className="server-info">
-      <Server size={48} className="server-icon" />
-      <h3 className="server-name">Welcome to {serverInfo.name}!</h3>
+      {serverInfo.iconURL ? (
+        <img src={serverInfo.iconURL} alt="Server Icon" className="server-icon" />
+      ) : (
+        <Server size={48} className="server-icon" />
+      )}
+      <h3 className="server-name">{serverInfo.serverName}</h3>
+      <div className="server-details">
+        <p className="member-count">
+          <Users size={20} />
+          {serverInfo.memberCount} members
+        </p>
+      </div>
       <p className="server-message">
         You're all set to explore MemberSense features. 
         Use the navigation menu to access Member Showcase and Discord Viewer.
@@ -86,7 +108,7 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
   );
 
   return (
-    <div className={`member-sense-container ${isTransitioning ? 'transitioning' : ''}`}>
+    <div className={`member-sense-container ${isTransitioning || isLoggingOut ? 'transitioning' : ''}`}>
       <h2 className="member-sense-title">MemberSense</h2>
       {parentLoading ? (
         <div className="loading-container">
@@ -96,32 +118,34 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
         <>
           {serverInfo ? renderServerInfo() : renderTokenForm()}
           
-          {validationMessage && (
-            <div className={`validation-message ${validationMessage.type}`}>
-              {validationMessage.type === 'success' ? 
+          {(validationMessage || error) && (
+            <div className={`validation-message ${validationMessage?.type || 'error'}`}>
+              {validationMessage?.type === 'success' ? 
                 <CheckCircle className="message-icon" size={20} /> : 
                 <AlertCircle className="message-icon" size={20} />
               }
-              {validationMessage.text}
+              {validationMessage?.text || error}
             </div>
           )}
 
-          <div className="permissions-info">
-            <h4>Required Bot Permissions:</h4>
-            <ul>
-              <li>Read Messages/View Channels</li>
-              <li>Send Messages</li>
-              <li>Read Message History</li>
-              <li>View Server Insights</li>
-            </ul>
-          </div>
+          {!serverInfo && (
+            <div className="permissions-info">
+              <h4>Required Bot Permissions:</h4>
+              <ul>
+                <li>Read Messages/View Channels</li>
+                <li>Send Messages</li>
+                <li>Read Message History</li>
+                <li>View Server Insights</li>
+              </ul>
+            </div>
+          )}
         </>
       )}
 
-      {isValidating && (
+      {(isValidating || isLoggingOut) && (
         <div className="overlay">
           <Spinner />
-          <p>Validating token...</p>
+          <p>{isLoggingOut ? 'Logging out...' : 'Validating token...'}</p>
         </div>
       )}
     </div>
