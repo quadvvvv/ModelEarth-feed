@@ -10,7 +10,11 @@
 <script type="text/javascript" src="/localsite/js/jquery.min.js" id="/localsite/js/jquery.min.js"></script>
 
 <link rel="stylesheet" href="/localsite/css/base.css" id="/localsite/css/base.css" />
-<script type="text/javascript" src="/localsite/js/localsite.js?showheader=true&showsearch=true"></script>
+<script type="text/javascript" src="/localsite/js/localsite.js?showheader=true&showsearch=false"></script>
+
+
+<link type="text/css" rel="stylesheet" href="/food/css/label.css" />
+<script type="text/javascript" src="/food/js/label.js"></script>
 
 <!--
 	How to use Promise.all to wait for multiple sources (csv, json) 
@@ -751,6 +755,39 @@ function updateAPIKeyInURL(url, apikey, keyname) {
 		<div id="resultJson" style="display:none;max-height:200px;overflow-y:scroll;border:1px solid #ccc; padding:10px"></div>
 	</div>
 	
+	<div class="local" style="overflow: auto; display:none">
+    <!-- ITEM LABEL -->
+    <div id="item-label" >
+      <div>
+        Nutrition Facts
+      </div>
+      <div class="item-label-header">
+        <div id="item-name" class="item-name"></div>
+        <div class="quantity-controls">
+          <button id="decrease-quantity" style="display:none">-</button>
+          <input id="quantity-input" style="width:45px" type="number" value="1" min="1" step="1">
+          <button id="increase-quantity" style="display:none">+</button>
+        </div>
+      </div>
+
+      <hr class="thick-line">
+      <div class="serving-size">Amount Per Serving</div>
+      <hr class="thin-line">
+
+      <div id="sections">
+      </div>
+
+      <div id="nutritionFooter" class="footer" style="display:none">
+        <hr class="thick-line">
+        <div class="disclaimer">
+          * The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.
+        </div>
+        <div class="ingredients"><strong>INGREDIENTS:</strong> Bleu Cheese Dressing</div>
+      </div>
+    </div><br><br>
+    <!-- /ITEM LABEL -->
+  </div>
+
 	<button id="open-all">Open All</button>
 
 	<!-- for address auto-complete in locationSearch.js -->

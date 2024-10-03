@@ -17,7 +17,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 [View Feeds](view) - The Feed Player is being designed to convert APIs, JSON and .CSV into video-like presentations.
 [Bluesky RSS Feeds](view/#feed=bsky) - Click "Turn on CORS passthrough". &nbsp;[About Bluesky RSS](https://bsky.app/profile/todex.bsky.social/post/3kj2xcufu5q2q).
 
-[JSON for video, image and feed links](src/Data/data.js) - We will also load from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing)
+[JSON for video, image and feed links](src/Data/data.js) - Feed APIs are loaded from a [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing)
 
 ## Team Projects
 
@@ -82,16 +82,20 @@ The Feed-Player interface that is both visually appealing and intuitive to use. 
 
 ## Getting Started
 
-Fork our two repos (localsite and feed) and clone into your webroot
+To contribute, fork our [four primary repos](https://github.com/ModelEarth?tab=repositories) and clone into your webroot:
 
       git clone https://github.com/[your account]/localsite.git
       git clone https://github.com/[your account]/feed.git
+      git clone https://github.com/[your account]/swiper.git
+      git clone https://github.com/[your account]/home.git
 
 ### Folders in your website root
 
 ```ini
 website
+├─ home
 ├─ localsite
+├─ swiper
 └─ feed
    ├─ README.md
    ├─ dist
@@ -105,16 +109,10 @@ website
 ### Start a web server in your webroot
 
 ```
-python3 -m venv env
-source env/bin/activate
 python -m http.server 8887
 ```
 
-On Windows, the second line is:
-
-      env\Scripts\activate
-
-### The primary pages will be visible here:
+### The primary FeedPlayer pages will be visible here:
 
 [Feed Player - localhost:8887/feed](http://localhost:8887/feed/)
 [Feed View - localhost:8887/feed/view](http://localhost:8887/feed/view/)
@@ -160,7 +158,7 @@ yarn install --immutable --immutable-cache --check-cache
 The command above requires yarn 2 and prevents third-parties from altering the checked-in packages before submitting them. [Source](https://stackoverflow.com/questions/58482655/what-is-the-closest-to-npm-ci-in-yarn).  
 It's the equivalent to `npm ci` to avoid updating package-lock.json, which occurs with `npm install`.
 
-### 3. Start the development server
+### 3. Start a development server (optional)
 
 <!--Skip this step. Port 5173 does not currently work because the files are looking for a base path containing "feed".-->
 
