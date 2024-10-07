@@ -1,11 +1,11 @@
-<h1 align='center'>Feed Player - For Images, Video&nbsp;and&nbsp;Text</h1>
+<h1 align='center'>Feed Player + Swiper - For Images, Video&nbsp;and&nbsp;Text</h1>
 
 <!-- Image and link icon to https://video-player-sahilatahar.netlify.app
 
 [![video-player](https://github.com/sahilatahar/Video-Player/assets/100127570/8315e5d3-9b16-4b37-a50c-141a96f2e72e)](https://video-player-sahilatahar.netlify.app/)
 -->
 
-Welcome to our Feed-Player React Project! This project provides a modern and user-friendly interface for viewing a series of images and video pulled from RSS, JSON, CSV and YAML. The UI is built using Vite, ReactJS, HTML, CSS, and JavaScript. The Feed-Player is designed to be fully responsive and packed with a range of features to enhance your viewing experience.
+Welcome to our Feed-Player React Project! This project provides a modern and user-friendly interface for viewing a series of images and video pulled from RSS, JSON, CSV and YAML. The UI is built using Vite, ReactJS, HTML, CSS, and JavaScript. The Feed-Player is designed to be fully responsive and packed with a range of features to enhance your viewing experience with filmstrip navigation using [swiper](https://github.com/modelearth/swiper).
 
 <!-- https://video-player-sahilatahar.netlify.app -->
 
@@ -27,7 +27,7 @@ DONE: Pulled image and video links from a Google Sheet by implementing the Conte
 
 DONE: Add columns for Title and Description in the Google Sheet - Matt B
 
-1.) DONE: When the text is longer than the display area, allow it to scroll. - Shreyas
+1.) DONE: New swiper control and text that scrolls in player.  - Shreyas
 
 2.) TO DO: Show the progress bar for the feed images. Update the progress bar to include multiple clickable sections when there are sequences of images. We could tap Matt B. who worked with the progress bar previously.
 
