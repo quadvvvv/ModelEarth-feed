@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, AlertCircle, CheckCircle, Server } from 'lucide-react';
 import './MemberSense.scss';
-import Spinner from './Spinner';
+import Spinner from '../../Spinner/Spinner'
 
 const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading, isFullScreen }) => {
   const [showToken, setShowToken] = useState(false);

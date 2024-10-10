@@ -6,11 +6,11 @@ import './App.scss';
 import { Context } from './Context/Context';
 import ContextProvider from "./Context/ContextGoogle";
 import reactToWebComponent from 'react-to-webcomponent';
-import MemberShowcase from './components/MemberShowcase';
-import DiscordChannelViewer from './components/DiscordChannelViewer';
+import MemberSense from './components/MemberSenseComponents/MemberSenseLogin/MemberSense';
+import MemberShowcase from './components/MemberSenseComponents/MemberShowcase/MemberShowcase';
+import DiscordChannelViewer from './components/MemberSenseComponents/DiscordChannelViewer/DiscordChannelViewer';
 import FullScreenLoader from './components/FullScreenLoader';
 import { Video, Users, MessageCircle, AlertCircle, Menu, Maximize, Minimize } from 'lucide-react';
-import MemberSense from './components/MembersSense';
 
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define('video-player-widget', VideoPlayerComponent);
