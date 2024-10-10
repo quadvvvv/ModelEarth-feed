@@ -4,6 +4,7 @@ import App from './App.jsx';
 import './index.scss';
 import 'remixicon/fonts/remixicon.css';
 import ContextProvider from './Context/Context.jsx';
+import { Video, Users, MessageCircle, ChevronDown } from 'lucide-react';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
