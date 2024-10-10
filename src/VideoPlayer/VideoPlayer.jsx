@@ -5,7 +5,7 @@ import './VideoPlayer.scss';
 import axios from 'axios'; //Tp fetch the urls of the API
 import PropTypes from 'prop-types';
 
-function VideoPlayer({ autoplay = false }) {
+function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
@@ -28,8 +28,6 @@ function VideoPlayer({ autoplay = false }) {
     // To fetch the urls and then fetch the image urls from the API
     const [selectedMediaList, setSelectedMediaList] = useState([]);
     const [listofMedia, setListofMedia] = useState({});
-
-    const [isFullScreen, setIsFullScreen] = useState(false);
 
     const imageDuration = 4;
 
@@ -216,26 +214,10 @@ function VideoPlayer({ autoplay = false }) {
         }
     };
 
-    const handleFullScreen = () => {
-        const elem = containerRef.current;
-        if (!isFullScreen) {
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-    };
+    const toggleFullScreen = () => {
+        // Call the function passed from the parent
+        handleFullScreen();
+      };
 
     const handleVolumeRange = () => {
         if (volumeRangeRef.current) {
@@ -357,8 +339,8 @@ function VideoPlayer({ autoplay = false }) {
         return <div>Loading...</div>;
     }
 
- return (
-    <div className={`VideoPlayer ${isFullScreen ? 'fullscreen' : ''}`} ref={containerRef}>
+    return (
+        <div className={`VideoPlayer ${isFullScreen ? 'fullscreen' : ''}`} ref={containerRef}>
         <div className="VideoPlayer__video-container">
             {isImageFile(currentMedia.url) ? (
                 <img className="video-image" src={currentMedia.url} alt={currentMedia.title || 'Media'} />
@@ -442,9 +424,9 @@ function VideoPlayer({ autoplay = false }) {
                     onChange={handleVolumeRange} 
                     step={0.1} 
                 />
-                <button className="control-button full-screen" onClick={handleFullScreen}>
-                    <i className={`ri-${isFullScreen ? 'fullscreen-exit' : 'fullscreen'}-line`}></i>
-                </button>
+               <button className="control-button full-screen" onClick={toggleFullScreen}>
+    <i className={`ri-${isFullScreen ? 'fullscreen-exit' : 'fullscreen'}-line`}></i>
+</button>
             </div>
         </div>
     </div>
@@ -452,7 +434,9 @@ function VideoPlayer({ autoplay = false }) {
 }
 
 VideoPlayer.propTypes = {
-autoplay: PropTypes.bool,
+    autoplay: PropTypes.bool,
+    isFullScreen: PropTypes.bool.isRequired,
+    handleFullScreen: PropTypes.func.isRequired,
 };
 
 VideoPlayer.defaultProps = {
