@@ -46,10 +46,6 @@ function App() {
   }, []);
 
   const handleViewChange = (view) => {
-    if ((view === 'Showcase' || view === 'DiscordViewer') && !token) {
-      setError('Please enter a Discord Bot Token in MemberSense first.');
-      return;
-    }
     setError('');
     setIsTransitioning(true);
     setIsLoading(true);
@@ -98,16 +94,13 @@ function App() {
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullScreen(!!document.fullscreenElement);
+      if(!isFullScreen) setIsMenuOpen(false);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  const navItems = [
-    { id: 'FeedPlayer', icon: Video, label: 'Feed Player' },
-    { id: 'MemberSense', icon: Users, label: 'MemberSense' }
-  ];
 
   const memberSenseDropdownItems = [
     { id: 'Showcase', icon: Users, label: 'Member Showcase' },
@@ -117,18 +110,22 @@ function App() {
   const renderContent = () => {
     const commonProps = { isFullScreen };
     switch(currentView) {
-      case 'FeedPlayer':
-        return (
-          <div className="feed-player-container">
-            {!isPopup && (
-              <button className="popup-btn" onClick={() => setIsPopup(true)}>
-                <i className="ri-links-line"></i>
-              </button>
-            )}
-            {isPopup && <Popup {...{ setVideoList, setCurrentVideoSrc, setIsPopup }} />}
-            <VideoPlayer autoplay={true} {...commonProps} />
-          </div>
-        );
+     case 'FeedPlayer':
+  return (
+    <div className="feed-player-container">
+      {!isPopup && (
+        <button className="popup-btn" onClick={() => setIsPopup(true)}>
+          <i className="ri-links-line"></i>
+        </button>
+      )}
+      {isPopup && <Popup {...{ setVideoList, setCurrentVideoSrc, setIsPopup }} />}
+      <VideoPlayer 
+        autoplay={true} 
+        isFullScreen={isFullScreen} 
+        handleFullScreen={handleFullScreen} 
+      />
+    </div>
+  );
       case 'MemberSense':
         return <MemberSense onValidToken={handleValidToken} initialToken={token} {...commonProps} />;
       case 'Showcase':
