@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import VideoPlayer from "./VideoPlayer/VideoPlayer";
 import Popup from "./components/Popup/Popup";
@@ -9,7 +9,7 @@ import reactToWebComponent from 'react-to-webcomponent';
 import MemberShowcase from './components/MemberShowcase';
 import DiscordChannelViewer from './components/DiscordChannelViewer';
 import FullScreenLoader from './components/FullScreenLoader';
-import { Video, Users, MessageCircle, AlertCircle } from 'lucide-react';
+import { Video, Users, MessageCircle, AlertCircle, Menu, Maximize, Minimize } from 'lucide-react';
 import MemberSense from './components/MembersSense';
 
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
@@ -33,9 +33,11 @@ function App() {
   const { setVideoList, setCurrentVideoSrc } = useContext(Context);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
   const [error, setError] = useState('');
   const [token, setToken] = useState('');
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const appRef = useRef(null);
 
   useEffect(() => {
     const fakeMembers = generateFakeMembers(100);
@@ -73,6 +75,35 @@ function App() {
     }, 300);
   };
 
+  const handleFullScreen = () => {
+    if (!isFullScreen) {
+      if (appRef.current.requestFullscreen) {
+        appRef.current.requestFullscreen();
+      } else if (appRef.current.webkitRequestFullscreen) {
+        appRef.current.webkitRequestFullscreen();
+      } else if (appRef.current.msRequestFullscreen) {
+        appRef.current.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   const navItems = [
     { id: 'FeedPlayer', icon: Video, label: 'Feed Player' },
     { id: 'MemberSense', icon: Users, label: 'MemberSense' }
@@ -84,6 +115,7 @@ function App() {
   ];
 
   const renderContent = () => {
+    const commonProps = { isFullScreen };
     switch(currentView) {
       case 'FeedPlayer':
         return (
@@ -94,76 +126,92 @@ function App() {
               </button>
             )}
             {isPopup && <Popup {...{ setVideoList, setCurrentVideoSrc, setIsPopup }} />}
-            <VideoPlayer autoplay={true} />
+            <VideoPlayer autoplay={true} {...commonProps} />
           </div>
         );
       case 'MemberSense':
-        return <MemberSense onValidToken={handleValidToken} initialToken={token} />;
+        return <MemberSense onValidToken={handleValidToken} initialToken={token} {...commonProps} />;
       case 'Showcase':
-        return <MemberShowcase token={token} members={members} />;
+        return <MemberShowcase token={token} members={members} {...commonProps} />;
       case 'DiscordViewer':
-        return <DiscordChannelViewer token={token} />;
+        return <DiscordChannelViewer token={token} {...commonProps} />;
       default:
         return <div>Select a view</div>;
     }
   };
 
+  const renderNavItems = () => {
+    const items = [
+      { id: 'FeedPlayer', icon: Video, label: 'Feed Player' },
+      { id: 'MemberSense', icon: Users, label: 'MemberSense' },
+      ...(token ? memberSenseDropdownItems : [])
+    ];
+
+    return items.map((item) => (
+      <button 
+        key={item.id}
+        onClick={() => {
+          handleViewChange(item.id);
+          if (isFullScreen) setIsMenuOpen(false);
+        }}
+        className={currentView === item.id ? 'active' : ''}
+        title={item.label}
+      >
+        <item.icon size={24} />
+        <span>{item.label}</span>
+      </button>
+    ));
+  };
+
   return (
     <ContextProvider>
-      <div className="App">
+      <div className={`App ${isFullScreen ? 'fullscreen' : ''}`} ref={appRef}>
         <FullScreenLoader isLoading={isLoading} />
-        <div className="app-header">
-          <h2>Choose a view</h2>
-        </div>
-        <nav className="app-nav">
-          {navItems.map((item) => (
-            <button 
-              key={item.id}
-              onClick={() => handleViewChange(item.id)}
-              className={currentView === item.id ? 'active' : ''}
-              title={item.label}
-            >
-              <item.icon size={24} />
-              <span>{item.label}</span>
+        
+        {isFullScreen ? (
+          <div className="fullscreen-nav">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="menu-btn">
+              <Menu size={24} />
             </button>
-          ))}
-          
-          {token && (
-            <>
-              <div className="dropdown">
-                <button 
-                  className={currentView === 'Showcase' || currentView === 'DiscordViewer' ? 'active' : ''}
-                  title="MemberSense Features"
-                >
-                  <Users size={24} />
-                  <span>MemberSense Features</span>
+            {isMenuOpen && (
+              <div className="fullscreen-menu">
+                {renderNavItems()}
+                <button onClick={handleFullScreen} className="fullscreen-toggle">
+                  <Minimize size={24} />
+                  <span>Exit Fullscreen</span>
                 </button>
-                <div className="dropdown-content">
-                  {memberSenseDropdownItems.map((item) => (
-                    <button 
-                      key={item.id}
-                      onClick={() => handleViewChange(item.id)}
-                      className={currentView === item.id ? 'active' : ''}
-                      title={item.label}
-                    >
-                      <item.icon size={20} />
-                      <span>{item.label}</span>
-                    </button>
-                  ))}
-                </div>
+                {token && (
+                  <button onClick={handleLogout} className="logout-btn">
+                    Logout
+                  </button>
+                )}
               </div>
-              <button onClick={handleLogout} className="logout-btn">
-                Logout
-              </button>
-            </>
-          )}
-        </nav>
+            )}
+          </div>
+        ) : (
+          <header className="app-header">
+            <h2>Choose a view</h2>
+            <nav className="app-nav">
+  {renderNavItems()}
+  <button onClick={handleFullScreen} className="fullscreen-toggle">
+    {isFullScreen ? <Minimize size={24} /> : <Maximize size={24} />}
+  </button>
+  {token && (
+    <button onClick={handleLogout} className="logout-btn">
+      Logout
+    </button>
+  )}
+</nav>
+          </header>
+        )}
+
         {error && (
           <div className="error-message">
             <AlertCircle className="error-icon" />
             <p>{error}</p>
           </div>
         )}
+
         <main className={`app-content ${isTransitioning ? 'fade-out' : 'fade-in'}`}>
           {renderContent()}
         </main>
