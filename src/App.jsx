@@ -187,7 +187,6 @@ function App() {
           </div>
         ) : (
           <header className="app-header">
-            <h2>Choose a view</h2>
             <nav className="app-nav">
   {renderNavItems()}
   <button onClick={handleFullScreen} className="fullscreen-toggle">
