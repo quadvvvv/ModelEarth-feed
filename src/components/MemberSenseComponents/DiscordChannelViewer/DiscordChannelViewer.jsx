@@ -49,7 +49,7 @@ const ChannelName = ({ name, maxLength }) => (
   <span title={name}>{truncateText(name, maxLength)}</span>
 );
 
-const DiscordChannelViewer = () => {
+const DiscordChannelViewer = ({ isFullScreen }) => {
   const [channels, setChannels] = useState([]);
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -104,8 +104,36 @@ const DiscordChannelViewer = () => {
   const handlePrevious = () => setCurrentPage(prev => Math.max(prev - 1, 1));
   const handleNext = () => setCurrentPage(prev => prev + 1);
 
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.style.height = isFullScreen ? '100vh' : '80vh';
+      containerRef.current.style.width = isFullScreen ? '100vw' : '100vh';
+      containerRef.current.style.maxWidth = isFullScreen ? 'none' : '800px';
+      containerRef.current.style.margin = isFullScreen ? '0' : '20px auto';
+      containerRef.current.style.borderRadius = isFullScreen ? '0' : '12px';
+    }
+  }, [isFullScreen]);
+
+  const fullScreenVariants = {
+    normal: {
+      scale: 1,
+      transition: { duration: 0.3, ease: 'easeInOut' }
+    },
+    fullScreen: {
+      scale: 1,
+      transition: { duration: 0.3, ease: 'easeInOut' }
+    }
+  };
+
   return (
-    <div className="discord-channel-viewer">
+    <motion.div 
+      className={`discord-channel-viewer ${isFullScreen ? 'fullscreen' : ''}`}
+      ref={containerRef}
+      variants={fullScreenVariants}
+      animate={isFullScreen ? 'fullScreen' : 'normal'}
+    >
       <nav className="app-nav">
         <div className="dropdown-container">
           <div className="dropdown" ref={dropdownRef}>
@@ -186,7 +214,7 @@ const DiscordChannelViewer = () => {
           <ChevronRight size={16} />
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

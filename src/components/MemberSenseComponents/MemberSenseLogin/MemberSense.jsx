@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, AlertCircle, CheckCircle, Server } from 'lucide-react';
 import './MemberSense.scss';
-import Spinner from './Spinner';
+import Spinner from '../../Spinner/Spinner'
 
-const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) => {
+const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading, isFullScreen }) => {
   const [showToken, setShowToken] = useState(false);
   const [inputToken, setInputToken] = useState('');
   const [isValidating, setIsValidating] = useState(false);
@@ -59,7 +59,8 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
   };
 
   return (
-    <div className={`member-sense-container ${isTransitioning ? 'transitioning' : ''}`}>
+    <div className={`member-sense-wrapper ${isFullScreen ? 'fullscreen' : ''}`}>
+      <div className={`member-sense-container ${isTransitioning ? 'transitioning' : ''}`}>
       <h2 className="member-sense-title">MemberSense</h2>
       {parentLoading ? (
         <div className="loading-container">
@@ -130,6 +131,7 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
           <p>Validating token...</p>
         </div>
       )}
+    </div>
     </div>
   );
 };

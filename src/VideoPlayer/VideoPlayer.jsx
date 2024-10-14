@@ -5,12 +5,13 @@ import './VideoPlayer.scss';
 import axios from 'axios'; //To fetch the urls of the API
 import PropTypes from 'prop-types';
 
-function VideoPlayer({ autoplay = false }) {
+function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
     const [isMute, setIsMute] = useState(true);  // Start muted
     const [imageElapsed, setImageElapsed] = useState(0);
+    const containerRef = useRef(null);
     const videoRef = useRef(null);
     const videoRangeRef = useRef(null);
     const volumeRangeRef = useRef(null);
@@ -22,18 +23,15 @@ function VideoPlayer({ autoplay = false }) {
     const [durationSec, setDurationSec] = useState(0);
     const [currentSec, setCurrentTimeSec] = useState(0);
 
-    const [isDropdownActive, setIsDropdownActive] = useState(false);  // Dropdown state
-    const [index, setIndex] = useState(0);//Setting the current drop down title
+    const [isDropdownActive, setIsDropdownActive] = useState(false);
+    const [index, setIndex] = useState(0);
+    // To fetch the urls and then fetch the image urls from the API
+    const [selectedMediaList, setSelectedMediaList] = useState([]);
+    const [listofMedia, setListofMedia] = useState({});
 
     const imageDuration = 4;
 
-    // To fetch the urls and then fetch the image urls from the API
-
-    const [selectedMediaList, setSelectedMediaList] = useState([]);
-    const[listofMedia,setListofMedia]=useState({});
-
     useEffect(() => {
-        //console.log("Use Effect 1 mediaList",mediaList);
         processMediaList();
     }, [mediaList]);
 
@@ -177,7 +175,7 @@ function VideoPlayer({ autoplay = false }) {
             videoRef.current.currentTime = 0;
         }
         setCurrentTimeSec(0);
-        setCurrentTime([0, 0]);  // Reset currentTime to [0, 0]
+        setCurrentTime([0, 0]);
         setIsPlaying(false);
     };
 
@@ -194,7 +192,6 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     const handleNext = useCallback(() => {
-
         setCurrentMediaIndex((prevIndex) => {
             const nextIndex = (prevIndex + 1) % mediaList.length;
             console.log("Moving to next media. New index:", nextIndex);
@@ -217,18 +214,10 @@ function VideoPlayer({ autoplay = false }) {
         }
     };
 
-    const handleFullScreen = () => {
-        const elem = videoRef.current;
-        if (elem) {
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
-        }
-    };
+    const toggleFullScreen = () => {
+        // Call the function passed from the parent
+        handleFullScreen();
+      };
 
     const handleVolumeRange = () => {
         if (volumeRangeRef.current) {
@@ -250,7 +239,6 @@ function VideoPlayer({ autoplay = false }) {
     };
 
     useEffect(() => {
-        //console.log("Use Effect 2")
         let interval;
         if (isPlaying && currentMedia && isVideoFile(currentMedia.url) && videoRef.current) {
             interval = setInterval(() => {
@@ -265,7 +253,6 @@ function VideoPlayer({ autoplay = false }) {
     }, [isPlaying, currentMedia]);
 
     useEffect(() => {
-        //console.log("Use Effect 3")
         const handleLoadedData = () => {
             if (videoRef.current) {
                 setDurationSec(videoRef.current.duration);
@@ -285,7 +272,7 @@ function VideoPlayer({ autoplay = false }) {
             if (isVideoFile(currentMedia.url) && videoRef.current) {
                 videoRef.current.addEventListener('loadeddata', handleLoadedData);
                 videoRef.current.addEventListener('ended', handleEnded);
-                videoRef.current.muted = isMute;  // Ensure video is muted if isMute is true
+                videoRef.current.muted = isMute;
             }
         }
 
@@ -299,19 +286,15 @@ function VideoPlayer({ autoplay = false }) {
     }, [currentMedia, handleNext, isMute]);
 
     useEffect(() => {
-        //console.log("Use Effect 4")
         if (selectedMediaList.length > 0) {
             setCurrentMedia(selectedMediaList[currentMediaIndex]);
             console.log('Current media set:', selectedMediaList[currentMediaIndex], 'Index:', currentMediaIndex);
-
         }
     }, [currentMediaIndex, mediaList, setCurrentMedia]);
 
     useEffect(() => {
-        //console.log("Use Effect 5")
         if (selectedMediaList.length > 0 && !currentMedia) {
             setCurrentMediaIndex(0);
-
             setCurrentMedia(selectedMediaList[0]);
             console.log('Initial media set:', selectedMediaList[0], 'Index: 0');
         }
@@ -319,117 +302,145 @@ function VideoPlayer({ autoplay = false }) {
 
     useEffect(() => {
         console.log('Current media changed:', currentMedia, 'Index:', currentMediaIndex);
-        // if(currentMediaIndex && currentMediaIndex>=0){
-        //     setSelectedMediaList(listofMedia[mediaList[currentMediaIndex].title]);
-        //     setCurrentMedia(listofMedia[mediaList[currentMediaIndex].title][0]);
-        // }
         setCurrentTimeSec(0);
-        setCurrentTime([0, 0]);  // Reset currentTime when media changes
+        setCurrentTime([0, 0]);
         setImageElapsed(0);
-        setIsPlaying(false);  // Reset playing state when media changes
+        setIsPlaying(false);
         
         if (currentMedia && autoplay) {
             play();
         }
-    }, [currentMedia, currentMediaIndex, autoplay,listofMedia,mediaList]);
+    }, [currentMedia, currentMediaIndex, autoplay, listofMedia, mediaList]);
+
+    useEffect(() => {
+        const handleFullScreenChange = () => {
+            setIsFullScreen(
+                document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement
+            );
+        };
+
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullScreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullScreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullScreenChange);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullScreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullScreenChange);
+            document.removeEventListener('mozfullscreenchange', handleFullScreenChange);
+            document.removeEventListener('MSFullscreenChange', handleFullScreenChange);
+        };
+    }, []);
 
     if (!currentMedia) {
         return <div>Loading...</div>;
     }
 
     return (
-        <div className="VideoPlayer">
-            <div className="VideoPlayer__video-container">
-                {isImageFile(currentMedia.url) ? (
-                    <img className="video-image" src={currentMedia.url} alt={currentMedia.title || 'Media'} />
-                ) : (
-                    <video ref={videoRef} src={currentMedia.url} poster='src/assets/videos/intro.jpg' muted={isMute}></video>
-                )}
-                <div className="VideoPlayer__overlay">
-                    <div className="VideoPlayer__info">
-                        <h2>{currentMedia.title || 'Untitled'}</h2>
-                        <p>{currentMedia.text || 'No description available'}</p>
-                    </div>
-                </div>
-                <div className='VideoPlayer__dropdown'>
-                    <div className='VideoPlayer__select'
-                    onClick={() => setIsDropdownActive(!isDropdownActive)}
-                    >
-                         <span>{mediaList ? mediaList[index].title : 'Select Media'}</span>
-                        <div className='VideoPlayer__caret'></div>
-                    </div>
-                    <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
-                    
-                    {mediaList.map((media, index) => (
-
-                        <li
-                            key={index}
-                            className={currentMediaIndex === index ? 'active' : ''}
-                            onClick={(e) => {
-                                console.log("current index is: ",index);
-                                setIndex(index);
-                                setIsDropdownActive(false);
-                                setCurrentMediaIndex(index);
-                                setSelectedMediaList(listofMedia[mediaList[index].title]);
-                            }}
-                        >
-                            {media.title || media.feed}
-                        </li>
-                    ))}
-                </ul>
+        <div className={`VideoPlayer ${isFullScreen ? 'fullscreen' : ''}`} ref={containerRef}>
+        <div className="VideoPlayer__video-container">
+            {isImageFile(currentMedia.url) ? (
+                <img className="video-image" src={currentMedia.url} alt={currentMedia.title || 'Media'} />
+            ) : (
+                <video ref={videoRef} src={currentMedia.url} poster='src/assets/videos/intro.jpg' muted={isMute}></video>
+            )}
+            <div className="VideoPlayer__overlay">
+                <div className="VideoPlayer__info">
+                    <h2>{currentMedia.title || 'Untitled'}</h2>
+                    <p>{currentMedia.text || 'No description available'}</p>
                 </div>
             </div>
-            <div className="VideoPlayer__controls">
-                <div className="control-group control-group-btn">
-                    <button className="control-button prev" onClick={handlePrev}>
-                        <i className="ri-skip-back-fill icon"></i>
-                    </button>
-                    <button className="control-button play-pause" onClick={handlePlayPause}>
-                        <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
-                    </button>
-                    <button className="control-button next" onClick={handleNext}>
-                        <i className="ri-skip-forward-fill icon"></i>
-                    </button>
-                    <button className="control-button stop" onClick={stop}>
-                        <i className="ri-stop-fill icon"></i>
-                    </button>
+            <div className='VideoPlayer__dropdown'>
+                <div className='VideoPlayer__select'
+                onClick={() => setIsDropdownActive(!isDropdownActive)}
+                >
+                     <span>{mediaList ? mediaList[index].title : 'Select Media'}</span>
+                    <div className='VideoPlayer__caret'></div>
                 </div>
-                <div className="control-group control-group-slider">
-                    {isVideoFile(currentMedia.url) && (
-                        <>
-                            <input
-                                type="range"
-                                className="range-input"
-                                ref={videoRangeRef}
-                                onChange={handleVideoRange}
-                                max={durationSec}
-                                value={currentSec}
-                                min={0}
-                            />
-                            <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
-                        </>
-                    )}
-                </div>
-                <div className="control-group control-group-volume">
-                    <button className="control-button volume" onClick={handleMute}>
-                        <i className={`ri-volume-${isMute ? 'mute' : 'up'}-fill`}></i>
-                    </button>
-                    <input type="range" className='range-input' ref={volumeRangeRef} max={1} min={0} value={currentVolume} onChange={handleVolumeRange} step={0.1} />
-                    <button className="control-button full-screen" onClick={handleFullScreen}>
-                        <i className="ri-fullscreen-line"></i>
-                    </button>
-                </div>
+                <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
+                {mediaList.map((media, index) => (
+                    <li
+                        key={index}
+                        className={currentMediaIndex === index ? 'active' : ''}
+                        onClick={() => {
+                            console.log("current index is: ", index);
+                            setIndex(index);
+                            setIsDropdownActive(false);
+                            setCurrentMediaIndex(index);
+                            setSelectedMediaList(listofMedia[mediaList[index].title]);
+                        }}
+                    >
+                        {media.title || media.feed}
+                    </li>
+                ))}
+                </ul>
             </div>
         </div>
-    );
+        <div className="VideoPlayer__controls">
+            <div className="control-group control-group-btn">
+                <button className="control-button prev" onClick={handlePrev}>
+                    <i className="ri-skip-back-fill icon"></i>
+                </button>
+                <button className="control-button play-pause" onClick={handlePlayPause}>
+                    <i className={`ri-${isPlaying ? 'pause' : 'play'}-fill icon`}></i>
+                </button>
+                <button className="control-button next" onClick={handleNext}>
+                    <i className="ri-skip-forward-fill icon"></i>
+                </button>
+                <button className="control-button stop" onClick={stop}>
+                    <i className="ri-stop-fill icon"></i>
+                </button>
+            </div>
+            <div className="control-group control-group-slider">
+                {isVideoFile(currentMedia.url) && (
+                    <>
+                        <input
+                            type="range"
+                            className="range-input"
+                            ref={videoRangeRef}
+                            onChange={handleVideoRange}
+                            max={durationSec}
+                            value={currentSec}
+                            min={0}
+                        />
+                        <span className="time">{currentTime[0]}:{currentTime[1]} / {duration[0]}:{duration[1]}</span>
+                    </>
+                )}
+            </div>
+            <div className="control-group control-group-volume">
+                <button className="control-button volume" onClick={handleMute}>
+                    <i className={`ri-volume-${isMute ? 'mute' : 'up'}-fill`}></i>
+                </button>
+                <input 
+                    type="range" 
+                    className='range-input' 
+                    ref={volumeRangeRef} 
+                    max={1} 
+                    min={0} 
+                    value={currentVolume} 
+                    onChange={handleVolumeRange} 
+                    step={0.1} 
+                />
+               <button className="control-button full-screen" onClick={toggleFullScreen}>
+    <i className={`ri-${isFullScreen ? 'fullscreen-exit' : 'fullscreen'}-line`}></i>
+</button>
+            </div>
+        </div>
+    </div>
+);
 }
 
 VideoPlayer.propTypes = {
     autoplay: PropTypes.bool,
+    isFullScreen: PropTypes.bool.isRequired,
+    handleFullScreen: PropTypes.func.isRequired,
 };
 
 VideoPlayer.defaultProps = {
-    autoplay: false, // Define default props
+autoplay: false,
 };
 
 export default VideoPlayer;

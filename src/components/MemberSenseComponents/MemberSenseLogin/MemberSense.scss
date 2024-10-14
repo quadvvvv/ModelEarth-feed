@@ -1,3 +1,20 @@
+.member-sense-wrapper {
+  
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    overflow-y: auto;
+  }
+}
+
 .member-sense-container {
   max-width: 400px;
   margin: 0 auto;
@@ -7,6 +24,12 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   position: relative;
+
+  .fullscreen & {
+    max-width: 500px; 
+    width: 100%;
+    padding: 20px;
+  }
 
   &.transitioning {
     opacity: 0;
