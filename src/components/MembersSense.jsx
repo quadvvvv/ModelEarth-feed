@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, AlertCircle, CheckCircle, Server } from 'lucide-react';
 import './MemberSense.scss';
@@ -96,7 +98,7 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading }) =
           <Server size={48} className="server-icon" />
           <h3 className="server-name">Welcome to {serverInfo.name}!</h3>
           <p className="server-message">
-            You're all set to explore MemberSense features. 
+            You&apos;re all set to explore MemberSense features. 
             Use the navigation menu to access Member Showcase and Discord Viewer.
           </p>
         </div>

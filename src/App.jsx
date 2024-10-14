@@ -11,6 +11,7 @@ import DiscordChannelViewer from './components/DiscordChannelViewer';
 import FullScreenLoader from './components/FullScreenLoader';
 import { Video, Users, MessageCircle, AlertCircle } from 'lucide-react';
 import MemberSense from './components/MembersSense';
+import SwiperLoop from '../../swiper/src/components/SwiperLoop/SwiperLoop'
 
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define('video-player-widget', VideoPlayerComponent);
@@ -167,6 +168,7 @@ function App() {
         <main className={`app-content ${isTransitioning ? 'fade-out' : 'fade-in'}`}>
           {renderContent()}
         </main>
+        <SwiperLoop/>
       </div>
     </ContextProvider>
   );
