@@ -113,6 +113,12 @@ const MemberSense = ({ onValidToken, initialToken, isLoading: parentLoading, isF
         </div>
       )}
 
+      <div className="token-info">
+        <a href="https://github.com/ModelEarth/feed/blob/main/MemberSense.md" target="_blank" rel="noopener noreferrer" className="token-link">
+          How to Get My Team's Token?
+        </a>
+      </div>
+
       <div className="permissions-info">
         <h4>Required Bot Permissions:</h4>
         <ul>

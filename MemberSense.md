@@ -18,18 +18,54 @@ MemberSense Discord Integration is a modern, responsive web application that com
 - 🔍 Member search functionality
 - 📱 Responsive design for various screen sizes
 
-## Installation
+## Prerequisites for Users
+
+To use the MemberSense Discord Integration, you need to set up your own Discord bot. Follow the steps below to create and configure your bot.
+
+### Discord Bot Setup Guide
+
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications).
+2. Click on "New Application" and give your application a name.
+3. Navigate to the "Bot" tab in the left sidebar and click "Add Bot".
+4. Under the bot's username, click "Copy" to copy your bot token. Keep this token secret and secure.
+5. Scroll down to the "Privileged Gateway Intents" section and enable "Server Members Intent".
+6. To invite the bot to your server, go to the "OAuth2" tab in the left sidebar.
+7. In the "Scopes" section, select "bot".
+8. In the "Bot Permissions" section, select the following permissions:
+   - Read Messages/View Channels
+   - Send Messages
+   - Read Message History
+   - View Server Insights
+9. Copy the generated URL at the bottom of the page.
+10. Open a new browser tab, paste the URL, and select the server where you want to add the bot.
+
+Note: The OAuth2 URL generation is primarily for inviting the bot to a server. If you're adding the bot to your own server or have other means of adding it, you may skip steps 6-10.
+
+For more detailed instructions, you can refer to the [official Discord.js guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html).
+
+### Required Bot Permissions
+
+Ensure your bot has the following permissions:
+
+- Read Messages/View Channels
+- Send Messages
+- Read Message History
+- View Server Insights
+
+Additional base permissions might be needed depending on your specific use case.
+
+## Installation for Developers
 
 To get started with the MemberSense Discord Integration frontend, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/membersense-discord-integration.git
+   git clone https://github.com/ModelEarth/feed.git
    ```
 
 2. Navigate to the project directory:
    ```
-   cd membersense-discord-integration
+   cd feed
    ```
 
 3. Install dependencies:
