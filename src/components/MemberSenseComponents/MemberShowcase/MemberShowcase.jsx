@@ -10,9 +10,9 @@ const MemberCard = ({ member, openProfile }) => (
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
   >
-    <img src={member.avatar} alt={member.username} className="member-avatar" />
+    <img src={member.avatar || 'https://via.placeholder.com/100'} alt={member.username} className="member-avatar" />
     <h3 className="member-name">{member.username}</h3>
-    <span className="badge">{member.role}</span>
+    <span className="badge">{member.role || 'Member'}</span>
     <p className="member-email">
       <Mail size={12} />
       {member.email || 'N/A'}
@@ -24,12 +24,11 @@ const MemberCard = ({ member, openProfile }) => (
   </motion.div>
 );
 
-const MemberShowcase = ({ members, isFullScreen }) => {
+const MemberShowcase = ({ members, isLoading, isFullScreen }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [progress, setProgress] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMember, setSelectedMember] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [gridDimensions, setGridDimensions] = useState({ columns: 3, rows: 3 });
   const containerRef = useRef(null);
   const intervalDuration = 5000; // 5 seconds per page
