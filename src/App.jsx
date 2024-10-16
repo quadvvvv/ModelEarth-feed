@@ -163,7 +163,6 @@ function App() {
   return (
     <ContextProvider>
       <div className={`App ${isFullScreen ? 'fullscreen' : ''}`} ref={appRef}>
-        <FullScreenLoader isLoading={isLoading} />
         
         {isFullScreen ? (
           <div className="fullscreen-nav">
