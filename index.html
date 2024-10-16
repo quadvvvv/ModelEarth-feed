@@ -16,7 +16,14 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
 </script>
 
 <style>
-.swiper-section {
+  .swiper-section {
+    height: 300px;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom:0;
+  }
+</style>
+<!-- .swiper-section {
   height: 477px;
   width: 100%;
   overflow: hidden;
@@ -39,8 +46,7 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
   .swiper-section {
     height: 400px;
   }  
-}
-</style>
+} -->
 
 </head>
 
@@ -50,7 +56,7 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
   Change it to use feedplayer.html like Yarn Build does. -->
 <div id="root"><img src="src/assets/images/intro-a.jpg" style="border-radius:20px;"><div style="margin-top:20px;z-index:1000">Broken by build. Manually update the index .js and .css files to include the newly built ID values.</div></div>
 
-<object type="text/html" class="swiper-section" data="/swiper/dist/index.html" scrolling="no"></object>
+<object type="text/html" class="swiper-section" data="/swiper/dist/loop.html" scrolling="no"></object>
 
 <div class="content contentpadding large-list" style="padding-top:0px">
   <div id="readmeDiv"></div>
