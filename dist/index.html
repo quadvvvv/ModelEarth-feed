@@ -16,12 +16,22 @@
   loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
   </script>
 
+  <style>
+    .swiper-section {
+      height: 300px;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom:0;
+    }
+    </style>
+
   <script type="module" crossorigin src="./assets/feedplayer.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/feedplayer.css">
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root"></div>
+  <object type="text/html" class="swiper-section" data="/swiper/dist/loop.html" scrolling="no"></object>
 
   <div class="content contentpadding large-list" style="padding-top:10px">
     <div id="readmeDiv"></div>
