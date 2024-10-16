@@ -333,3 +333,10 @@
     }
   }
 }
+
+.VideoPlayer__menu {
+  li.loading {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

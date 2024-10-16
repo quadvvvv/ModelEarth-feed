@@ -2,14 +2,14 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
-import axios from 'axios'; //Tp fetch the urls of the API
+import axios from 'axios';
 import PropTypes from 'prop-types';
 
 function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
-    const [isMute, setIsMute] = useState(true);  // Start muted
+    const [isMute, setIsMute] = useState(true);
     const [imageElapsed, setImageElapsed] = useState(0);
     const containerRef = useRef(null);
     const videoRef = useRef(null);
@@ -25,9 +25,9 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
 
     const [isDropdownActive, setIsDropdownActive] = useState(false);
     const [index, setIndex] = useState(0);
-    // To fetch the urls and then fetch the image urls from the API
     const [selectedMediaList, setSelectedMediaList] = useState([]);
     const [listofMedia, setListofMedia] = useState({});
+    const [loadedFeeds, setLoadedFeeds] = useState([]);
 
     const imageDuration = 4;
 
@@ -35,42 +35,45 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
         processMediaList();
     }, [mediaList]);
 
-    // useEffect(() => {
-    //     // This will log the updated selectedMediaList after it changes
-    //     console.log("selectedMediaList updated: ", selectedMediaList);
-    //     console.log("listofMedia 2.0", listofMedia);
-    // }, [selectedMediaList]);
-    
-
-    const processMediaList = () => {
+    const processMediaList = async () => {
         const templistofMedia = {};
-    
-        // Collect all promises from the map operation
-        const processedListPromises = mediaList.map((media) => {
-            return fetchMediaFromAPI(media).then((mediaItems) => {
-                if (Array.isArray(mediaItems)) {
-                    console.log(`mediaItems for ${media.title}`, mediaItems);
-                    templistofMedia[media.title] = mediaItems;
-                } else {
-                    console.log(`mediaItems for ${media.title} (single item)`, mediaItems);
-                    templistofMedia[media.title] = [mediaItems];
-                }
-            }).catch((error) => {
-                console.error(`Error processing media with title ${media.title}:`, error);
-                templistofMedia[media.title] = []; // Handle error by setting an empty array or any default value
-            });
-        });
-    
-        // Wait for all fetch operations to complete
-        Promise.all(processedListPromises).then(() => {
-            if (mediaList && mediaList.length > 0) {
-                // console.log("First media title:", mediaList[0].title);
-                // console.log("Final listofMedia:", templistofMedia);
-                setListofMedia(templistofMedia);
-                setSelectedMediaList(templistofMedia[mediaList[0].title]);
-                setCurrentMedia(templistofMedia[mediaList[0].title][0]);
+        
+        // Find the NASA feed
+        const nasaFeed = mediaList.find(media => media.feed.trim().toLowerCase() === "nasa");
+        
+        if (nasaFeed) {
+            // Load NASA feed first
+            await loadFeed(nasaFeed, templistofMedia);
+            setLoadedFeeds(["nasa"]);
+            
+            // Set initial media
+            setListofMedia(templistofMedia);
+            setSelectedMediaList(templistofMedia[nasaFeed.title]);
+            setCurrentMedia(templistofMedia[nasaFeed.title][0]);
+        }
+        
+        // Load other feeds in the background
+        mediaList.forEach(async (media) => {
+            if (media.feed.trim().toLowerCase() !== "nasa") {
+                await loadFeed(media, templistofMedia);
+                setLoadedFeeds(prev => [...prev, media.feed.trim().toLowerCase()]);
             }
         });
+    };
+
+    const loadFeed = async (media, templistofMedia) => {
+        try {
+            const mediaItems = await fetchMediaFromAPI(media);
+            if (Array.isArray(mediaItems)) {
+                templistofMedia[media.title] = mediaItems;
+            } else {
+                templistofMedia[media.title] = [mediaItems];
+            }
+            setListofMedia(prev => ({...prev, [media.title]: templistofMedia[media.title]}));
+        } catch (error) {
+            console.error(`Error processing media with title ${media.title}:`, error);
+            templistofMedia[media.title] = [];
+        }
     };
     
     const fetchMediaFromAPI = async (media) => {
@@ -355,27 +358,32 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
             </div>
             <div className='VideoPlayer__dropdown'>
                 <div className='VideoPlayer__select'
-                onClick={() => setIsDropdownActive(!isDropdownActive)}
+                    onClick={() => setIsDropdownActive(!isDropdownActive)}
                 >
-                     <span>{mediaList ? mediaList[index].title : 'Select Media'}</span>
+                    <span>{mediaList ? mediaList[index].title : 'Select Media'}</span>
                     <div className='VideoPlayer__caret'></div>
                 </div>
                 <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
-                {mediaList.map((media, index) => (
-                    <li
-                        key={index}
-                        className={currentMediaIndex === index ? 'active' : ''}
-                        onClick={() => {
-                            console.log("current index is: ", index);
-                            setIndex(index);
-                            setIsDropdownActive(false);
-                            setCurrentMediaIndex(index);
-                            setSelectedMediaList(listofMedia[mediaList[index].title]);
-                        }}
-                    >
-                        {media.title || media.feed}
-                    </li>
-                ))}
+                    {mediaList.map((media, index) => (
+                        <li
+                            key={index}
+                            className={`${currentMediaIndex === index ? 'active' : ''} ${loadedFeeds.includes(media.feed.trim().toLowerCase()) ? '' : 'loading'}`}
+                            onClick={() => {
+                                if (loadedFeeds.includes(media.feed.trim().toLowerCase())) {
+                                    console.log("current index is: ", index);
+                                    setIndex(index);
+                                    setIsDropdownActive(false);
+                                    setCurrentMediaIndex(index);
+                                    setSelectedMediaList(listofMedia[mediaList[index].title]);
+                                } else {
+                                    alert("This feed is still loading. Please wait.");
+                                }
+                            }}
+                        >
+                            {media.title || media.feed}
+                            {!loadedFeeds.includes(media.feed.trim().toLowerCase()) && " (Loading...)"}
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>
