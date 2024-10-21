@@ -12,7 +12,16 @@
 <link rel="stylesheet" crossorigin href="dist/assets/feedplayer.css">
 
 <script>
+
 loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
+
+window.onload = function() {
+  if (performance.navigation.type === 1) {
+    // This is a page refresh
+    history.replaceState(null, null, ' ');
+  }
+};
+
 </script>
 
 <style>
@@ -39,13 +48,21 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
 </div>
 
 <script>
+  window.addEventListener('load', function() {
+    if (performance.navigation.type === 1) {
+      // This is a page refresh
+      history.replaceState(null, null, ' ');
+    }
+  });
+
   window.addEventListener('message', (event) => {
     // Verify the origin
-    if (event.origin === 'https://raydendarkus.github.io') {
-      const { url, source } = event.data;
+    if (event.origin === 'https://raydendarkus.github.io' || event.origin === 'http://localhost:8887' || event.origin === 'https://model.earth/') {
+      const { index, source } = event.data;
+      console.log('Received message:', index, source);
       // Check if the message is from the swiper iframe
-      if (source === 'loop' && activeIndex) {
-        window.location.hash = url;
+      if (source === 'loop' && index) {
+        window.location.hash = `#feed=nasa&scene=${index}`;
       }
     } else {
       console.warn('Unexpected origin:', event.origin);

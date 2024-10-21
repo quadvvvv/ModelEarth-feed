@@ -13,7 +13,16 @@
   <script type="text/javascript" src="https://model.earth/localsite/js/localsite.js?showheader=true"></script>
   
   <script>
+  
   loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
+
+  window.onload = function() {
+    if (performance.navigation.type === 1) {
+      // This is a page refresh
+      history.replaceState(null, null, ' ');
+    }
+  };
+
   </script>
 
   <style>
@@ -35,6 +44,29 @@
   <div class="content contentpadding large-list" style="padding-top:10px">
     <div id="readmeDiv"></div>
   </div>
+
+<script>
+  window.addEventListener('load', function() {
+    if (performance.navigation.type === 1) {
+      // This is a page refresh
+      history.replaceState(null, null, ' ');
+    }
+  });
+
+  window.addEventListener('message', (event) => {
+    // Verify the origin
+    if (event.origin === 'https://raydendarkus.github.io' || event.origin === 'http://localhost:8887' || event.origin === 'https://model.earth/') {
+      const { index, source } = event.data;
+      console.log('Received message:', index, source);
+      // Check if the message is from the swiper iframe
+      if (source === 'loop' && index) {
+        window.location.hash = `#feed=nasa&scene=${index}`;
+      }
+    } else {
+      console.warn('Unexpected origin:', event.origin);
+    }
+  });
+</script>
 
 </body>
 
