@@ -62,5 +62,19 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
   <div id="readmeDiv"></div>
 </div>
 
+<script>
+  window.addEventListener('message', (event) => {
+    // Verify the origin
+    if (event.origin === 'https://raydendarkus.github.io') {
+      const { activeIndex, source } = event.data;
+      // Check if the message is from the swiper iframe
+      if (source === 'loop' && activeIndex) {
+        window.location.hash = `#feed=nasa&scene=${activeIndex}`;
+      }
+    } else {
+      console.warn('Unexpected origin:', event.origin);
+    }
+  });
+</script>
 </body>
 </html>
