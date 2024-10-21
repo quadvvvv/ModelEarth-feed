@@ -23,30 +23,6 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
     margin-bottom:0;
   }
 </style>
-<!-- .swiper-section {
-  height: 477px;
-  width: 100%;
-  overflow: hidden;
-  margin-bottom:0;
-}
-
-@media screen and (max-width: 1089px) {
-  .swiper-section {
-    height: 467px;
-  }
-}
-
-@media screen and (max-width: 376px) {
-  .swiper-section {
-    height: 450px;
-  }
-}
-
-@media screen and (max-width: 350px) {
-  .swiper-section {
-    height: 400px;
-  }  
-} -->
 
 </head>
 
@@ -66,10 +42,10 @@ loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
   window.addEventListener('message', (event) => {
     // Verify the origin
     if (event.origin === 'https://raydendarkus.github.io') {
-      const { activeIndex, source } = event.data;
+      const { url, source } = event.data;
       // Check if the message is from the swiper iframe
       if (source === 'loop' && activeIndex) {
-        window.location.hash = `#feed=nasa&scene=${activeIndex}`;
+        window.location.hash = url;
       }
     } else {
       console.warn('Unexpected origin:', event.origin);
