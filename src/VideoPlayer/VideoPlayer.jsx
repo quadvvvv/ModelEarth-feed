@@ -9,7 +9,7 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
     const { mediaList, currentMedia, setCurrentMedia } = useContext(Context);
     const [isPlaying, setIsPlaying] = useState(autoplay);
     const [currentVolume, setCurrentVolume] = useState(1);
-    const [isMute, setIsMute] = useState(true);  // Start muted
+    const [isMute, setIsMute] = useState(true);
     const [imageElapsed, setImageElapsed] = useState(0);
     const containerRef = useRef(null);
     const videoRef = useRef(null);
@@ -25,87 +25,88 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
 
     const [isDropdownActive, setIsDropdownActive] = useState(false);
     const [index, setIndex] = useState(0);
-    // To fetch the urls and then fetch the image urls from the API
     const [selectedMediaList, setSelectedMediaList] = useState([]);
     const [listofMedia, setListofMedia] = useState({});
+    const [loadedFeeds, setLoadedFeeds] = useState([]);
+    const [loadingFeeds, setLoadingFeeds] = useState({});
+
+    const [isLoading, setIsLoading] = useState(true);
 
     const imageDuration = 4;
 
     useEffect(() => {
-        processMediaList();
+        if (mediaList && mediaList.length > 0) {
+            processMediaList();
+        }
     }, [mediaList]);
 
-    // useEffect(() => {
-    //     // This will log the updated selectedMediaList after it changes
-    //     console.log("selectedMediaList updated: ", selectedMediaList);
-    //     console.log("listofMedia 2.0", listofMedia);
-    // }, [selectedMediaList]);
-    
-
-    const processMediaList = () => {
+    const processMediaList = async () => {
+        setIsLoading(true);
         const templistofMedia = {};
-    
-        // Collect all promises from the map operation
-        const processedListPromises = mediaList.map((media) => {
-            return fetchMediaFromAPI(media).then((mediaItems) => {
-                if (Array.isArray(mediaItems)) {
-                    console.log(`mediaItems for ${media.title}`, mediaItems);
-                    templistofMedia[media.title] = mediaItems;
-                } else {
-                    console.log(`mediaItems for ${media.title} (single item)`, mediaItems);
-                    templistofMedia[media.title] = [mediaItems];
-                }
-            }).catch((error) => {
-                console.error(`Error processing media with title ${media.title}:`, error);
-                templistofMedia[media.title] = []; // Handle error by setting an empty array or any default value
-            });
-        });
-    
-        // Wait for all fetch operations to complete
-        Promise.all(processedListPromises).then(() => {
-            if (mediaList && mediaList.length > 0) {
-                // console.log("First media title:", mediaList[0].title);
-                // console.log("Final listofMedia:", templistofMedia);
-                setListofMedia(templistofMedia);
-                setSelectedMediaList(templistofMedia[mediaList[0].title]);
-                setCurrentMedia(templistofMedia[mediaList[0].title][0]);
-            }
-        });
+        
+        // Find the NASA feed
+        const nasaFeed = mediaList.find(media => media.feed.trim().toLowerCase() === "nasa");
+        
+        if (nasaFeed) {
+            // Load NASA feed first
+            await loadFeed(nasaFeed, templistofMedia);
+            setLoadedFeeds(["nasa"]);
+            
+            // Set initial media
+            setListofMedia(templistofMedia);
+            setSelectedMediaList(templistofMedia[nasaFeed.title]);
+            setCurrentMedia(templistofMedia[nasaFeed.title][0]);
+        }
+        
+        setIsLoading(false);
+    };
+
+    const loadFeed = async (media, templistofMedia) => {
+        setLoadingFeeds(prev => ({ ...prev, [media.title]: true }));
+        try {
+            const mediaItems = await fetchMediaFromAPI(media);
+            templistofMedia[media.title] = Array.isArray(mediaItems) ? mediaItems : [mediaItems];
+            setLoadedFeeds(prev => [...prev, media.feed.trim().toLowerCase()]);
+            setListofMedia(prev => ({...prev, [media.title]: templistofMedia[media.title]}));
+        } catch (error) {
+            console.error(`Error processing media with title ${media.title}:`, error);
+            templistofMedia[media.title] = [];
+        }
+        setLoadingFeeds(prev => ({ ...prev, [media.title]: false }));
     };
     
     const fetchMediaFromAPI = async (media) => {
         try {
-            //console.log("Fetching API for:", media.title, "with feed type:", media.feed.trim());
             const response = await axios.get(media.url);
-            //console.log("API Response for", media.title, response);
-    
-            if (media.feed.trim() === "seeclickfix-311") {
-                return response.data.issues.map(item => ({
-                    url: item.media.image_full || item.media.representative_image_url,
-                    text: item.description || 'No description available',
-                    title: item.summary
-                }));
-            } else if (media.feed.trim() === "film-scouting") {
-                return response.data.flatMap(item => {
-                    const photos = [];
-                    for (let i = 1; i <= 10; i++) {
-                        const photoKey = `photo${i}`;
-                        if (item[photoKey]) {
-                            photos.push({
-                                url: item[photoKey],
-                                text: item.description || 'No description available',
-                                title: item[`photoText${i}`] || 'No title available'
-                            });
+            
+            switch (media.feed.trim().toLowerCase()) {
+                case "seeclickfix-311":
+                    return response.data.issues.map(item => ({
+                        url: item.media.image_full || item.media.representative_image_url,
+                        text: item.description || 'No description available',
+                        title: item.summary
+                    }));
+                case "film-scouting":
+                    return response.data.flatMap(item => {
+                        const photos = [];
+                        for (let i = 1; i <= 10; i++) {
+                            const photoKey = `photo${i}`;
+                            if (item[photoKey]) {
+                                photos.push({
+                                    url: item[photoKey],
+                                    text: item.description || 'No description available',
+                                    title: item[`photoText${i}`] || 'No title available'
+                                });
+                            }
                         }
-                    }
-                    return photos;
-                });
-            } else {
-                return response.data.map(item => ({
-                    url: item.hdurl || item.url,
-                    text: item.explanation || 'No description available',
-                    title: item.title
-                }));
+                        return photos;
+                    });
+                default:
+                    return response.data.map(item => ({
+                        url: item.hdurl || item.url,
+                        text: item.explanation || 'No description available',
+                        title: item.title
+                    }));
             }
         } catch (error) {
             console.error('Error fetching from API for', media.title, ':', error);
@@ -114,11 +115,13 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
     };
 
     const isImageFile = (src) => {
+        if (!src) return false;
         const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
         return src && imageExtensions.some(extension => src.toLowerCase().endsWith(extension));
     };
 
     const isVideoFile = (src) => {
+        if (!src) return false;
         const videoExtensions = ['.mp4', '.webm', '.ogg'];
         return src && videoExtensions.some(extension => src.toLowerCase().endsWith(extension));
     };
@@ -335,51 +338,70 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
         };
     }, []);
 
-    if (!currentMedia) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <div className={`VideoPlayer ${isFullScreen ? 'fullscreen' : ''}`} ref={containerRef}>
-        <div className="VideoPlayer__video-container">
-            {isImageFile(currentMedia.url) ? (
-                <img className="video-image" src={currentMedia.url} alt={currentMedia.title || 'Media'} />
-            ) : (
-                <video ref={videoRef} src={currentMedia.url} poster='src/assets/videos/intro.jpg' muted={isMute}></video>
-            )}
-            <div className="VideoPlayer__overlay">
-                <div className="VideoPlayer__info">
-                    <h2>{currentMedia.title || 'Untitled'}</h2>
-                    <p>{currentMedia.text || 'No description available'}</p>
-                </div>
-            </div>
-            <div className='VideoPlayer__dropdown'>
-                <div className='VideoPlayer__select'
-                onClick={() => setIsDropdownActive(!isDropdownActive)}
-                >
-                     <span>{mediaList ? mediaList[index].title : 'Select Media'}</span>
-                    <div className='VideoPlayer__caret'></div>
-                </div>
-                <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
-                {mediaList.map((media, index) => (
-                    <li
-                        key={index}
-                        className={currentMediaIndex === index ? 'active' : ''}
-                        onClick={() => {
-                            console.log("current index is: ", index);
-                            setIndex(index);
-                            setIsDropdownActive(false);
-                            setCurrentMediaIndex(index);
-                            setSelectedMediaList(listofMedia[mediaList[index].title]);
-                        }}
+            <div className="VideoPlayer__video-container">
+                {isLoading ? (
+                    <div className="VideoPlayer__loading">
+                        <div className="spinner"></div>
+                        <p>Loading media...</p>
+                    </div>
+                ) : currentMedia && currentMedia.url ? (
+                    isImageFile(currentMedia.url) ? (
+                        <img className="video-image" src={currentMedia.url} alt={currentMedia.title || 'Media'} />
+                    ) : isVideoFile(currentMedia.url) ? (
+                        <video ref={videoRef} src={currentMedia.url} poster='src/assets/videos/intro.jpg' muted={isMute}></video>
+                    ) : (
+                        <div className="VideoPlayer__unsupported-media">
+                            <p>Unsupported media type</p>
+                        </div>
+                    )
+                ) : (
+                    <div className="VideoPlayer__no-media">
+                        <p>No media available</p>
+                    </div>
+                )}
+                {!isLoading && currentMedia && (
+                    <div className="VideoPlayer__overlay">
+                        <div className="VideoPlayer__info">
+                            <h2>{currentMedia.title || 'Untitled'}</h2>
+                            <p>{currentMedia.text || 'No description available'}</p>
+                        </div>
+                    </div>
+                )}
+                <div className='VideoPlayer__dropdown'>
+                    <div className='VideoPlayer__select'
+                        onClick={() => setIsDropdownActive(!isDropdownActive)}
                     >
-                        {media.title || media.feed}
-                    </li>
-                ))}
-                </ul>
+                        <span>{mediaList && mediaList[index] ? mediaList[index].title : 'Select Media'}</span>
+                        <div className='VideoPlayer__caret'></div>
+                    </div>
+                    <ul className={`VideoPlayer__menu ${isDropdownActive ? 'active' : ''}`}>
+                        {mediaList && mediaList.map((media, idx) => (
+                            <li
+                                key={idx}
+                                className={`${currentMediaIndex === idx ? 'active' : ''} ${loadedFeeds.includes(media.feed.trim().toLowerCase()) ? '' : 'loading'}`}
+                                onClick={() => {
+                                    if (loadedFeeds.includes(media.feed.trim().toLowerCase())) {
+                                        setIndex(idx);
+                                        setIsDropdownActive(false);
+                                        setCurrentMediaIndex(0);
+                                        setSelectedMediaList(listofMedia[media.title]);
+                                        setCurrentMedia(listofMedia[media.title][0]);
+                                    } else {
+                                        loadFeed(media, listofMedia);
+                                    }
+                                }}
+                            >
+                                {media.title || media.feed}
+                                {loadingFeeds[media.title] ? " (Loading...)" : (!loadedFeeds.includes(media.feed.trim().toLowerCase()) && " (Click to load)")}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div className="VideoPlayer__controls">
+            <div className="VideoPlayer__controls">
             <div className="control-group control-group-btn">
                 <button className="control-button prev" onClick={handlePrev}>
                     <i className="ri-skip-back-fill icon"></i>
@@ -395,7 +417,7 @@ function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
                 </button>
             </div>
             <div className="control-group control-group-slider">
-                {isVideoFile(currentMedia.url) && (
+                {currentMedia && isVideoFile(currentMedia.url) && (
                     <>
                         <input
                             type="range"

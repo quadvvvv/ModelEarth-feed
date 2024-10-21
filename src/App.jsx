@@ -194,9 +194,8 @@ function App() {
 
   return (
     <ContextProvider>
-      <div className={`App ${isFullScreen ? "fullscreen" : ""}`} ref={appRef}>
-        <FullScreenLoader isLoading={isLoading} />
-
+      <div className={`App ${isFullScreen ? 'fullscreen' : ''}`} ref={appRef}>
+        
         {isFullScreen ? (
           <div className="fullscreen-nav">
             <button
