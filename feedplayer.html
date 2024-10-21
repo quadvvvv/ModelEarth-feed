@@ -55,7 +55,7 @@
 
   window.addEventListener('message', (event) => {
     // Verify the origin
-    if (event.origin === 'https://raydendarkus.github.io' || event.origin === 'http://localhost:8887' || event.origin === 'https://model.earth/') {
+    if (event.origin === 'https://model.earth/' || event.origin === 'https://raydendarkus.github.io' || event.origin === 'http://localhost:8887') {
       const { index, source } = event.data;
       console.log('Received message:', index, source);
       // Check if the message is from the swiper iframe
