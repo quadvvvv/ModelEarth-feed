@@ -49,7 +49,7 @@ For more detailed instructions, you can refer to the [official Discord.js guide]
 
 Ensure your bot has the following permissions:
 
-- Read Messages/View Channels
+- View Channels
 - Send Messages
 - Read Message History
 - View Server Insights
