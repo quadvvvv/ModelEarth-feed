@@ -7,6 +7,8 @@
 
 MemberSense Discord Integration is a modern, responsive web application that combines a video player with Discord-inspired member management and channel viewing capabilities. This frontend-focused project showcases smooth transitions, fullscreen support, and interactive user interfaces.
 
+Also see [Backend Setup](https://github.com/ModelEarth/members)
+
 ## Features
 
 - 🎥 Video Player with popup support
