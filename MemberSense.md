@@ -34,7 +34,7 @@ To use the MemberSense Discord Integration, you need to set up your own Discord 
 6. To invite the bot to your server, go to the "OAuth2" tab in the left sidebar.
 7. In the "Scopes" section, select "bot".
 8. In the "Bot Permissions" section, select the following permissions:
-   - Read Messages/View Channels
+   - View Channels
    - Send Messages
    - Read Message History
    - View Server Insights
