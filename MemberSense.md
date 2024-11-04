@@ -7,6 +7,8 @@
 
 MemberSense Discord Integration is a modern, responsive web application that combines a video player with Discord-inspired member management and channel viewing capabilities. This frontend-focused project showcases smooth transitions, fullscreen support, and interactive user interfaces.
 
+Also see [Backend Setup](https://github.com/ModelEarth/members)
+
 ## Features
 
 - 🎥 Video Player with popup support
@@ -32,7 +34,7 @@ To use the MemberSense Discord Integration, you need to set up your own Discord 
 6. To invite the bot to your server, go to the "OAuth2" tab in the left sidebar.
 7. In the "Scopes" section, select "bot".
 8. In the "Bot Permissions" section, select the following permissions:
-   - Read Messages/View Channels
+   - View Channels
    - Send Messages
    - Read Message History
    - View Server Insights
@@ -47,7 +49,7 @@ For more detailed instructions, you can refer to the [official Discord.js guide]
 
 Ensure your bot has the following permissions:
 
-- Read Messages/View Channels
+- View Channels
 - Send Messages
 - Read Message History
 - View Server Insights
