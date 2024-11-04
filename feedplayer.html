@@ -45,29 +45,36 @@
     <div id="readmeDiv"></div>
   </div>
 
-<script>
-  window.addEventListener('load', function() {
-    if (performance.navigation.type === 1) {
-      // This is a page refresh
-      history.replaceState(null, null, ' ');
+  <script>
+    const allowedOrigins = ['https://model.earth', 'https://raydendarkus.github.io', 'http://localhost:8887', 'http://localhost:5173'];
+    // Function to handle hash changes
+    function handleHashChange() {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const scene = parseInt(hashParams.get('scene'), 10);
+        if (scene > 0 && scene <= 18) {
+            const iframe = document.querySelector('.swiper-section');
+            if (iframe && iframe.contentWindow) 
+              iframe.contentWindow.postMessage({ action: 'changeSlide', scene: scene }, '*');
+        }
     }
-  });
-
-  window.addEventListener('message', (event) => {
-    // Verify the origin
-    if (event.origin === 'https://model.earth/' || event.origin === 'https://raydendarkus.github.io' || event.origin === 'http://localhost:8887') {
-      const { index, source } = event.data;
-      console.log('Received message:', index, source);
-      // Check if the message is from the swiper iframe
-      if (source === 'loop' && index) {
-        window.location.hash = `#feed=nasa&scene=${index}`;
-      }
-    } else {
-      console.warn('Unexpected origin:', event.origin);
+    // Function to handle messages from the iframe
+    function handleMessage(event) {
+        if (allowedOrigins.includes(event.origin)) {
+            const { index, source } = event.data;
+            if (source === 'loop' && !isNaN(index) && index > 0 && index <= 18) 
+                history.replaceState(null, null, `#feed=nasa&scene=${index}`);
+        }
     }
-  });
-</script>
-
+    // Set up event listeners
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('message', handleMessage);
+  
+    // Clean up function to prevent memory leaks
+    window.addEventListener('unload', () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('message', handleMessage);
+    });
+    </script>
 </body>
 
 </html>
