@@ -10,7 +10,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 <!-- https://video-player-sahilatahar.netlify.app -->
 
 <!-- [Check out the Live Preview](intro.html) -->
-[Check out the dist preview](dist/) of the Feed-Player project on model.earth.
+[Check out the FeedPlayer](https://model.earth/feed/) on model.earth.
 
 ## Feed Samples
 
