@@ -15,7 +15,8 @@ import { Video, Users, MessageCircle, AlertCircle, Menu, Maximize, Minimize } fr
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define('video-player-widget', VideoPlayerComponent);
 
-const API_BASE_URL = 'http://localhost:3000/api'; // Update this for production
+// Replace the existing API_BASE_URL declaration
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL // Fallback for local development
 
 function App() {
   const [isPopup, setIsPopup] = useState(false);
