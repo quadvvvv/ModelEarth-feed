@@ -23,20 +23,24 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if you're working on an update.
 
-DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
+1.) DONE: Pulled image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
+<!--
 DONE: Add columns for Title and Description in the Google Sheet - Matt B
+-->
 
-1.) DONE: New swiper control and text that scrolls in player.  - Shreyas
+2.) DONE: New swiper control and text that scrolls in player.  - Shreyas
 
-2.) TO DO: Show the progress bar for the feed images. Update the progress bar to include multiple clickable sections when there are sequences of images. We could tap Matt B. who worked with the progress bar previously.
+3.) TO DO: Show the progress bar for the feed images. Update the progress bar to include multiple clickable sections when there are sequences of images. We could tap Matt B. who worked with the progress bar previously.
+
+4.) IN PROGRESS: Membersense development and implementation using Discord API - Yunbo
 
 <!-- 
 Let's revisit this for a modile orienation.
-3.) DONE: Aspect ratio of video remains the same when showing landscape image.--><!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
+DONE: Aspect ratio of video remains the same when showing landscape image.--><!--To prevent the video height from jumping short briefly: When setCurrentVideoSrc is called to advance the video, insert the current height until the next video loads. Remove the inserted height once the new slide video/image loads into the DOM. (The last video is an example with a different aspect ratio.)-->
 
 
-6.) TO DO: Use Vite to add [Swiper Element](https://swiperjs.com/element) in our "[swiper](https://github.com/modelearth/swiper)" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time - Srinath
+6.) IN PROGRESS: Use Vite to add [Swiper Element](https://swiperjs.com/element) in our "[swiper](https://github.com/modelearth/swiper)" repo and provide a filmstrip based on the images in incoming feeds. Place in a "swiper" folder. See [Swiper Element Setup](https://www.freecodecamp.org/news/how-to-set-up-swiper-element-in-a-react-application/) and [Film-strip sample](https://www.sliderrevolution.com/templates/wordpress-media-gallery) - We'll avoid showing multiple heros at the same time - Srinath
 
 7.) TO DO: Load images into the Feed Player from our [pull from Github](../home/repo/). - Chethan
 Embed and show the FeedPlayer when choosing "images" at [/home/repo/](../home/repo/)
