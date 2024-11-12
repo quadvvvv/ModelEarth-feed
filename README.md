@@ -23,7 +23,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if you're working on an update.
 
-1.) Reactivate the display of videos using the "BigBunny" dropdown choice.  Hide the "link icon" in the upper right unless a video is being viewed. Provide a more specific error than "No media available"
+1.) We recently deactivating pre-loading other feeds. When choosing a feed in the upper right dropdown, provide a more specific error than "No media available". Get the dropdown choices to load feeds. Get the "BigBunny" video to load with this new process.
 
 2.) DONE: Pull the image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
@@ -55,6 +55,8 @@ Embed and show the FeedPlayer when choosing "images" at [/home/repo/](../home/re
 11.) TO DO: Pull the replies for each Bluesky post in the feed. Use the screen-grab technique that we use to grab images from news sites that are listed in the feed. Scrape the posts from the Bluesky website. Grab replies for the top 3 posts. If the process doesn't work, leave the attempt commented out. - Noopur
 
 12.) DONE - List of feeds on right of player with links to /feed/view/#feed= - Kalyan
+
+13.) Hide the "link icon" in the upper right unless a video is being viewed.
 
 ### Building Transparency
 
