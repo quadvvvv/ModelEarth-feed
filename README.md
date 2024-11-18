@@ -23,7 +23,7 @@ Welcome to our Feed-Player React Project! This project provides a modern and use
 
 Place your name here if you're working on an update.
 
-1.) We recently deactivating pre-loading other feeds. When choosing a feed in the upper right dropdown, provide a more specific error than "No media available". Get the dropdown choices to load feeds. Get the "BigBunny" video to load with this new process.
+1.) TO DO: We recently deactivated pre-loading other feeds. Get the dropdown choices (in the upper right) to load the selected feeds. Get the "BigBunny" video to load again.  Provide a more specific error than "No media available".
 
 2.) DONE: Pull the image and video links from a Google Sheet by implementing the Content/ContextGoogle.jsx page which pulls from this [Google Sheet](https://docs.google.com/spreadsheets/d/1jQTlXWom-pXvyP9zuTcbdluyvpb43hu2h7anxhF5qlQ/edit?usp=sharing) - By Gary
 
