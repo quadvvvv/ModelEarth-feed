@@ -1,8 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, AlertCircle, CheckCircle, Server, Users, ToggleLeft, ToggleRight, Lock } from 'lucide-react';
+import { 
+  Eye, 
+  EyeOff, 
+  AlertCircle, 
+  CheckCircle, 
+  Server, 
+  Users, 
+  ToggleLeft, 
+  ToggleRight, 
+  Lock 
+} from 'lucide-react';
 import './MemberSense.scss';
 import Spinner from '../../Spinner/Spinner';
 
+/**
+ * MemberSense Component
+ * 
+ * A component that handles Discord server authentication and displays server information.
+ * Supports both production and demo modes for testing and development.
+ * 
+ * @param {Object} props
+ * @param {Function} props.onValidToken - Callback function to validate Discord token
+ * @param {string} props.initialToken - Initial Discord bot token
+ * @param {boolean} props.isLoading - Loading state from parent component
+ * @param {string} props.error - Error message from parent
+ * @param {boolean} props.isLoggedIn - Authentication status
+ * @param {boolean} props.isLoggingOut - Logout process status
+ * @param {Object} props.initialServerInfo - Initial server information
+ * @param {boolean} props.isFullScreen - Fullscreen display mode
+ * @param {boolean} props.useMockData - Toggle for demo/production mode
+ * @param {Function} props.onToggleMockData - Callback for toggling demo mode
+ */
 const MemberSense = ({
   onValidToken,
   initialToken,
@@ -12,9 +40,10 @@ const MemberSense = ({
   isLoggingOut,
   serverInfo: initialServerInfo,
   isFullScreen,
-  useMockData = true, // Default to demo mode
+  useMockData = true,
   onToggleMockData,
 }) => {
+  // State management
   const [showToken, setShowToken] = useState(false);
   const [inputToken, setInputToken] = useState("");
   const [isValidating, setIsValidating] = useState(false);
@@ -22,6 +51,9 @@ const MemberSense = ({
   const [serverInfo, setServerInfo] = useState(initialServerInfo);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  /**
+   * Handles initial token and server info setup
+   */
   useEffect(() => {
     if (initialToken) {
       console.log("Initial token is not empty");
@@ -36,6 +68,10 @@ const MemberSense = ({
     }
   }, [initialToken, initialServerInfo]);
 
+  /**
+   * Handles token submission and validation
+   * Includes minimum validation time for UX purposes
+   */
   const handleTokenSubmit = async (e) => {
     e.preventDefault();
     setIsValidating(true);
@@ -76,6 +112,9 @@ const MemberSense = ({
     }
   };
 
+  /**
+   * Renders the demo/production mode toggle
+   */
   const renderDataModeToggle = () => (
     <div className="data-mode-toggle">
       <div className="toggle-description">
@@ -105,6 +144,9 @@ const MemberSense = ({
     </div>
   );
 
+  /**
+   * Renders the token input form
+   */
   const renderTokenForm = () => (
     <div className="auth-container">
       <div className="auth-header">
@@ -113,7 +155,7 @@ const MemberSense = ({
         <p className="auth-description">Enter your Discord bot token to access your server data</p>
       </div>
       <form onSubmit={handleTokenSubmit} className="token-form">
-      <div className="token-input-wrapper">
+        <div className="token-input-wrapper">
           <input
             type={showToken ? "text" : "password"}
             value={inputToken}
@@ -141,6 +183,9 @@ const MemberSense = ({
     </div>
   );
 
+  /**
+   * Renders server information after successful authentication
+   */
   const renderServerInfo = () => (
     <div className="server-info">
       {serverInfo.iconURL ? (
@@ -176,8 +221,7 @@ const MemberSense = ({
         }`}
       >
         <h1 className="member-sense-title">MemberSense</h1>
-        {!isLoggedIn && renderDataModeToggle()}{" "}
-        {/* Render toggle only if not logged in */}
+        {!isLoggedIn && renderDataModeToggle()}
         {parentLoading ? (
           <div className="loading-container">
             <Spinner />

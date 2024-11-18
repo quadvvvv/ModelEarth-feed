@@ -1,23 +1,24 @@
+// External dependencies
 import React, { useContext, useState, useEffect, useRef } from "react";
+import reactToWebComponent from "react-to-webcomponent";
 import ReactDOM from "react-dom";
+import { 
+  Video, Users, MessageCircle, AlertCircle, 
+  Menu, Maximize, Minimize 
+} from "lucide-react";
+
+// Components
 import VideoPlayer from "./VideoPlayer/VideoPlayer";
 import Popup from "./components/Popup/Popup";
-import "./App.scss";
-import { Context } from "./Context/Context";
-import ContextProvider from "./Context/ContextGoogle";
-import reactToWebComponent from "react-to-webcomponent";
 import MemberSense from "./components/MemberSenseComponents/MemberSenseLogin/MemberSense";
 import MemberShowcase from "./components/MemberSenseComponents/MemberShowcase/MemberShowcase";
 import DiscordChannelViewer from "./components/MemberSenseComponents/DiscordChannelViewer/DiscordChannelViewer";
-import {
-  Video,
-  Users,
-  MessageCircle,
-  AlertCircle,
-  Menu,
-  Maximize,
-  Minimize,
-} from "lucide-react";
+
+// Context
+import { Context } from "./Context/Context";
+import ContextProvider from "./Context/ContextGoogle";
+
+// Services
 import {
   fetchMembers,
   fetchChannels,
@@ -27,38 +28,53 @@ import {
   fetchFakeMessages
 } from "./services/Dataservice";
 
+// Styles
+import "./App.scss";
+
+// Constants
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// Web Component Registration
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define("video-player-widget", VideoPlayerComponent);
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Base URL for google cloud run deployed backend.
-
 
 function App() {
+  // Navigation state
   const [currentView, setCurrentView] = useState("FeedPlayer");
-
-  // Feed player states
-  const [isPopup, setIsPopup] = useState(false);
-  const { setVideoList, setCurrentVideoSrc } = useContext(Context);
-
-  // MemberSense states
-  const [members, setMembers] = useState([]);
-  const [channels, setChannels] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [error, setError] = useState("");
-  const [token, setToken] = useState("");
-  const [sessionId, setSessionId] = useState("");
-  const [serverInfo, setServerInfo] = useState(null);
-  const [selectedChannel, setSelectedChannel] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [useMockData, setUseMockData] = useState(true);
-
-  // UI states
-  const [isLoading, setIsLoading] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // UI state
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const appRef = useRef(null);
 
+  // Feed player state
+  const [isPopup, setIsPopup] = useState(false);
+  const { setVideoList, setCurrentVideoSrc } = useContext(Context);
+
+  // Auth state
+  const [token, setToken] = useState("");
+  const [sessionId, setSessionId] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [serverInfo, setServerInfo] = useState(null);
+  
+  // Data state
+  const [useMockData, setUseMockData] = useState(true);
+  const [members, setMembers] = useState([]);
+  const [channels, setChannels] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+
+  // Navigation items configuration
+  const memberSenseDropdownItems = [
+    { id: "Showcase", icon: Users, label: "Member Showcase" },
+    { id: "DiscordViewer", icon: MessageCircle, label: "Discord Viewer" },
+  ];
+
+  // Effects
   useEffect(() => {
     if (sessionId) {
       setIsLoading(true);
@@ -78,6 +94,8 @@ function App() {
           .then(([membersData, channelsData]) => {
             setMembers(membersData);
             setChannels(channelsData);
+            console.log("Fetching Channel Data.")
+            console.log(channelsData.length);
             if (channelsData.length > 0 && !selectedChannel) {
               setSelectedChannel(channelsData[0].id);
             }
@@ -116,9 +134,21 @@ function App() {
     }
   }, [sessionId, selectedChannel]);
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+      if (!isFullScreen) setIsMenuOpen(false);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  // Event handlers
   const handleLogin = async (inputToken) => {
     setIsLoading(true);
     setError("");
+    
     if (useMockData) {
       setToken("MockTokenPlaceHolder");
       setSessionId("12345-abcdef-67890");
@@ -130,38 +160,40 @@ function App() {
       });
       setIsLoading(false);
       return true;
-    } else {
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: inputToken }),
-        });
-        if (!response.ok) throw new Error("Login failed");
-        const data = await response.json();
-        setToken(inputToken);
-        setSessionId(data.sessionId);
-        setServerInfo({
-          serverName: data.serverName,
-          memberCount: data.memberCount,
-          iconURL: data.iconURL,
-        });
-        return true;
-      } catch (error) {
-        console.error("Login error:", error);
-        setError("Login failed. Please check your token and try again.");
-        setToken("");
-        setSessionId("");
-        setServerInfo(null);
-        return false;
-      } finally {
-        setIsLoading(false);
-      }
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: inputToken }),
+      });
+      
+      if (!response.ok) throw new Error("Login failed");
+      
+      const data = await response.json();
+      setToken(inputToken);
+      setSessionId(data.sessionId);
+      setServerInfo({
+        serverName: data.serverName,
+        memberCount: data.memberCount,
+        iconURL: data.iconURL,
+      });
+      return true;
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Login failed. Please check your token and try again.");
+      setToken("");
+      setSessionId("");
+      setServerInfo(null);
+      return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleLogout = async () => {
-    if(useMockData){
+    if (useMockData) {
       setIsLoggingOut(true);
       setIsTransitioning(true);
       setIsLoading(true);
@@ -175,26 +207,27 @@ function App() {
         setIsLoading(false);
         setIsTransitioning(false);
       }, 300);
-    }else{
-      setIsLoggingOut(true);
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-          method: 'POST',
-          headers: { 'Authorization': sessionId }
-        });
-        if (!response.ok) throw new Error('Logout failed');
-      } catch (error) {
-        console.error('Logout error:', error);
-      } finally {
-        setTimeout(() => {
-          setToken('');
-          setSessionId('');
-          setServerInfo(null);
-          setCurrentView('MemberSense');
-          setIsLoggingOut(false);
-        }, 300);
-      }
-    }   
+      return;
+    }
+
+    setIsLoggingOut(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        headers: { 'Authorization': sessionId }
+      });
+      if (!response.ok) throw new Error('Logout failed');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setTimeout(() => {
+        setToken('');
+        setSessionId('');
+        setServerInfo(null);
+        setCurrentView('MemberSense');
+        setIsLoggingOut(false);
+      }, 300);
+    }
   };
 
   const handleViewChange = (view) => {
@@ -228,24 +261,10 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullScreen(!!document.fullscreenElement);
-      if (!isFullScreen) setIsMenuOpen(false);
-    };
-
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () =>
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, []);
-
-  const memberSenseDropdownItems = [
-    { id: "Showcase", icon: Users, label: "Member Showcase" },
-    { id: "DiscordViewer", icon: MessageCircle, label: "Discord Viewer" },
-  ];
-
+  // Render helpers
   const renderContent = () => {
     const commonProps = { isFullScreen };
+    
     switch (currentView) {
       case "FeedPlayer":
         return (
@@ -329,6 +348,7 @@ function App() {
     ));
   };
 
+  // Main render
   return (
     <ContextProvider>
       <div className={`App ${isFullScreen ? "fullscreen" : ""}`} ref={appRef}>
