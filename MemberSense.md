@@ -19,10 +19,11 @@ Also see [Backend Setup](https://github.com/ModelEarth/members)
 - 🌓 Smooth transitions between views
 - 🔍 Member search functionality
 - 📱 Responsive design for various screen sizes
+- 🔄 Demo/Production mode toggle
 
 ## Prerequisites for Users
 
-To use the MemberSense Discord Integration, you need to set up your own Discord bot. Follow the steps below to create and configure your bot.
+To use the MemberSense Discord Integration in production mode, you need to set up your own Discord bot. Follow the steps below to create and configure your bot.
 
 ### Discord Bot Setup Guide
 
@@ -102,7 +103,38 @@ yarn preview
 The main components of the project are:
 
 - `App.jsx`: The main application component that handles routing and view management.
-- `VideoPlayer`: A custom video player component with fullscreen support.
 - `MemberSense`: Handles authentication and provides access to member-related features.
 - `MemberShowcase`: Displays member information in a grid layout with search functionality.
 - `DiscordChannelViewer`: Simulates a Discord-like channel viewing experience.
+
+## Directory Structure
+
+Only main components for MemberSense are shown:
+
+```
+membersense/
+├── src/
+│   ├── components/          
+│   │   └── MemberSenseComponents/       # Core MemberSense feature components
+│   │       ├── DiscordChannelViewer/    # Channel and message viewing interface
+│   │       │   ├── DiscordChannelViewer.jsx
+│   │       │   └── DiscordChannelViewer.scss
+│   │       │
+│   │       ├── MemberSenseLogin/        # Authentication components
+│   │       │   ├── MemberSense.jsx     # Main authentication component
+│   │       │   └── MemberSense.scss    # Authentication styling
+│   │       │
+│   │       └── MemberShowcase/          # Member grid display
+│   │           ├── MemberShowcase.jsx  # Member grid component
+│   │           └── MemberShowcase.scss # Showcase styling
+│   │
+│   ├── services/           
+│   │   └── DataService.js               # Unified data handling service
+│   │       # Handles:
+│   │       # - Production API calls
+│   │       # - Mock data generation
+│   │       # - Data transformation
+│   │
+│   └── App.jsx                         # Main application component
+                                       # Integrates FeedPlayer and MemberSense
+```
