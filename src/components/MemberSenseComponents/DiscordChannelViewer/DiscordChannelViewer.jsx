@@ -144,7 +144,7 @@ const DiscordChannelViewer = ({ channels, messages, selectedChannel, onChannelSe
                     <div className="message-content">
                       <h4>{message.author.name}</h4>
                       <p>{message.content}</p>
-                      <span className="timestamp">{message.timestamp.toLocaleString()}</span>
+                      <span className="timestamp">{new Date(message.timestamp).toLocaleString()}</span>
                     </div>
                   </div>
                 ))

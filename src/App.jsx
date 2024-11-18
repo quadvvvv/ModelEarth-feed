@@ -18,90 +18,19 @@ import {
   Maximize,
   Minimize,
 } from "lucide-react";
+import {
+  fetchMembers,
+  fetchChannels,
+  fetchMessages,
+  fetchFakeMembers,
+  fetchFakeChannels,
+  fetchFakeMessages
+} from "./services/Dataservice";
 
 const VideoPlayerComponent = reactToWebComponent(VideoPlayer, React, ReactDOM);
 customElements.define("video-player-widget", VideoPlayerComponent);
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Base URL for google cloud run deployed backend.
 
-// Utility functions for fake data
-const generateFakeMembers = (num) => {
-  const names = [
-    "John",
-    "Jane",
-    "Alice",
-    "Bob",
-    "Charlie",
-    "David",
-    "Eva",
-    "Frank",
-    "Grace",
-    "Hannah",
-  ];
-  return Array.from({ length: num }, (_, i) => ({
-    id: i + 1,
-    username: `${names[i % names.length]} ${i + 1}`,
-    avatar: `https://via.placeholder.com/150?text=${names[i % names.length]}`,
-    email:
-      i % 2 === 0
-        ? `${names[i % names.length].toLowerCase()}${i + 1}@example.com`
-        : null,
-    role: "Member",
-  }));
-};
-
-// A random date within the last 30 days
-const getRandomDate = () => {
-  const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  return new Date(
-    thirtyDaysAgo.getTime() +
-      Math.random() * (now.getTime() - thirtyDaysAgo.getTime())
-  );
-};
-
-// Function to generate fake channels
-const generateFakeChannels = (num) => {
-  return Array.from({ length: num }, (_, i) => ({
-    id: `channel-${i + 1}`,
-    name: `Channel ${i + 1} ${Math.random().toString(36).substring(7)}`,
-  }));
-};
-// Function to generate fake messages
-const generateFakeMessages = (num, channelId) => {
-  const users = [
-    {
-      id: "user1",
-      name: "Alice",
-      avatar: "https://via.placeholder.com/40?text=A",
-    },
-    {
-      id: "user2",
-      name: "Bob",
-      avatar: "https://via.placeholder.com/40?text=B",
-    },
-    {
-      id: "user3",
-      name: "Charlie",
-      avatar: "https://via.placeholder.com/40?text=C",
-    },
-    {
-      id: "user4",
-      name: "David",
-      avatar: "https://via.placeholder.com/40?text=D",
-    },
-  ];
-
-  return Array.from({ length: num }, (_, i) => {
-    const user = users[Math.floor(Math.random() * users.length)];
-    return {
-      id: `msg-${channelId}-${i + 1}`,
-      content: `This is a fake message ${
-        i + 1
-      } in channel ${channelId}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-      author: user,
-      timestamp: getRandomDate(),
-    };
-  }).sort((a, b) => b.timestamp - a.timestamp); // Sort messages by timestamp, newest first
-};
 
 function App() {
   const [currentView, setCurrentView] = useState("FeedPlayer");
@@ -130,38 +59,34 @@ function App() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const appRef = useRef(null);
 
-  const fetchFakeMembers = () => {
-    const fakeMembers = generateFakeMembers(100);
-    setMembers(fakeMembers);
-    setTimeout(() => setIsLoading(false), 300); // 300ms forced loading for smooth transition
-  };
-
-  const fetchFakeMessages = (selectedChannel) => {
-    setIsLoading(true);
-    const data = generateFakeMessages(100, selectedChannel);
-    setMessages(data);
-    setIsLoading(false);
-  };
-
-  const fetchFakeChannels = () => {
-    setIsLoading(true);
-    const data = generateFakeChannels(10);
-    setChannels(data);
-    if (data.length > 0 && !selectedChannel) {
-      setSelectedChannel(data[0].id);
-    }
-    setIsLoading(false);
-  };
-
-  // Need test for real data
   useEffect(() => {
     if (sessionId) {
+      setIsLoading(true);
       if (useMockData) {
-        fetchFakeMembers();
-        fetchFakeChannels();
+        const fakeMembers = fetchFakeMembers();
+        const fakeChannels = fetchFakeChannels();
+        setMembers(fakeMembers);
+        setChannels(fakeChannels);
+        if (fakeChannels.length > 0 && !selectedChannel) {
+          setSelectedChannel(fakeChannels[0].id);
+        }
       } else {
-        // fetchMembers();
-        // fetchChannels();
+        Promise.all([
+          fetchMembers(sessionId),
+          fetchChannels(sessionId)
+        ])
+          .then(([membersData, channelsData]) => {
+            setMembers(membersData);
+            setChannels(channelsData);
+            if (channelsData.length > 0 && !selectedChannel) {
+              setSelectedChannel(channelsData[0].id);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+            setError('Failed to fetch data. Please try again.');
+          })
+          .finally(() => setIsLoading(false));
       }
     } else {
       setMembers([]);
@@ -172,84 +97,36 @@ function App() {
 
   useEffect(() => {
     if (sessionId && selectedChannel) {
-      if(useMockData){
-        console.log("LEEEETSS GOOO GENERAGE SPAM MESSAGES");
-        fetchFakeMessages(selectedChannel);
-      }else{
-        // fetchMessages(selectedChannel);
+      setIsLoading(true);
+      if (useMockData) {
+        const fakeMessages = fetchFakeMessages(selectedChannel);
+        setMessages(fakeMessages);
+        setIsLoading(false);
+      } else {
+        fetchMessages(sessionId, selectedChannel)
+          .then(messagesData => {
+            setMessages(messagesData);
+          })
+          .catch(error => {
+            console.error('Error fetching messages:', error);
+            setError('Failed to fetch messages. Please try again.');
+          })
+          .finally(() => setIsLoading(false));
       }
     }
   }, [sessionId, selectedChannel]);
-
-  // // MemberSense handlers:
-
-  // const fetchMembers = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/members`, {
-  //       headers: { 'Authorization': sessionId }
-  //     });
-  //     if (!response.ok) throw new Error('Failed to fetch members');
-  //     const data = await response.json();
-  //     setMembers(data);
-  //   } catch (error) {
-  //     console.error('Error fetching members:', error);
-  //     setError('Failed to fetch members. Please try again.');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  // const fetchChannels = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/channels`, {
-  //       headers: { 'Authorization': sessionId }
-  //     });
-  //     if (!response.ok) throw new Error('Failed to fetch channels');
-  //     const data = await response.json();
-  //     setChannels(data);
-  //     if (data.length > 0 && !selectedChannel) {
-  //       setSelectedChannel(data[0].id);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching channels:', error);
-  //     setError('Failed to fetch channels. Please try again.');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  // const fetchMessages = async (channelId) => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/messages?channelId=${channelId}`, {
-  //       headers: { 'Authorization': sessionId }
-  //     });
-  //     if (!response.ok) throw new Error('Failed to fetch messages');
-  //     const data = await response.json();
-  //     setMessages(data);
-  //   } catch (error) {
-  //     console.error('Error fetching messages:', error);
-  //     setError('Failed to fetch messages. Please try again.');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleLogin = async (inputToken) => {
     setIsLoading(true);
     setError("");
     if (useMockData) {
-      setIsLoading(true);
       setToken("MockTokenPlaceHolder");
-      setError("");
       setSessionId("12345-abcdef-67890");
       setIsLoggedIn(true);
       setServerInfo({
         serverName: "Mocking Discord Server",
         memberCount: 1500,
-        iconURL: "https://via.placeholder.com/48", // A placeholder image URL
+        iconURL: "https://via.placeholder.com/48",
       });
       setIsLoading(false);
       return true;
@@ -269,14 +146,14 @@ function App() {
           memberCount: data.memberCount,
           iconURL: data.iconURL,
         });
-        return true; // Indicate successful login
+        return true;
       } catch (error) {
         console.error("Login error:", error);
         setError("Login failed. Please check your token and try again.");
         setToken("");
         setSessionId("");
         setServerInfo(null);
-        return false; // Indicate failed login
+        return false;
       } finally {
         setIsLoading(false);
       }
