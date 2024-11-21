@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../Context/ContextGoogle';
 import { formatTime } from '../utils/formatTime';
 import './VideoPlayer.scss';
-import axios from 'axios';
+import axios from 'axios'; //To fetch the urls of the API
 import PropTypes from 'prop-types';
 
 function VideoPlayer({ autoplay = false, isFullScreen, handleFullScreen }) {
