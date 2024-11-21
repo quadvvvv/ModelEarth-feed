@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -24,11 +23,20 @@
       loadMarkdown("/feed/README.md", "readmeDiv", "_parent");
       window.onload = function () {
         if (performance.navigation.type === 1) {
-          // This is a page refresh
-          history.replaceState(null, null, " ");
+          // This is a page refresh - preserve only the swiper type
+          const hashParams = new URLSearchParams(
+            window.location.hash.substring(1)
+          );
+          const currentSwiperType = hashParams.get("swiper");
+          if (currentSwiperType)
+            history.replaceState(null, null, `#swiper=${currentSwiperType}`);
+          else history.replaceState(null, null, " ");
         }
+        // Always show the active swiper after page load
+        showActiveSwiper();
       };
     </script>
+
     <style>
       .swiper-filmstrip {
         height: 300px;
@@ -64,9 +72,13 @@
   </head>
 
   <body>
-    <!-- Yarn Dev is still using index.html.
-  Change it to use feedplayer.html like Yarn Build does. -->
-<div id="root"><img src="src/assets/images/intro-a.jpg" style="border-radius:20px;"><div style="margin-top:20px;z-index:1000">Broken by build. Manually update the index .js and .css files to include the newly built ID values.</div></div>
+    <div id="root">
+      <img src="src/assets/images/intro-a.jpg" style="border-radius: 20px" />
+      <div style="margin-top: 20px; z-index: 1000">
+        Broken by build. Manually update the index .js and .css files to include
+        the newly built ID values.
+      </div>
+    </div>
 
     <object
       type="text/html"
@@ -156,9 +168,6 @@
           }
         }
       }
-
-      // Initial setup
-      showActiveSwiper();
 
       // Set up event listeners
       window.addEventListener("hashchange", handleHashChange);
