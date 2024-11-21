@@ -43,6 +43,11 @@ To use the MemberSense Discord Integration in production mode, you need to set u
    - Read Message History
 <!-- Probably leave as "Guide Install" -->
 
+<!--
+Also tried this without success:
+In Discord, found the bot user, went to it's profile, clicked Add App > Add to Server, selected the server and clicked Authorize.
+-->
+
 9. Copy the generated URL at the bottom of the page. (Contains permissions integer: 592896)
 10. Open a new browser tab, paste the URL, and select the server <!-- model.earth for us --> where you want to add the bot.
 
