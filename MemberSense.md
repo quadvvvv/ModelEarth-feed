@@ -45,7 +45,7 @@ To use the MemberSense Discord Integration in production mode, you need to set u
 
 <!--
 Also tried this without success:
-In Discord, found the bot user, went to it's profile, clicked Add App > Add to Server, selected the server and clicked Authorize.
+In Discord, found the bot user, went to its profile, clicked Add App > Add to Server, selected the server and clicked Authorize.
 -->
 
 9. Copy the generated URL at the bottom of the page. (Contains permissions integer: 592896)
